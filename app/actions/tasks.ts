@@ -50,6 +50,13 @@ export async function updateTaskStatusAction(taskId: string, status: Status) {
   const task = await prisma.task.findUnique({ where: { id: taskId } });
   if (!task) throw new Error("Task not found");
 
+  console.log("BEFORE:", {
+    taskId,
+    oldStatus: task.status,
+    newStatus: status,
+    assigneeId: task.assigneeId,
+  });
+
   if (session.role !== "ADMIN" && task.assigneeId !== session.id) {
     throw new Error("Forbidden: You can only update tasks assigned to you");
   }
@@ -58,6 +65,7 @@ export async function updateTaskStatusAction(taskId: string, status: Status) {
     data: { status },
   });
   revalidatePath("/");
+  revalidatePath("/admin/leaderboard");
 }
 
 export async function reassignTaskAction(

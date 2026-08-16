@@ -44,6 +44,33 @@ async function main() {
       role: Role.MEMBER,
     },
   });
+  const member3 = await prisma.user.upsert({
+    where: { email: "member3@example.com" },
+    update: {},
+    create: {
+      email: "member3@example.com",
+      passwordHash: memberPassword,
+      role: Role.MEMBER,
+    },
+  });
+  const member4 = await prisma.user.upsert({
+    where: { email: "member4@example.com" },
+    update: {},
+    create: {
+      email: "member4@example.com",
+      passwordHash: memberPassword,
+      role: Role.MEMBER,
+    },
+  });
+  const member5 = await prisma.user.upsert({
+    where: { email: "member5@example.com" },
+    update: {},
+    create: {
+      email: "member5@example.com",
+      passwordHash: memberPassword,
+      role: Role.MEMBER,
+    },
+  });
 
   await prisma.task.createMany({
     data: [

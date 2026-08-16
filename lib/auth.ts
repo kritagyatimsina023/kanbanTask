@@ -1,5 +1,6 @@
 import { jwtVerify, SignJWT } from "jose";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
+import { Status } from "@/generated/prisma/enums";
 
 const JWT_SECRET = process.env.JWT_SECRET || "secret";
 const key = new TextEncoder().encode(JWT_SECRET); // jose expects binary data expects so for the converison of this string to bianry data we use this textencoder
@@ -15,7 +16,7 @@ export async function signToken(payload: SessionPayload) {
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime("1d")
-    .sign(key); // performs cryptoGraphic operations
+    .sign(key);
 }
 
 export async function verifyToken(
@@ -32,6 +33,17 @@ export async function verifyToken(
 }
 
 export async function getSession(): Promise<SessionPayload | null> {
+  const headersList = await headers();
+  const sessionHeader = headersList.get("x-user-session");
+  
+  if (sessionHeader) {
+    try {
+      return JSON.parse(sessionHeader) as SessionPayload;
+    } catch {
+      return null;
+    }
+  }
+
   const cookieStore = await cookies();
   const token = cookieStore.get("kanban_session")?.value;
   if (!token) return null;

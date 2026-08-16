@@ -6,33 +6,52 @@ import { logoutAction } from "../app/actions/auth";
 
 const Nav = async () => {
   const session = await getSession();
+
   return (
-    <nav className="navbar">
-      <div className="container">
-        <Link href="/" className="navbar-brand">
-          <LayoutDashboard size={24} />
-          Kanban Board
+    <nav className="sticky top-0 z-50 border-b border-gray-200 bg-white">
+      <div className="container flex h-16 items-center justify-between">
+        <Link
+          href="/"
+          className="flex items-center gap-2 text-lg font-bold text-gray-900"
+        >
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gray-900 text-white">
+            <LayoutDashboard size={19} />
+          </div>
+          <span>Kanban Board</span>
         </Link>
-        <div className="navbar-actions">
-          {session ? (
+
+        <div className="flex items-center gap-4">
+          <Link
+            href="/"
+            className="flex items-center gap-2 rounded-lg bg-gray-100 px-3 py-2 text-sm font-medium text-gray-900 transition hover:bg-gray-200"
+          >
+            <LayoutDashboard size={16} />
+            Dashboard
+          </Link>
+          {session && (
             <>
-              <div
-                className="user-info"
-                style={{ fontSize: "0.875rem", color: "var(--text-muted)" }}
-              >
-                {session.email}{" "}
-                <strong style={{ color: "var(--primary)", marginLeft: "4px" }}>
-                  ({session.role})
-                </strong>
+              <div className="hidden items-center border-l border-gray-200 pl-4 sm:flex">
+                <div className="text-right">
+                  <p className="text-sm font-medium text-gray-900">
+                    {session.email}
+                  </p>
+
+                  <p className="text-xs font-medium text-gray-500">
+                    {session.role}
+                  </p>
+                </div>
               </div>
               <form action={logoutAction}>
-                <button type="submit" className="btn btn-danger">
+                <button
+                  type="submit"
+                  className="flex items-center gap-2 rounded-lg border border-red-200 px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
+                >
                   <LogOut size={16} />
-                  Logout
+                  <span className="hidden sm:inline">Logout</span>
                 </button>
               </form>
             </>
-          ) : null}
+          )}
         </div>
       </div>
     </nav>

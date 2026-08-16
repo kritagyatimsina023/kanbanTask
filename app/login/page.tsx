@@ -3,12 +3,6 @@ import { redirect } from "next/navigation";
 import LoginForm from "./LoginForm";
 
 export default async function LoginPage() {
-  const session = await getSession();
-
-  if (session) {
-    redirect("/");
-  }
-
   return (
     <div className="login-container mx-auto! mt-16! max-w-[400px] rounded-xl border border-gray-200 bg-white p-8! shadow-lg">
       <div className="mb-8! text-center">
@@ -20,7 +14,6 @@ export default async function LoginPage() {
           Please sign in to access your tasks.
         </p>
       </div>
-
       <LoginForm />
     </div>
   );

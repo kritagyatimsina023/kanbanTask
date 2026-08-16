@@ -17,6 +17,10 @@ enum Status {
   IN_PROGRESS
   DONE
 }
+enum UserStatus{
+  ACTIVE
+  BANNED
+}
 
 model User {
   id           String   @id @default(uuid())
@@ -24,8 +28,15 @@ model User {
   passwordHash String
   role         Role     @default(MEMBER)
   tasks        Task[]
+  status    UserStatus @default(ACTIVE)
+
+  banReason    String?
+  bannedAt     DateTime?
+
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
+  rewards      Reward[]
 }
 
 model Task {
@@ -37,4 +48,20 @@ model Task {
   assignee    User?    @relation(fields: [assigneeId], references: [id])
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model Reward {
+  id        String   @id @default(cuid())
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  title     String
+  message   String?
+
+  createdAt DateTime @default(now())
+
+  awardedBy String
+
+  @@index([userId, createdAt])
 }

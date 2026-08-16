@@ -11,7 +11,7 @@ interface Props {
   column: Column;
   tasks: Task[];
   members: Member[];
-  session: SessionPayload;
+  userId: string;
   isAdmin: boolean;
 }
 
@@ -19,10 +19,11 @@ export default function BoardColumn({
   column,
   tasks,
   members,
-  session,
+  userId,
   isAdmin,
 }: Props) {
-  const canEditTask = (task: Task) => isAdmin || task.assigneeId === session.id;
+  const canEditTask = (task: Task) => isAdmin || task.assigneeId === userId;
+  console.log(tasks, "From prosp");
 
   return (
     <div className="flex min-h-[400px] shadow-md flex-col my-4! overflow-hidden rounded-xl border border-gray-100 bg-[#fafafa]">

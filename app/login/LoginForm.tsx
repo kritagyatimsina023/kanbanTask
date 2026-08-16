@@ -13,7 +13,6 @@ const initialState: LoginState = {
 
 function SubmitButton() {
   const { pending } = useFormStatus();
-
   return (
     <button
       type="submit"

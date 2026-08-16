@@ -8,6 +8,7 @@ import { Member } from "@/app/types/member.types";
 import { Column } from "@/app/types/column.types";
 import { useOpenModel } from "@/store/useOpenModel";
 import DeleteTask from "./DeleteTask";
+import { useRouter } from "next/navigation";
 
 interface TaskCardProps {
   task: Task;
@@ -26,6 +27,7 @@ export default function TaskCard({
 }: TaskCardProps) {
   const { isPending, handleDelete, handleStatusChange, handleReassign } =
     useTaskActions();
+  const router = useRouter();
   const { setDeleteOpen, setTask, isDeleteOpen } = useOpenModel();
   const handleTaskDelete = (task: Task) => {
     setDeleteOpen();
@@ -70,7 +72,6 @@ export default function TaskCard({
               className="appearance-none bg-transparent outline-none cursor-pointer pr-4! hover:text-slate-700"
             >
               <option value="">Unassigned</option>
-
               {members.map((member) => (
                 <option key={member.id} value={member.id}>
                   {member.email}

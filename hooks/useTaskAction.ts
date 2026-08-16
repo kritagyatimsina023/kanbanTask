@@ -8,6 +8,7 @@ import {
   reassignTaskAction,
   updateTaskStatusAction,
 } from "../app/actions/tasks";
+import { useRouter } from "next/navigation";
 
 type Options = {
   onTaskCreated?: () => void;
@@ -15,34 +16,33 @@ type Options = {
 
 export function useTaskActions(options?: Options) {
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   const handleStatusChange = (taskId: string, status: Status) => {
-    startTransition(() => {
-      updateTaskStatusAction(taskId, status);
+    startTransition(async () => {
+      await updateTaskStatusAction(taskId, status);
+
+      router.refresh();
     });
   };
+
   const handleDelete = async (taskId: string) => {
     await deleteTaskAction(taskId);
+    router.refresh();
   };
 
   const handleReassign = (taskId: string, assigneeId: string | null) => {
-    startTransition(() => {
-      reassignTaskAction(taskId, assigneeId);
+    startTransition(async () => {
+      await reassignTaskAction(taskId, assigneeId);
+
+      router.refresh();
     });
   };
-
-  //   const handleCreateTask = (formData: FormData) => {
-  //     startTransition(async () => {
-  //       await createTaskAction(formData);
-  //       options?.onTaskCreated?.();
-  //     });
-  //   };
 
   return {
     isPending,
     handleDelete,
     handleStatusChange,
     handleReassign,
-    // handleCreateTask,
   };
 }

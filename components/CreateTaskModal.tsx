@@ -1,5 +1,4 @@
 "use client";
-
 import { useActionState, useEffect } from "react";
 import { useFormStatus } from "react-dom";
 import { createTaskAction } from "../app/actions/tasks";
