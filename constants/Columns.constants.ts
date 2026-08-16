@@ -1,4 +1,4 @@
-import { Status } from "@prisma/client";
+import { Status } from "@/app/types/task.types";
 export const columns = [
   {
     id: Status.TODO,
