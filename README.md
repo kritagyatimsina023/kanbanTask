@@ -4,93 +4,98 @@ This is a Full-Stack Kanban Task Board built with Next.js (App Router), React, a
 
 ## Features
 
-- **Next.js App Router**: Uses Server Components for data fetching and Server Actions for mutations.
-- **Relational Database**: PostgreSQL managed via Prisma ORM.
-- **Authentication**: Custom JWT based session management using `jose` and HttpOnly cookies.
-- **Role-Based Access Control (RBAC)**:
-  - **Admin**: Full CRUD access. Can create, edit, reassign, update status, and delete any task.
-  - **Member**: Can view the board and update the status of tasks assigned to them.
-- **Tailwind CSS**: Responsive UI built with Tailwind CSS and custom CSS variables for consistent theming.
+### 1. Authentication & Authorization
 
-## Setup Instructions
+- Custom JWT-based authentication using `jose` and HttpOnly cookies.
+- Secure session management.
+- Role-Based Access Control (RBAC).
+- Separate Admin and Member experiences.
+- Protected routes using `proxy.ts`.
 
-### 1. Prerequisites
+### 2. Admin Dashboard
 
-- Node.js (v20+)
-- `pnpm` package manager
-- Docker (optional, for running local PostgreSQL)
+- Dashboard summary with:
+  - Total Users
+  - Total Tasks
+  - Active Tasks
+  - In Progress Tasks
+  - Completed Tasks
+  - Total Rewards
+  - Rewards issued this month
+- Task distribution and workspace overview.
+- Top performer summary.
 
-## Environment Variables
+### 3. User Management
 
-Create a `.env` file in the project root and configure the following variables:
+- Admin can view all registered users.
+- View user task statistics.
+- Ban members with a specified reason.
+- Unban previously banned members.
+- Admin accounts cannot be banned through the member management interface.
+- Banned users are prevented from accessing protected application functionality.
 
-```env
-DATABASE_URL="postgres://username:password@db.prisma.io:5432/postgres?sslmode=verify-full"
-JWT_SECRET="your_long_random_jwt_secret"
-```
+### 4. Kanban Task Management
 
-### Why `sslmode=verify-full`?
+- Create, update, assign, reassign, and delete tasks.
+- Task statuses:
+  - **To Do**
+  - **In Progress**
+  - **Done**
+- Admins can manage all tasks.
+- Members can update the status of tasks assigned to them.
+- Task assignment and reassignment.
 
-This project uses PostgreSQL over an encrypted SSL/TLS connection.
+### 5. Leaderboard & Ranking
 
-The `sslmode=verify-full` option:
+- Members are ranked based on completed tasks.
+- Higher completed-task counts result in higher rankings.
+- Leaderboard displays:
+  - Rank
+  - Member
+  - Completed Tasks
+- Email is used as a secondary sorting criterion when members have the same number of completed tasks.
 
-- Encrypts all communication between the application and the database.
-- Verifies the database server's SSL certificate.
-- Confirms that the server hostname matches the certificate, helping prevent man-in-the-middle attacks.
-- Matches the recommended SSL configuration for newer versions of the PostgreSQL Node.js driver (`pg`).
+### 6. Reward System
 
-If `sslmode` is omitted or set to `require`, `prefer`, or `verify-ca`, newer versions of the PostgreSQL driver may display a security warning similar to:
+- Admins can reward members based on their performance.
+- Rewards can include a title and optional message.
+- Members can view their received rewards.
+- Dashboard displays reward statistics and top performers.
 
-```text
-SECURITY WARNING: The SSL modes 'prefer', 'require', and 'verify-ca'
-are treated as aliases for 'verify-full'.
-```
+### 7. Responsive UI
 
-Using `sslmode=verify-full` removes this warning and ensures the application uses the strongest SSL verification mode recommended by the PostgreSQL driver.
-
-### 3. Install Dependencies
-
-```bash
-pnpm install
-```
-
-### 4. Database Setup & Seeding
-
-Create the database schema and populate it with sample data for testing.
-
-```bash
-npx prisma db push
-npx tsx prisma/seed.ts
-```
-
-The seed script creates:
-
-- 1 Admin user
-- 2 Member users
-- Sample Kanban tasks across **To Do**, **In Progress**, and **Done**
-- Passwords hashed using `bcryptjs`
-
-### 5. Run the Application
-
-```bash
-pnpm dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+- Responsive interface built with Tailwind CSS.
+- Dashboard, Kanban board, user management, leaderboard, and reward interfaces.
+- Loading skeletons for improved user experience during server-side data fetching.
 
 ## Test Credentials
 
-Use the following credentials to log in and test the RBAC implementation:
+You can use the following credentials to test the application with different roles and permissions.
 
-**Admin Role:**
+### Admin Account
 
-- Email: `admin@example.com`
-- Password: `admin123`
+The Admin account has full access to the application, including task management, user management, leaderboard management, rewards, and dashboard statistics.
 
-**Member Role:**
+- **Email:** `admin@example.com`
+- **Password:** `admin123`
+- **Role:** `ADMIN`
 
-- Email: `member1@example.com`
-- Password: `member123`
-- Email: `member2@example.com`
-- Password: `member123`
+### Member Accounts
+
+The following accounts can be used to test the Member experience.
+
+All member accounts use the same password:
+
+- **Password:** `member123`
+- **Role:** `MEMBER`
+
+Available member accounts:
+
+- `member1@example.com`
+- `member2@example.com`
+- `member6@example.com`
+- `member7@example.com`
+- `member8@example.com`
+- `member9@example.com`
+
+> **Note:** Log in with the Admin account to access administrative features. Log in with any of the Member accounts to test the member-specific task board, leaderboard, ranking, and reward features.
