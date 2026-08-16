@@ -53,8 +53,8 @@ export async function rewardUser(
       awardedBy: admin.id,
     },
   });
-  revalidatePath("/admin/leaderboard");
-  revalidatePath("/leaderboard");
+  // revalidatePath("/admin/leaderboard");
+  // revalidatePath("/leaderboard");
   return {
     success: true,
   };

@@ -1,6 +1,6 @@
 "use client";
 
-import { Status } from "@prisma/client";
+import { Status } from "@/app/types/task.types";
 import { ChevronLeft, ChevronRight, Trash2, User } from "lucide-react";
 import { useTaskActions } from "../hooks/useTaskAction";
 import { Task } from "@/app/types/task.types";

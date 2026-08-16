@@ -1,8 +1,7 @@
 "use client";
 
-import { Status } from "@prisma/client";
 import TaskCard from "./TaskCard";
-import { SessionPayload } from "@/lib/auth";
+
 import { Column } from "@/app/types/column.types";
 import { Task } from "@/app/types/task.types";
 import { Member } from "@/app/types/member.types";
