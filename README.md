@@ -2,6 +2,8 @@
 
 This is a Full-Stack Kanban Task Board built with Next.js (App Router), React, and Prisma with PostgreSQL.
 
+**Live Demo:** https://kanbankritagya.vercel.app/
+
 ## Features
 
 ### 1. Authentication & Authorization
