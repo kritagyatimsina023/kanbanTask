@@ -39,7 +39,7 @@ async function main() {
       },
     });
 
-    console.log("User created:", user.email);
+    // console.log("User created:", user.email);
   }
 }
 

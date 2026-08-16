@@ -1,0 +1,19 @@
+import { requireAuth } from "@/lib/auth";
+// import React from "react";
+import { getUsersWithStats } from "../user.action";
+import UsersTable from "./UsersTable";
+// import { delay } from "@/lib/delay";
+
+const UserTableDataPage = async () => {
+  //   await delay(5000);
+  await requireAuth();
+
+  const users = await getUsersWithStats();
+  return (
+    <>
+      <UsersTable users={users} />
+    </>
+  );
+};
+
+export default UserTableDataPage;

@@ -64,7 +64,6 @@ export default function LoginForm() {
           placeholder="••••••••"
         />
       </div>
-
       <SubmitButton />
     </form>
   );

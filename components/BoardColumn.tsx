@@ -1,7 +1,6 @@
 "use client";
 
 import TaskCard from "./TaskCard";
-
 import { Column } from "@/app/types/column.types";
 import { Task } from "@/app/types/task.types";
 import { Member } from "@/app/types/member.types";
@@ -22,7 +21,6 @@ export default function BoardColumn({
   isAdmin,
 }: Props) {
   const canEditTask = (task: Task) => isAdmin || task.assigneeId === userId;
-  console.log(tasks, "From prosp");
 
   return (
     <div className="flex min-h-[400px] shadow-md flex-col my-4! overflow-hidden rounded-xl border border-gray-100 bg-[#fafafa]">

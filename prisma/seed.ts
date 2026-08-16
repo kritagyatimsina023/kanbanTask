@@ -10,7 +10,7 @@ const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
-  console.log("Seeding database...");
+  // console.log("Seeding database...");
 
   const adminPassword = await bcrypt.hash("admin123", 10);
   const memberPassword = await bcrypt.hash("member123", 10);

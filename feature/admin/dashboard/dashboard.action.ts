@@ -4,7 +4,6 @@ import { calculateLeaderboard } from "@/lib/leaderboard";
 
 export async function getDashboardStats() {
   await requireAdmin();
-
   const [
     totalUsers,
     activeTasks,

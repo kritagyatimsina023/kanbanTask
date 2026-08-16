@@ -1,42 +1,10 @@
 import { Trophy } from "lucide-react";
-import prisma from "@/lib/prisma";
-import LeaderBoardTable from "./LeaderBoardTable";
-import { calculateLeaderboard } from "@/lib/leaderboard";
+
+import { Suspense } from "react";
+import LeaderBoardDataPage from "./LeaderBoardDataPage";
+import LeaderBoardTableSkeleton from "./LeaderBoardSkeleton";
 
 const LeaderBoardPage = async () => {
-  const users = await prisma.user.findMany({
-    where: {
-      role: "MEMBER",
-      status: "ACTIVE",
-    },
-    select: {
-      id: true,
-      email: true,
-      _count: {
-        select: {
-          tasks: {
-            where: {
-              status: "DONE",
-            },
-          },
-        },
-      },
-    },
-    orderBy: {
-      tasks: {
-        _count: "desc",
-      },
-    },
-  });
-  console.log(
-    "LEADERBOARD:",
-    users.map((user) => ({
-      email: user.email,
-      completed: user._count.tasks,
-    })),
-  );
-  const leaderboard = calculateLeaderboard(users);
-
   return (
     <div className="space-y-6!">
       <div>
@@ -52,7 +20,9 @@ const LeaderBoardPage = async () => {
           </div>
         </div>
       </div>
-      <LeaderBoardTable users={leaderboard} />
+      <Suspense fallback={<LeaderBoardTableSkeleton />}>
+        <LeaderBoardDataPage />
+      </Suspense>
     </div>
   );
 };

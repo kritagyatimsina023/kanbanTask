@@ -24,6 +24,11 @@
   --column-in-progress: #fef08a;
   --column-done: #bbf7d0;
 }
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+}
 
 * {
   box-sizing: border-box;
@@ -39,12 +44,13 @@ body {
     "Segoe UI",
     Roboto,
     sans-serif;
+
   background-color: var(--background);
   color: var(--foreground);
+
   -webkit-font-smoothing: antialiased;
+
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
 }
 
 /* Utilities */

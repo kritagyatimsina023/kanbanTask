@@ -1,12 +1,8 @@
-import { requireAuth } from "@/lib/auth";
-import { getUsersWithStats } from "../user.action";
-import UsersTable from "./UsersTable";
+import { Suspense } from "react";
+import UserTableDataPage from "./UserTableDataPage";
+import UsersTableSkeleton from "./UserTableSkeleton";
 
 export default async function UserPage() {
-  await requireAuth();
-
-  const users = await getUsersWithStats();
-
   return (
     <div>
       <div className="mb-8!">
@@ -16,7 +12,9 @@ export default async function UserPage() {
           Manage users, monitor their tasks, and control account access.
         </p>
       </div>
-      <UsersTable users={users} />
+      <Suspense fallback={<UsersTableSkeleton />}>
+        <UserTableDataPage />
+      </Suspense>
     </div>
   );
 }
