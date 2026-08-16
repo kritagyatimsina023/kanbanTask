@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import prisma from "@/lib/prisma";
 import { requireAuth, requireAdmin } from "@/lib/auth";
-import { Status } from "@prisma/client";
+import { Status } from "@/app/types/task.types";
 
 type CreateTaskState = {
   error: string | null;
