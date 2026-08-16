@@ -2,7 +2,6 @@
 
 import prisma from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth";
-import { revalidatePath } from "next/cache";
 
 export async function rewardUser(
   userId: string,

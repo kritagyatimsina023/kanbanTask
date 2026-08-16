@@ -1,6 +1,3 @@
-// import { Status } from "@prisma/client";
-import { Member } from "./member.types";
-
 export type Task = {
   id: string;
   title: string;

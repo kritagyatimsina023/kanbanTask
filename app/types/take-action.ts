@@ -1,4 +1,4 @@
-import { Status } from "@prisma/client";
+import { Status } from "./task.types";
 
 export interface TaskActions {
   onDelete(taskId: string): void;

@@ -1,4 +1,4 @@
-import { Status } from "@prisma/client";
+import { Status } from "./task.types";
 
 export type Column = {
   id: Status;
