@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { loginAction } from "../actions/auth";
+import { loginAction } from "../actions/auth.action";
 import { useFormStatus } from "react-dom";
 import { LoginState } from "../types/auth";
 import { toast } from "sonner";

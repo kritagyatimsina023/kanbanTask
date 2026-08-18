@@ -1,4 +1,4 @@
-import { Status } from "./task.types";
+import { Status } from "@/generated/prisma/enums";
 
 export interface TaskActions {
   onDelete(taskId: string): void;

@@ -1,7 +1,7 @@
 "use client";
 import { useActionState, useEffect } from "react";
 import { useFormStatus } from "react-dom";
-import { createTaskAction } from "../app/actions/tasks";
+import { createTaskAction } from "../app/actions/tasks.action";
 import { useOpenModel } from "@/store/useOpenModel";
 import { CreateTaskState } from "@/app/types/auth";
 import { Member } from "@/app/types/member.types";
@@ -29,8 +29,14 @@ export default function CreateTaskModal({ members }: { members: Member[] }) {
     if (state.success) {
       setOpen();
       toast.success("Task created successfully");
+      return;
     }
-  }, [state.success, setOpen]);
+    if (state.fieldErrors) {
+      Object.values(state.fieldErrors)
+        .flat()
+        .forEach((error) => toast.error(error));
+    }
+  }, [state, setOpen]);
 
   if (!isOpen) return null;
 
@@ -40,15 +46,20 @@ export default function CreateTaskModal({ members }: { members: Member[] }) {
         <h2 className="mb-6! text-xl font-semibold">Create New Task</h2>
 
         <form action={formAction} className="flex flex-col gap-4">
-          {state.error && (
+          {/* {state.error && (
             <div className="rounded-md border p-3! text-sm  border-[rgba(239,68,68,0.2)] bg-[rgba(239,68,68,0.1)] text-[var(--danger)]">
               {state.error}
             </div>
-          )}
+          )} */}
 
           <div>
             <label className="label">Title</label>
             <input name="title" className="input" placeholder="Task title" />
+            {state.fieldErrors?.title && (
+              <p className="mt-1 text-sm text-red-500">
+                {state.fieldErrors.title[0]}
+              </p>
+            )}
           </div>
 
           <div>

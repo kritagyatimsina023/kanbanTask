@@ -1,13 +1,24 @@
 import RewardSummary from "./RewardSummary";
-import { getDashboardStats } from "../dashboard.action";
+// import { getDashboardStats } from "../dashboard.action";
 import {
   CheckCircle2,
   CircleUserRound,
   ClipboardList,
   LoaderCircle,
 } from "lucide-react";
+import { dashboardService } from "../dashboard.service";
 
 const DashboardStats = async () => {
+  // const {
+  //   totalUsers,
+  //   activeTasks,
+  //   inProgressTasks,
+  //   completedTasks,
+  //   totalTasks,
+  //   totalRewards,
+  //   rewardsThisMonth,
+  //   topPerformers,
+  // } = await getDashboardStats();
   const {
     totalUsers,
     activeTasks,
@@ -17,7 +28,8 @@ const DashboardStats = async () => {
     totalRewards,
     rewardsThisMonth,
     topPerformers,
-  } = await getDashboardStats();
+  } = await dashboardService.getDashboardStats();
+
   return (
     <>
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">

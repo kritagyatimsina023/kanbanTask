@@ -2,7 +2,7 @@ import { getSession } from "@/lib/auth";
 import { LayoutDashboard, LogOut } from "lucide-react";
 import Link from "next/link";
 
-import { logoutAction } from "../app/actions/auth";
+import { logoutAction } from "../app/actions/auth.action";
 
 const Nav = async () => {
   const session = await getSession();

@@ -34,16 +34,12 @@ export default function RewardUserModal({
       toast.error("Reward title is required");
       return;
     }
-
     startTransition(async () => {
       try {
         await rewardUser(user.id, title, message);
-
         toast.success("Reward awarded successfully");
-
         setTitle("");
         setMessage("");
-
         onClose();
       } catch (error) {
         toast.error(

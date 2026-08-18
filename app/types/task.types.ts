@@ -1,3 +1,4 @@
+import { Status } from "@/generated/prisma/enums";
 export type Task = {
   id: string;
   title: string;
@@ -10,10 +11,10 @@ export type Task = {
   } | null;
 };
 
-export const Status = {
-  TODO: "TODO",
-  IN_PROGRESS: "IN_PROGRESS",
-  DONE: "DONE",
-} as const;
+// export const Status = {
+//   TODO: "TODO",
+//   IN_PROGRESS: "IN_PROGRESS",
+//   DONE: "DONE",
+// } as const;
 
-export type Status = (typeof Status)[keyof typeof Status];
+// export type Status = (typeof Status)[keyof typeof Status];

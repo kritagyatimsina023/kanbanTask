@@ -12,7 +12,6 @@ interface Props {
   userId: string;
   isAdmin: boolean;
 }
-
 export default function BoardColumn({
   column,
   tasks,

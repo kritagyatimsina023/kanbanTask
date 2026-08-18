@@ -6,7 +6,6 @@ import DashboardStats from "./DashboardStats";
 
 const DashboardHomePage = async () => {
   const session = await requireAuth();
-
   return (
     <div>
       <div className="mb-8!">

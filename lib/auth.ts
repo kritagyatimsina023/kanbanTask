@@ -2,8 +2,7 @@ import { jwtVerify, SignJWT } from "jose";
 import { cookies, headers } from "next/headers";
 
 const JWT_SECRET = process.env.JWT_SECRET || "secret";
-const key = new TextEncoder().encode(JWT_SECRET); // jose expects binary data expects so for the converison of this string to bianry data we use this textencoder
-
+const key = new TextEncoder().encode(JWT_SECRET);
 export type SessionPayload = {
   id: string;
   email: string;

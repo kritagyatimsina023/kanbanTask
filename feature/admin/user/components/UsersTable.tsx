@@ -41,7 +41,6 @@ export default function UsersTable({ users }: UsersTableProps) {
 
       return;
     }
-
     startTransition(async () => {
       try {
         await toggleBanUser(user.id);

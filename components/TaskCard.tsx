@@ -1,6 +1,5 @@
 "use client";
-
-import { Status } from "@/app/types/task.types";
+import { Status } from "@/generated/prisma/enums";
 import { ChevronLeft, ChevronRight, Trash2, User } from "lucide-react";
 import { useTaskActions } from "../hooks/useTaskAction";
 import { Task } from "@/app/types/task.types";
@@ -8,7 +7,8 @@ import { Member } from "@/app/types/member.types";
 import { Column } from "@/app/types/column.types";
 import { useOpenModel } from "@/store/useOpenModel";
 import DeleteTask from "./DeleteTask";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
+// import { useEffect } from "react";
 
 interface TaskCardProps {
   task: Task;
@@ -25,14 +25,14 @@ export default function TaskCard({
   isAdmin,
   canEdit,
 }: TaskCardProps) {
-  const { isPending, handleDelete, handleStatusChange, handleReassign } =
-    useTaskActions();
-  const router = useRouter();
+  const { isPending, handleStatusChange, handleReassign } = useTaskActions();
+  // const router = useRouter();
   const { setDeleteOpen, setTask, isDeleteOpen } = useOpenModel();
   const handleTaskDelete = (task: Task) => {
     setDeleteOpen();
     setTask(task);
   };
+
   return (
     <div
       className="rounded-xl relative border border-gray-100 bg-white p-5! shadow-[0_2px_4px_rgba(0,0,0,0.02)] transition-opacity"

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
+import { Role } from "./generated/prisma/enums";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -8,8 +9,6 @@ if (!JWT_SECRET) {
 }
 
 const secret = new TextEncoder().encode(JWT_SECRET);
-
-type Role = "ADMIN" | "MEMBER";
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -31,9 +30,7 @@ export async function proxy(request: NextRequest) {
     payload = result.payload;
   } catch {
     const response = NextResponse.redirect(new URL("/login", request.url));
-
     response.cookies.delete("kanban_session");
-
     return response;
   }
 
@@ -41,10 +38,9 @@ export async function proxy(request: NextRequest) {
 
   if (pathname.startsWith("/admin")) {
     if (role !== "ADMIN") {
-      return NextResponse.redirect(new URL("/", request.url)); // maybe redirect to / instead of /unauthorized if it doesn't exist
+      return NextResponse.redirect(new URL("/", request.url));
     }
   }
-
   const response = NextResponse.next();
   response.headers.set("x-user-session", JSON.stringify(payload));
   return response;

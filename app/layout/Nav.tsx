@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { LayoutDashboard, KanbanSquare, LogOut } from "lucide-react";
-import { logoutAction } from "../actions/auth";
+import { logoutAction } from "../actions/auth.action";
 import { getSession } from "@/lib/auth";
 
 const Nav = async () => {

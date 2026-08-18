@@ -69,7 +69,6 @@ const RewardSummary = ({
         </div>
       </div>
 
-      {/* Top Performers */}
       <div className="rounded-xl border border-gray-200 bg-white p-6! shadow-sm lg:col-span-2">
         <div className="mb-5! flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-yellow-50 text-yellow-600">

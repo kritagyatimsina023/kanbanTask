@@ -1,4 +1,4 @@
-import { Status } from "@/app/types/task.types";
+import { Status } from "@/generated/prisma/enums";
 export const columns = [
   {
     id: Status.TODO,
