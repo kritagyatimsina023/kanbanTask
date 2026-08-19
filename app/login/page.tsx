@@ -6,6 +6,8 @@ import {
   Users,
 } from "lucide-react";
 import LoginForm from "./LoginForm";
+import { FaGithub } from "react-icons/fa";
+import Link from "next/link";
 
 export default async function LoginPage() {
   return (
@@ -70,6 +72,35 @@ export default async function LoginPage() {
               </p>
             </div>
             <LoginForm />
+            <div className="mt-5! rounded-xl border border-indigo-100 bg-indigo-50/50 p-4!">
+              <div className="mb-3! flex items-center gap-2">
+                <ShieldCheck size={16} className="text-indigo-600" />
+
+                <div>
+                  <h3 className="text-xs font-semibold text-gray-800">
+                    Demo Access
+                  </h3>
+
+                  <p className="text-[11px] text-gray-500">
+                    Test the application with either role.
+                  </p>
+                </div>
+              </div>
+
+              <Link
+                href="https://github.com/kritagyatimsina023/kanbanTask"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4! flex w-full items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-4! py-2.5! text-sm font-medium text-gray-700 transition-all hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-600"
+              >
+                <FaGithub size={17} />
+                <span>View on GitHub</span>
+              </Link>
+
+              <p className="mt-3! text-center text-[10px] text-gray-400">
+                You can find the demo credentials in the repository README.
+              </p>
+            </div>
 
             <div className="mt-7! border-t border-gray-100 pt-5!">
               <div className="flex items-center justify-center gap-2 text-xs text-gray-400">
