@@ -38,7 +38,6 @@ export default function UsersTable({ users }: UsersTableProps) {
         id: user.id,
         email: user.email,
       });
-
       return;
     }
     startTransition(async () => {

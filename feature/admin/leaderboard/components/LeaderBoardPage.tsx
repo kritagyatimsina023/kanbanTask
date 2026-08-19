@@ -1,5 +1,4 @@
 import { Trophy } from "lucide-react";
-
 import { Suspense } from "react";
 import LeaderBoardDataPage from "./LeaderBoardDataPage";
 import LeaderBoardTableSkeleton from "./LeaderBoardSkeleton";

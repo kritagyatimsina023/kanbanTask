@@ -9,6 +9,7 @@ export interface CreateTaskState {
     title?: string[];
     description?: string[];
     assigneeId?: string[];
+    deadline?: string[];
   };
 }
 export type CurrentUser = {

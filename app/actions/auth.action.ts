@@ -1,10 +1,9 @@
 "use server";
 import { cookies } from "next/headers";
-import bcrypt from "bcryptjs";
-import prisma from "@/lib/prisma";
 import { signToken } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { authService } from "./auth.service";
+import { handleError } from "@/lib/errors/handle-error";
 type LoginState = {
   error: string | null;
 };
@@ -38,8 +37,12 @@ export async function loginAction(
       maxAge: 60 * 60 * 24,
     });
   } catch (error) {
+    const handledError = handleError(error);
+    // return {
+    //   error: error instanceof Error ? error.message : "Invalid credentials",
+    // };
     return {
-      error: error instanceof Error ? error.message : "Invalid credentials",
+      error: handledError.message,
     };
   }
   redirect("/");

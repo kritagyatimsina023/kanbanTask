@@ -1,15 +1,82 @@
 import prisma from "@/lib/prisma";
 import { Status } from "@/generated/prisma/enums";
-import { invalidate } from "@/lib/cache";
 import { SessionPayload } from "@/lib/auth";
+import { unstable_cache } from "next/cache";
+import { Errors } from "@/lib/errors/errors";
+
+const PAGE_SIZE = 5;
 
 export class TaskService {
+  private getTasksCached = (page: number) =>
+    unstable_cache(
+      async () => {
+        const skip = (page - 1) * PAGE_SIZE;
+        const [tasks, totalTasks] = await Promise.all([
+          prisma.task.findMany({
+            skip,
+            take: PAGE_SIZE,
+            include: {
+              assignee: {
+                select: {
+                  id: true,
+                  email: true,
+                  role: true,
+                  status: true,
+                },
+              },
+            },
+            orderBy: {
+              createdAt: "desc",
+            },
+          }),
+          prisma.task.count(),
+        ]);
+
+        return {
+          tasks,
+          totalTasks,
+          totalPages: Math.ceil(totalTasks / PAGE_SIZE),
+          currentPage: page,
+          pageSize: PAGE_SIZE,
+        };
+      },
+      ["admin-tasks", `page-${page}`],
+      {
+        tags: ["admin-tasks"],
+      },
+    )();
+
+  async getAllTasks(page = 1) {
+    return this.getTasksCached(page);
+  }
   async createTask(data: {
     title: string;
     description: string;
     assigneeId: string | null;
+    deadline: Date | null;
   }) {
-    const task = await prisma.task.create({
+    if (data.assigneeId) {
+      const assignee = await prisma.user.findUnique({
+        where: {
+          id: data.assigneeId,
+        },
+        select: {
+          id: true,
+          role: true,
+          status: true,
+        },
+      });
+      if (!assignee) {
+        throw Errors.notFound("Assignee not found", "USER");
+      }
+      if (assignee.status === "BANNED") {
+        throw Errors.badRequest(
+          "A banned user cannot be assigned a task",
+          "TASK",
+        );
+      }
+    }
+    await prisma.task.create({
       data: {
         title: data.title,
         description: data.description,
@@ -17,13 +84,16 @@ export class TaskService {
         status: Status.TODO,
       },
     });
-    return task;
+    // return task;
   }
   async updateStatus(taskId: string, status: Status, session: SessionPayload) {
     const task = await prisma.task.findUnique({ where: { id: taskId } });
-    if (!task) throw new Error("Task not found");
+    if (!task) throw Errors.notFound("Task not found", "TASK");
     if (session.role !== "ADMIN" && task.assigneeId !== session.id) {
-      throw new Error("Forbidden: You can only update tasks assigned to you");
+      throw Errors.forbidden(
+        " You can only update tasks assigned to you",
+        "TASK",
+      );
     }
     await prisma.task.update({
       where: {
@@ -34,6 +104,37 @@ export class TaskService {
       },
     });
     return task;
+  }
+  async updateTask(
+    taskId: string,
+    data: {
+      title: string;
+      description: string;
+      assigneeId: string | null;
+      deadline: Date | null;
+    },
+  ) {
+    const existingTask = await prisma.task.findUnique({
+      where: {
+        id: taskId,
+      },
+    });
+
+    if (!existingTask) {
+      throw new Error("Task not found");
+    }
+
+    return prisma.task.update({
+      where: {
+        id: taskId,
+      },
+      data: {
+        title: data.title,
+        description: data.description,
+        assigneeId: data.assigneeId,
+        deadline: data.deadline,
+      },
+    });
   }
   async deleteTask(taskId: string) {
     const task = await prisma.task.findUnique({
@@ -53,7 +154,7 @@ export class TaskService {
       select: { status: true },
     });
     if (!task) {
-      throw new Error("Task not found");
+      throw Errors.notFound("Task not found", "TASK");
     }
     await prisma.task.update({
       where: { id: taskId },

@@ -4,6 +4,7 @@ import TaskCard from "./TaskCard";
 import { Column } from "@/app/types/column.types";
 import { Task } from "@/app/types/task.types";
 import { Member } from "@/app/types/member.types";
+import { memo, useState } from "react";
 
 interface Props {
   column: Column;
@@ -11,18 +12,55 @@ interface Props {
   members: Member[];
   userId: string;
   isAdmin: boolean;
+  pendingTaskId: string | null;
+  onDropTask: (taskId: string, status: Column["id"]) => void;
 }
-export default function BoardColumn({
+const BoardColumn = memo(function BoardColumn({
   column,
   tasks,
   members,
   userId,
   isAdmin,
+  pendingTaskId,
+  onDropTask,
 }: Props) {
+  const [isDragOver, setIsDragOver] = useState(false);
+
   const canEditTask = (task: Task) => isAdmin || task.assigneeId === userId;
 
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+  const handleDragLeave = () => {
+    setIsDragOver(false);
+  };
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    const taskId = e.dataTransfer.getData("taskId");
+    const taskStatus = e.dataTransfer.getData("taskStatus");
+
+    console.log("Dropped task:", taskId);
+    console.log("Current status:", taskStatus);
+    console.log("Target status:", column.id);
+
+    if (!taskId || !taskStatus) return;
+
+    if (taskStatus === column.id) return;
+
+    onDropTask(taskId, column.id);
+  };
+
   return (
-    <div className="flex min-h-[400px] shadow-md flex-col my-4! overflow-hidden rounded-xl border border-gray-100 bg-[#fafafa]">
+    <div
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+      className={`my-4! flex min-h-[400px] flex-col overflow-hidden rounded-xl border bg-[#fafafa] shadow-md transition ${
+        isDragOver ? "border-blue-400 bg-blue-50/50" : "border-gray-100"
+      }`}
+    >
       <div
         className="flex items-center justify-between px-4! py-2!"
         style={{
@@ -49,10 +87,12 @@ export default function BoardColumn({
             column={column}
             members={members}
             isAdmin={isAdmin}
+            isPending={pendingTaskId === task.id}
             canEdit={canEditTask(task)}
           />
         ))}
       </div>
     </div>
   );
-}
+});
+export default BoardColumn;

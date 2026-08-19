@@ -1,11 +1,15 @@
 "use client";
 import { useActionState, useEffect } from "react";
 import { useFormStatus } from "react-dom";
-import { createTaskAction } from "../app/actions/tasks.action";
+import {
+  createTaskAction,
+  updateTaskAction,
+} from "../app/actions/tasks.action";
 import { useOpenModel } from "@/store/useOpenModel";
 import { CreateTaskState } from "@/app/types/auth";
 import { Member } from "@/app/types/member.types";
 import { toast } from "sonner";
+import { utcToNepalInput } from "@/lib/helper";
 
 const initialState: CreateTaskState = {
   error: null,
@@ -14,21 +18,33 @@ const initialState: CreateTaskState = {
 
 function SubmitButton() {
   const { pending } = useFormStatus();
+  const { mode } = useOpenModel();
+  const isEditMode = mode === "edit";
+
   return (
     <button type="submit" className="btn btn-primary" disabled={pending}>
-      {pending ? "Creating..." : "Create Task"}
+      {pending
+        ? isEditMode
+          ? "Updating..."
+          : "Creating..."
+        : isEditMode
+          ? "Update Task"
+          : "Create Task"}
     </button>
   );
 }
 export default function CreateTaskModal({ members }: { members: Member[] }) {
-  const { isOpen, setOpen } = useOpenModel();
-
-  const [state, formAction] = useActionState(createTaskAction, initialState);
+  const { isOpen, setOpen, mode, task, closeTaskModal } = useOpenModel();
+  const isEditMode = mode === "edit";
+  const action = isEditMode ? updateTaskAction : createTaskAction;
+  const [state, formAction] = useActionState(action, initialState);
 
   useEffect(() => {
     if (state.success) {
       setOpen();
-      toast.success("Task created successfully");
+      toast.success(
+        isEditMode ? "Task updated successfully" : "Task created successfully",
+      );
       return;
     }
     if (state.fieldErrors) {
@@ -43,35 +59,39 @@ export default function CreateTaskModal({ members }: { members: Member[] }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4!">
       <div className="w-full max-w-lg rounded-xl bg-white p-8! shadow-xl">
-        <h2 className="mb-6! text-xl font-semibold">Create New Task</h2>
-
+        <h2 className="mb-6! text-xl font-semibold">
+          {isEditMode ? "Edit Task" : "Create New Task"}
+        </h2>
         <form action={formAction} className="flex flex-col gap-4">
-          {/* {state.error && (
-            <div className="rounded-md border p-3! text-sm  border-[rgba(239,68,68,0.2)] bg-[rgba(239,68,68,0.1)] text-[var(--danger)]">
-              {state.error}
-            </div>
-          )} */}
-
+          {isEditMode && task && (
+            <input type="hidden" name="taskId" value={task.id} />
+          )}
           <div>
             <label className="label">Title</label>
-            <input name="title" className="input" placeholder="Task title" />
-            {state.fieldErrors?.title && (
-              <p className="mt-1 text-sm text-red-500">
-                {state.fieldErrors.title[0]}
-              </p>
-            )}
+            <input
+              name="title"
+              className="input"
+              defaultValue={task?.title ?? ""}
+              placeholder="Task title"
+            />
           </div>
-
           <div>
             <label className="label">Description</label>
-
-            <textarea name="description" className="input" rows={4} />
+            <textarea
+              defaultValue={task?.description ?? ""}
+              name="description"
+              className="input"
+              rows={4}
+            />
           </div>
 
           <div>
             <label className="label">Assignee</label>
-
-            <select name="assigneeId" className="input">
+            <select
+              defaultValue={task?.assigneeId ?? ""}
+              name="assigneeId"
+              className="input"
+            >
               <option value="">Unassigned</option>
 
               {members.map((member) => (
@@ -81,9 +101,24 @@ export default function CreateTaskModal({ members }: { members: Member[] }) {
               ))}
             </select>
           </div>
+          <div>
+            <label className="label">Deadline</label>
+            <input
+              defaultValue={
+                task?.deadline ? utcToNepalInput(task.deadline) : ""
+              }
+              type="datetime-local"
+              name="deadline"
+              className="input"
+            />
+
+            <p className="mt-1! text-xs text-gray-500">
+              Deadline is based on Nepal Time (NPT).
+            </p>
+          </div>
 
           <div className="mt-4 flex justify-end gap-4">
-            <button type="button" className="btn" onClick={setOpen}>
+            <button type="button" className="btn" onClick={closeTaskModal}>
               Cancel
             </button>
             <SubmitButton />

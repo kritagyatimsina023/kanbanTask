@@ -1,19 +1,68 @@
-import { Task } from "@/app/types/task.types";
+// import { Task } from "@/app/types/task.types";
+import { Task } from "@/generated/prisma/client";
 import { create } from "zustand";
-interface openModelProps {
+
+type TaskModelMode = "create" | "edit";
+
+interface OpenModelProps {
   isOpen: boolean;
-  setOpen: () => void;
   isDeleteOpen: boolean;
-  setDeleteOpen: () => void;
+  mode: TaskModelMode;
   task: Task | null;
-  setTask: (selectedTask: Task) => void;
+  setOpen: () => void;
+  setDeleteOpen: () => void;
+  setTask: (selectedTask: Task | null) => void;
+  setMode: (mode: TaskModelMode) => void;
+  openCreateModal: () => void;
+  openEditModal: (task: Task) => void;
+  closeTaskModal: () => void;
 }
 
-export const useOpenModel = create<openModelProps>((set) => ({
+export const useOpenModel = create<OpenModelProps>((set) => ({
   isOpen: false,
   isDeleteOpen: false,
+
+  mode: "create",
   task: null,
-  setTask: (selectedTask) => set(() => ({ task: selectedTask })),
-  setDeleteOpen: () => set((state) => ({ isDeleteOpen: !state.isDeleteOpen })),
-  setOpen: () => set((state) => ({ isOpen: !state.isOpen })),
+
+  setOpen: () =>
+    set((state) => ({
+      isOpen: !state.isOpen,
+    })),
+
+  setDeleteOpen: () =>
+    set((state) => ({
+      isDeleteOpen: !state.isDeleteOpen,
+    })),
+
+  setTask: (selectedTask) =>
+    set({
+      task: selectedTask,
+    }),
+
+  setMode: (mode) =>
+    set({
+      mode,
+    }),
+
+  openCreateModal: () =>
+    set({
+      isOpen: true,
+      mode: "create",
+      task: null,
+    }),
+
+  openEditModal: (task) =>
+    set({
+      isOpen: true,
+      mode: "edit",
+      task,
+    }),
+
+  closeTaskModal: () =>
+    set({
+      isOpen: false,
+      mode: "create",
+      task: null,
+    }),
 }));

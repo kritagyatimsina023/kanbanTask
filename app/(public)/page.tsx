@@ -14,7 +14,6 @@ type Props = {
 export default async function DashboardPage(props: Props) {
   const searchParams = await props.searchParams;
   const view = searchParams.view === "all" ? "all" : "mine";
-
   const session = await requireAuth();
   if (!session) return null;
   return (

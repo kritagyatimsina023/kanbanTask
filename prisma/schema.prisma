@@ -44,10 +44,14 @@ model Task {
   title       String
   description String?
   status      Status   @default(TODO)
+
+  deadline   DateTime?
+
   assigneeId  String?
   assignee    User?    @relation(fields: [assigneeId], references: [id])
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
 }
 
 model Reward {

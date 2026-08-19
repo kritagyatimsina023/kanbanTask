@@ -1,15 +1,19 @@
 import { Status } from "@/generated/prisma/enums";
-export type Task = {
+export interface Task {
   id: string;
   title: string;
   description: string | null;
   status: Status;
+  deadline: Date | null;
   assigneeId: string | null;
-  assignee: {
+  createdAt: Date;
+  updatedAt: Date;
+
+  assignee?: {
     id: string;
     email: string;
   } | null;
-};
+}
 
 // export const Status = {
 //   TODO: "TODO",

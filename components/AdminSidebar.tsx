@@ -5,10 +5,10 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   Users,
-  Settings,
   LogOut,
   KanbanSquare,
   Crown,
+  ListTodoIcon,
 } from "lucide-react";
 import { logoutAction } from "@/app/actions/auth.action";
 
@@ -28,6 +28,11 @@ const navItems = [
     href: "/admin/leaderboards",
     icon: Crown,
   },
+  {
+    label: "Tasks",
+    href: "/admin/tasks",
+    icon: ListTodoIcon,
+  },
 ];
 
 export default function AdminSidebar() {
@@ -46,7 +51,6 @@ export default function AdminSidebar() {
           <span>Admin</span>
         </Link>
       </div>
-
       <div className="mt-8! flex flex-1 flex-col overflow-y-auto px-4!">
         <nav className="flex-1 space-y-4!">
           {navItems.map((item) => {
