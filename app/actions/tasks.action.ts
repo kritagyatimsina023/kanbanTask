@@ -31,6 +31,7 @@ export async function createTaskAction(
         success: false,
         error: "Please fix the validation errors",
         fieldErrors: {
+          // remove this redundancy of handling error
           title: errors.properties?.title?.errors,
           description: errors.properties?.description?.errors,
           assigneeId: errors.properties?.assigneeId?.errors,
@@ -39,6 +40,7 @@ export async function createTaskAction(
       };
     }
     await taskService.createTask(result.data);
+    revalidatePath("/admin/tasks");
     invalidate.admin();
     invalidate.adminUser();
     return {
@@ -54,22 +56,23 @@ export async function createTaskAction(
     };
   }
 }
+export async function getTask() {
+  const task = await taskService.getAllTasks();
+  return task;
+}
 export async function updateTaskAction(
   prevState: CreateTaskState,
   formData: FormData,
 ): Promise<CreateTaskState> {
   try {
     await requireAdmin();
-
     const taskId = formData.get("taskId");
-
     if (!taskId || typeof taskId !== "string") {
       return {
         success: false,
         error: "Task ID is required",
       };
     }
-
     const deadline = formData.get("deadline");
 
     const rawData = {
@@ -109,7 +112,6 @@ export async function updateTaskAction(
     };
   }
 }
-
 export async function updateTaskStatusAction(taskId: string, status: Status) {
   try {
     const session = await requireAuth();
@@ -154,12 +156,27 @@ export async function reassignTaskAction(
   }
 }
 export async function deleteTaskAction(taskId: string) {
-  await requireAdmin();
-  const task = await taskService.deleteTask(taskId);
-  if (task.status === Status.DONE) {
-    invalidate.leaderboard();
-    revalidatePath("/admin/leaderboards");
+  try {
+    await requireAdmin();
+    const task = await taskService.deleteTask(taskId);
+    console.log(task, "deleted task details");
+    if (task.status === Status.DONE) {
+      invalidate.leaderboard();
+      revalidatePath("/admin/leaderboards");
+    }
+    revalidatePath("/");
+    invalidate.taskDeleted();
+    return {
+      success: true,
+    };
+  } catch (error) {
+    const handledError = handleError(error);
+    return {
+      success: false,
+      data: null,
+      error: handledError.message,
+      code: handledError.code,
+      resource: handledError.resource,
+    };
   }
-  revalidatePath("/");
-  invalidate.taskDeleted();
 }

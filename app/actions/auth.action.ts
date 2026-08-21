@@ -4,6 +4,7 @@ import { signToken } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { authService } from "./auth.service";
 import { handleError } from "@/lib/errors/handle-error";
+import { revalidatePath } from "next/cache";
 type LoginState = {
   error: string | null;
 };
@@ -20,15 +21,15 @@ export async function loginAction(
       error: "Email and password are required",
     };
   }
+  let user;
 
   try {
-    const user = await authService.login(email, password);
+    user = await authService.login(email, password);
     const token = await signToken({
       id: user.id,
       email: user.email,
       role: user.role,
     });
-
     const cookieStore = await cookies();
     cookieStore.set("kanban_session", token, {
       httpOnly: true,
@@ -38,17 +39,18 @@ export async function loginAction(
     });
   } catch (error) {
     const handledError = handleError(error);
-    // return {
-    //   error: error instanceof Error ? error.message : "Invalid credentials",
-    // };
     return {
       error: handledError.message,
     };
   }
-  redirect("/");
+  if (user.role === "ADMIN") {
+    redirect("/admin");
+  }
+  redirect("/member");
 }
 export async function logoutAction() {
   const cookieStore = await cookies();
   cookieStore.delete("kanban_session");
-  redirect("/login");
+  // revalidatePath("/", "layout");
+  // redirect("/login");
 }

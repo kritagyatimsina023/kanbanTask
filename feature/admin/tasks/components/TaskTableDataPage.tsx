@@ -13,7 +13,6 @@ const TaskTableDataPage = async ({ searchParams }: TaskTableDataPageProps) => {
   console.log(params, "is params"); // {page:1}
   const page = Math.max(1, Number(params.page) || 1);
   const tasks = await taskService.getAllTasks(page);
-
   return <TaskTable data={tasks} />;
 };
 

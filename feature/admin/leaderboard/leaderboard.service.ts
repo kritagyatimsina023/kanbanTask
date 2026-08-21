@@ -2,6 +2,7 @@ import "server-only";
 import { invalidate } from "@/lib/cache";
 import prisma from "@/lib/prisma";
 import { revalidatePath, unstable_cache } from "next/cache";
+import { notificationService } from "@/feature/notification/notification.service";
 
 type LeaderboardUser = {
   id: string;
@@ -61,7 +62,6 @@ export class LeaderboardService {
 
   async getUserLeaderboardData(userId: string) {
     const leaderboard = await this.getLeaderBoard();
-
     const currentUser = leaderboard.find((user) => user.id === userId);
 
     if (!currentUser) {
@@ -109,7 +109,6 @@ export class LeaderboardService {
     if (trimmedTitle.length < 3) {
       throw new Error("Reward title must be at least 3 characters");
     }
-
     const user = await prisma.user.findUnique({
       where: {
         id: userId,
@@ -129,6 +128,20 @@ export class LeaderboardService {
     if (user.status !== "ACTIVE") {
       throw new Error("Banned users cannot be rewareded");
     }
+    const rewardData = await prisma.reward.create({
+      data: {
+        userId: user.id,
+        title: trimmedTitle,
+        message: trimmedMessage,
+        awardedBy: adminId,
+      },
+    });
+    await notificationService.createRewardedNotificaiton(
+      userId,
+      trimmedTitle,
+      trimmedMessage,
+      rewardData.createdAt,
+    );
     return prisma.reward.create({
       data: {
         userId: user.id,

@@ -17,41 +17,71 @@ enum Status {
   IN_PROGRESS
   DONE
 }
-enum UserStatus{
+
+enum UserStatus {
   ACTIVE
   BANNED
 }
 
 model User {
-  id           String   @id @default(uuid())
-  email        String   @unique
+  id           String     @id @default(uuid())
+  email        String     @unique
   passwordHash String
-  role         Role     @default(MEMBER)
+  role         Role       @default(MEMBER)
   tasks        Task[]
-  status    UserStatus @default(ACTIVE)
+  status       UserStatus @default(ACTIVE)
 
-  banReason    String?
-  bannedAt     DateTime?
+  banReason String?
+  bannedAt  DateTime?
 
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  rewards      Reward[]
+  rewards       Reward[]
+  notifications Notification[]
 }
 
 model Task {
-  id          String   @id @default(uuid())
+  id          String  @id @default(uuid())
   title       String
   description String?
-  status      Status   @default(TODO)
+  status      Status  @default(TODO)
 
-  deadline   DateTime?
+  deadline DateTime?
 
-  assigneeId  String?
-  assignee    User?    @relation(fields: [assigneeId], references: [id])
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  assigneeId String?
+  assignee   User?    @relation(fields: [assigneeId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
+  notifications Notification[]
+}
+
+enum NotificationType {
+  TASK_OVERDUE
+  TASK_ASSIGNED
+  TASK_DELETED
+  REWARD_GRANTED
+}
+model Notification {
+  id String @id @default(uuid())
+
+  userId String
+  taskId String?
+
+  type    NotificationType
+  title   String
+  message String
+  read    Boolean          @default(false)
+
+  createdAt DateTime @default(now())
+
+  user User  @relation(fields: [userId], references: [id])
+  task Task? @relation(fields: [taskId], references: [id])
+
+  @@unique([userId, taskId, type])
+  @@index([userId, read])
+  @@index([taskId])
 }
 
 model Reward {
@@ -62,6 +92,6 @@ model Reward {
   message   String?
   createdAt DateTime @default(now())
   awardedBy String
-
   @@index([userId, createdAt])
+  
 }

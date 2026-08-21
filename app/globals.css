@@ -145,6 +145,9 @@ body {
   top: 0;
   z-index: 10;
 }
+button {
+  cursor: pointer;
+}
 
 .navbar .container {
   display: flex;

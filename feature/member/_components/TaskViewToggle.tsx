@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 export default function TaskViewToggle() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const currentView = searchParams.get("view") === "all" ? "all" : "mine";
+  const currentView = searchParams.get("view") === "mine" ? "mine" : "all";
   const handleToggle = (view: "mine" | "all") => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("view", view);

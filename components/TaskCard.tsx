@@ -8,8 +8,7 @@ import { Column } from "@/app/types/column.types";
 import { useOpenModel } from "@/store/useOpenModel";
 import DeleteTask from "./DeleteTask";
 import { memo } from "react";
-// import { useRouter } from "next/navigation";
-// import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 interface TaskCardProps {
   task: Task;
@@ -29,22 +28,19 @@ const TaskCard = memo(function TaskCard({
   isPending,
 }: TaskCardProps) {
   const { handleStatusChange, handleReassign } = useTaskActions();
+  const router = useRouter();
 
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
     e.dataTransfer.setData("taskId", task.id);
     e.dataTransfer.setData("taskStatus", task.status);
     e.dataTransfer.effectAllowed = "move";
   };
-  const {
-    setDeleteOpen,
-    setTask,
-    isDeleteOpen,
-    openEditModal,
-    openCreateModal,
-  } = useOpenModel();
+  const { setDeleteOpen, setTask, isDeleteOpen, openEditModal } =
+    useOpenModel();
   const handleTaskDelete = (task: Task) => {
     setDeleteOpen();
     setTask(task);
+    router.refresh();
   };
 
   return (

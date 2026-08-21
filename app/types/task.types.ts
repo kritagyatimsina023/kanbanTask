@@ -15,10 +15,27 @@ export interface Task {
   } | null;
 }
 
-// export const Status = {
-//   TODO: "TODO",
-//   IN_PROGRESS: "IN_PROGRESS",
-//   DONE: "DONE",
-// } as const;
+export type MyTaskData = {
+  tasks: {
+    id: string;
+    title: string;
+    description: string | null;
+    status: Status;
 
-// export type Status = (typeof Status)[keyof typeof Status];
+    deadline: Date | null;
+    createdAt: Date;
+  }[];
+
+  stats: {
+    total: number;
+    todo: number;
+    inProgress: number;
+    completed: number;
+  };
+
+  statusDistribution: {
+    status: Status;
+    label: string;
+    count: number;
+  }[];
+};

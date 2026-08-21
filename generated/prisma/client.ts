@@ -52,6 +52,11 @@ export type User = Prisma.UserModel
  */
 export type Task = Prisma.TaskModel
 /**
+ * Model Notification
+ * 
+ */
+export type Notification = Prisma.NotificationModel
+/**
  * Model Reward
  * 
  */

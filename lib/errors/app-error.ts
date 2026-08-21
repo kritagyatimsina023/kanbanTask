@@ -1,3 +1,4 @@
+// take this types
 export type Errorcode =
   | "VALIDATION"
   | "UNAUTHORIZED"
@@ -7,7 +8,13 @@ export type Errorcode =
   | "BAD_REQUEST"
   | "INTERNAL";
 
-export type ErrorResource = "AUTH" | "USER" | "TASK" | "REWARD" | "LEADERBOARD";
+export type ErrorResource =
+  | "AUTH"
+  | "USER"
+  | "TASK"
+  | "REWARD"
+  | "LEADERBOARD"
+  | "NOTIFICATION";
 
 export class AppError extends Error {
   constructor(

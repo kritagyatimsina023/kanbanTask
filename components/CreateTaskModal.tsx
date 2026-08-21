@@ -10,6 +10,7 @@ import { CreateTaskState } from "@/app/types/auth";
 import { Member } from "@/app/types/member.types";
 import { toast } from "sonner";
 import { utcToNepalInput } from "@/lib/helper";
+import { useRouter } from "next/navigation";
 
 const initialState: CreateTaskState = {
   error: null,
@@ -35,6 +36,7 @@ function SubmitButton() {
 }
 export default function CreateTaskModal({ members }: { members: Member[] }) {
   const { isOpen, setOpen, mode, task, closeTaskModal } = useOpenModel();
+  const router = useRouter();
   const isEditMode = mode === "edit";
   const action = isEditMode ? updateTaskAction : createTaskAction;
   const [state, formAction] = useActionState(action, initialState);
@@ -45,6 +47,7 @@ export default function CreateTaskModal({ members }: { members: Member[] }) {
       toast.success(
         isEditMode ? "Task updated successfully" : "Task created successfully",
       );
+      router.refresh();
       return;
     }
     if (state.fieldErrors) {
@@ -52,7 +55,7 @@ export default function CreateTaskModal({ members }: { members: Member[] }) {
         .flat()
         .forEach((error) => toast.error(error));
     }
-  }, [state, setOpen]);
+  }, [state, setOpen, router]);
 
   if (!isOpen) return null;
 
@@ -111,7 +114,6 @@ export default function CreateTaskModal({ members }: { members: Member[] }) {
               name="deadline"
               className="input"
             />
-
             <p className="mt-1! text-xs text-gray-500">
               Deadline is based on Nepal Time (NPT).
             </p>

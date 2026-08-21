@@ -1,7 +1,4 @@
-// src/lib/errors/errors.ts
-
 import { AppError } from "./app-error";
-
 export const Errors = {
   validation(message: string, resource: AppError["resource"]) {
     return new AppError(message, "VALIDATION", 422, resource);

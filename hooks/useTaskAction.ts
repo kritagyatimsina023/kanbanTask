@@ -31,7 +31,18 @@ export function useTaskActions() {
   }, []);
 
   const handleDelete = useCallback(async (taskId: string) => {
-    await deleteTaskAction(taskId);
+    startTransition(async () => {
+      try {
+        const result = await deleteTaskAction(taskId);
+        if (!result.success) {
+          toast.error(result.error);
+          return;
+        }
+        toast.success("Task Deleted");
+      } catch (error) {
+        console.error("Error on transition side", error);
+      }
+    });
   }, []);
 
   const handleReassign = useCallback(
@@ -48,7 +59,6 @@ export function useTaskActions() {
     },
     [startTransition],
   );
-
   return {
     isPending,
     handleDelete,

@@ -9,7 +9,6 @@ export function handleError(error: unknown) {
     };
   }
   console.error("Unexpected error", error);
-
   return {
     code: "INTERNAL" as const,
     message: "Somthing went wrong:Please try again",

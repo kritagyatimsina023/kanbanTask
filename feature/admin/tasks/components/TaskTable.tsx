@@ -1,5 +1,4 @@
 "use client";
-
 import { taskService } from "@/feature/member/task.service";
 import {
   CalendarDays,
@@ -10,6 +9,9 @@ import {
   CalendarClock,
 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { DateOnly, formatNepalDate, TimeOnly } from "@/lib/helper";
+import { useEffect } from "react";
+import { getTask } from "@/app/actions/tasks.action";
 
 type TaskTableProps = {
   data: Awaited<ReturnType<typeof taskService.getAllTasks>>;
@@ -34,6 +36,7 @@ const TaskTable = ({ data }: TaskTableProps) => {
     }
     router.push(`/admin/tasks?${params.toString()}`);
   };
+
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
       <div className="border-b border-gray-200 px-6! py-5!">
@@ -109,7 +112,6 @@ const TaskTable = ({ data }: TaskTableProps) => {
                   key={task.id}
                   className="transition-colors hover:bg-gray-50/70"
                 >
-                  {/* Task */}
                   <td className="px-4! py-3!">
                     <div className="min-w-0">
                       <p className="truncate text-sm font-semibold text-gray-900">
@@ -179,22 +181,25 @@ const TaskTable = ({ data }: TaskTableProps) => {
                   <td className="px-4! py-3!">
                     <div className="flex items-center gap-1.5! text-xs text-gray-600">
                       <span className="whitespace-nowrap">
-                        {new Date(task.createdAt).toLocaleDateString("en-NP", {
+                        {/* {formatNepalDate(task.createdAt)} */}
+                        {DateOnly(task.createdAt)}
+                        {/* {new Date(task.createdAt).toLocaleDateString("en-NP", {
                           year: "numeric",
                           month: "short",
                           day: "numeric",
-                        })}
+                        })} */}
                       </span>
                     </div>
                   </td>
 
                   <td className="px-4! py-3!">
                     <span className="whitespace-nowrap text-xs text-gray-600">
-                      {new Date(task.updatedAt).toLocaleDateString("en-NP", {
+                      {/* {new Date(task.updatedAt).toLocaleDateString("en-NP", {
                         year: "numeric",
                         month: "short",
                         day: "numeric",
-                      })}
+                      })} */}
+                      {DateOnly(task.createdAt)}
                     </span>
                   </td>
 
@@ -212,28 +217,29 @@ const TaskTable = ({ data }: TaskTableProps) => {
                                 isOverdue ? "text-red-500" : "text-gray-400"
                               }`}
                             />
-
                             <div className="min-w-0">
                               <p
                                 className={`whitespace-nowrap text-xs font-medium ${
                                   isOverdue ? "text-red-600" : "text-gray-600"
                                 }`}
                               >
-                                {deadline.toLocaleDateString("en-NP", {
+                                {DateOnly(deadline)}
+                                {/* {deadline.toLocaleDateString("en-NP", {
                                   year: "numeric",
                                   month: "short",
                                   day: "numeric",
-                                })}
+                                })} */}
                               </p>
                               <p
                                 className={`whitespace-nowrap text-[11px] ${
                                   isOverdue ? "text-red-500" : "text-gray-400"
                                 }`}
                               >
-                                {deadline.toLocaleTimeString("en-NP", {
+                                {TimeOnly(deadline)}
+                                {/* {deadline.toLocaleTimeString("en-NP", {
                                   hour: "2-digit",
                                   minute: "2-digit",
-                                })}
+                                })} */}
                               </p>
                             </div>
                             {isOverdue && (

@@ -15,3 +15,26 @@ export function utcToNepalInput(date: Date | string) {
     .replace(",", "")
     .replace(" ", "T");
 }
+
+export function formatNepalDate(date: Date | string) {
+  return new Intl.DateTimeFormat("en-NP", {
+    timeZone: "Asia/Kathmandu",
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(new Date(date));
+}
+
+export function DateOnly(date: Date | string) {
+  return new Intl.DateTimeFormat("en-NP", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  }).format(new Date(date));
+}
+
+export function TimeOnly(date: Date | string) {
+  return new Intl.DateTimeFormat("en-NP", {
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(date));
+}

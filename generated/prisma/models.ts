@@ -10,5 +10,6 @@
  */
 export type * from './models/User'
 export type * from './models/Task'
+export type * from './models/Notification'
 export type * from './models/Reward'
 export type * from './commonInputTypes'

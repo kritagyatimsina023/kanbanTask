@@ -22,7 +22,6 @@ export default function DeleteTask() {
     try {
       await handleDelete(task.id);
       setDeleteOpen();
-      toast.success("Task Deleted");
     } catch (err) {
       toast.error("Error in deleting task");
     }

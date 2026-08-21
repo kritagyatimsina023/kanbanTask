@@ -5,7 +5,7 @@ type TaskHomeProps = {
   }>;
 };
 
-const TaskHome = async ({ searchParams }: TaskHomeProps) => {
+const TaskHome = ({ searchParams }: TaskHomeProps) => {
   return <TaskMainPage searchParams={searchParams} />;
 };
 

@@ -32,3 +32,13 @@ export const UserStatus = {
 } as const
 
 export type UserStatus = (typeof UserStatus)[keyof typeof UserStatus]
+
+
+export const NotificationType = {
+  TASK_OVERDUE: 'TASK_OVERDUE',
+  TASK_ASSIGNED: 'TASK_ASSIGNED',
+  TASK_DELETED: 'TASK_DELETED',
+  REWARD_GRANTED: 'REWARD_GRANTED'
+} as const
+
+export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType]
