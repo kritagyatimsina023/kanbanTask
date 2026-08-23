@@ -8,7 +8,6 @@ type Props = {
   currentUser: CurrentUser;
   view: "mine" | "all";
 };
-
 export default async function TaskBoardContainer({ currentUser, view }: Props) {
   const { tasks, members } = await taskService.getTasks(view, currentUser.id);
   return (

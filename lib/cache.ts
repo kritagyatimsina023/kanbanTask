@@ -1,3 +1,4 @@
+import { revalidateTag } from "next/cache";
 import { updateTag } from "next/cache";
 
 export const CACHE_TAGS = {

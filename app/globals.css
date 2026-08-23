@@ -28,6 +28,7 @@ html,
 body {
   width: 100%;
   min-height: 100%;
+  scroll-behavior: smooth;
 }
 
 * {
@@ -148,6 +149,9 @@ body {
 button {
   cursor: pointer;
 }
+.link {
+  cursor: pointer;
+}
 
 .navbar .container {
   display: flex;
@@ -174,4 +178,14 @@ button {
 .main-content {
   flex: 1;
   padding: 2rem 0;
+}
+
+@keyframes shine {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(300%);
+  }
 }

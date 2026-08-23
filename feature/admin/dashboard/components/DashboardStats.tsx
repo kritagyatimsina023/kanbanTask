@@ -1,5 +1,5 @@
 import RewardSummary from "./RewardSummary";
-// import { getDashboardStats } from "../dashboard.action";
+
 import {
   CheckCircle2,
   CircleUserRound,
@@ -9,16 +9,6 @@ import {
 import { dashboardService } from "../dashboard.service";
 
 const DashboardStats = async () => {
-  // const {
-  //   totalUsers,
-  //   activeTasks,
-  //   inProgressTasks,
-  //   completedTasks,
-  //   totalTasks,
-  //   totalRewards,
-  //   rewardsThisMonth,
-  //   topPerformers,
-  // } = await getDashboardStats();
   const {
     totalUsers,
     activeTasks,
@@ -51,7 +41,6 @@ const DashboardStats = async () => {
           </div>
         </div>
 
-        {/* Active Tasks */}
         <div className="rounded-xl border border-gray-200 bg-white p-5! shadow-sm transition-shadow hover:shadow-md">
           <div className="flex items-start justify-between">
             <div>
@@ -70,7 +59,6 @@ const DashboardStats = async () => {
           </div>
         </div>
 
-        {/* In Progress */}
         <div className="rounded-xl border border-gray-200 bg-white p-5! shadow-sm transition-shadow hover:shadow-md">
           <div className="flex items-start justify-between">
             <div>
@@ -91,7 +79,6 @@ const DashboardStats = async () => {
           </div>
         </div>
 
-        {/* Completed */}
         <div className="rounded-xl border border-gray-200 bg-white p-5! shadow-sm transition-shadow hover:shadow-md">
           <div className="flex items-start justify-between">
             <div>
@@ -115,9 +102,7 @@ const DashboardStats = async () => {
         </div>
       </div>
 
-      {/* Overview section */}
       <div className="mt-8! grid gap-6 lg:grid-cols-2">
-        {/* Task Overview */}
         <div className="rounded-xl border border-gray-200 bg-white p-6! shadow-sm">
           <div className="mb-5!">
             <h2 className="text-base font-semibold text-gray-900">

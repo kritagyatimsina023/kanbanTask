@@ -1,9 +1,10 @@
 "use server";
 import { requireAdmin } from "@/lib/auth";
 import { invalidate } from "@/lib/cache";
-// import prisma from "@/lib/prisma";
-// import { unstable_cache } from "next/cache";
+
 import { usersServices } from "./user.service";
+
+import { handleError } from "@/lib/errors/handle-error";
 // const getCachedUsersWithStats = unstable_cache(
 //   async () => {
 //     const users = await prisma.user.findMany({
@@ -131,8 +132,15 @@ import { usersServices } from "./user.service";
 // }
 
 export async function toggleBanUser(userId: string, reason?: string) {
-  await requireAdmin();
-  const result = await usersServices.toggleBanUser(userId, reason);
-  invalidate.userBanToggled();
-  return result;
+  try {
+    await requireAdmin();
+    const result = await usersServices.toggleBanUser(userId, reason);
+    invalidate.userBanToggled();
+    return result;
+  } catch (error) {
+    return {
+      success: false as const,
+      ...handleError(error),
+    };
+  }
 }

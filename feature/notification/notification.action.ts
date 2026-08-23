@@ -3,12 +3,22 @@ import { getSession } from "@/lib/auth";
 import { Errors } from "@/lib/errors/errors";
 import { notificationService } from "./notification.service";
 import { handleError } from "@/lib/errors/handle-error";
-import { success } from "zod";
 
 export async function markAllNotificationsAsReadAction() {
-  const session = await getSession();
-  if (!session) throw Errors.unauthorized("Unauthorized", "AUTH");
-  await notificationService.markAllAsRead(session.id);
+  try {
+    const session = await getSession();
+    if (!session) throw Errors.unauthorized("Unauthorized", "AUTH");
+    await notificationService.markAllAsRead(session.id);
+    return {
+      success: true as const,
+      message: "All notifications marked as read",
+    };
+  } catch (error) {
+    return {
+      success: false as const,
+      ...handleError(error),
+    };
+  }
 }
 
 export async function deleteNotificaiton(notificationId?: string) {
@@ -23,7 +33,6 @@ export async function deleteNotificaiton(notificationId?: string) {
         notificationId,
         session.id,
       );
-
       return {
         success: true as const,
         message: "Notification deleted successfully",

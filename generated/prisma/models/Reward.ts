@@ -20,8 +20,20 @@ export type RewardModel = runtime.Types.Result.DefaultSelection<Prisma.$RewardPa
 
 export type AggregateReward = {
   _count: RewardCountAggregateOutputType | null
+  _avg: RewardAvgAggregateOutputType | null
+  _sum: RewardSumAggregateOutputType | null
   _min: RewardMinAggregateOutputType | null
   _max: RewardMaxAggregateOutputType | null
+}
+
+export type RewardAvgAggregateOutputType = {
+  points: number | null
+  milestone: number | null
+}
+
+export type RewardSumAggregateOutputType = {
+  points: number | null
+  milestone: number | null
 }
 
 export type RewardMinAggregateOutputType = {
@@ -29,6 +41,8 @@ export type RewardMinAggregateOutputType = {
   userId: string | null
   title: string | null
   message: string | null
+  points: number | null
+  milestone: number | null
   createdAt: Date | null
   awardedBy: string | null
 }
@@ -38,6 +52,8 @@ export type RewardMaxAggregateOutputType = {
   userId: string | null
   title: string | null
   message: string | null
+  points: number | null
+  milestone: number | null
   createdAt: Date | null
   awardedBy: string | null
 }
@@ -47,17 +63,31 @@ export type RewardCountAggregateOutputType = {
   userId: number
   title: number
   message: number
+  points: number
+  milestone: number
   createdAt: number
   awardedBy: number
   _all: number
 }
 
 
+export type RewardAvgAggregateInputType = {
+  points?: true
+  milestone?: true
+}
+
+export type RewardSumAggregateInputType = {
+  points?: true
+  milestone?: true
+}
+
 export type RewardMinAggregateInputType = {
   id?: true
   userId?: true
   title?: true
   message?: true
+  points?: true
+  milestone?: true
   createdAt?: true
   awardedBy?: true
 }
@@ -67,6 +97,8 @@ export type RewardMaxAggregateInputType = {
   userId?: true
   title?: true
   message?: true
+  points?: true
+  milestone?: true
   createdAt?: true
   awardedBy?: true
 }
@@ -76,6 +108,8 @@ export type RewardCountAggregateInputType = {
   userId?: true
   title?: true
   message?: true
+  points?: true
+  milestone?: true
   createdAt?: true
   awardedBy?: true
   _all?: true
@@ -119,6 +153,18 @@ export type RewardAggregateArgs<ExtArgs extends runtime.Types.Extensions.Interna
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: RewardAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: RewardSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: RewardMinAggregateInputType
@@ -149,6 +195,8 @@ export type RewardGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   take?: number
   skip?: number
   _count?: RewardCountAggregateInputType | true
+  _avg?: RewardAvgAggregateInputType
+  _sum?: RewardSumAggregateInputType
   _min?: RewardMinAggregateInputType
   _max?: RewardMaxAggregateInputType
 }
@@ -158,9 +206,13 @@ export type RewardGroupByOutputType = {
   userId: string
   title: string
   message: string | null
+  points: number
+  milestone: number | null
   createdAt: Date
   awardedBy: string
   _count: RewardCountAggregateOutputType | null
+  _avg: RewardAvgAggregateOutputType | null
+  _sum: RewardSumAggregateOutputType | null
   _min: RewardMinAggregateOutputType | null
   _max: RewardMaxAggregateOutputType | null
 }
@@ -188,6 +240,8 @@ export type RewardWhereInput = {
   userId?: Prisma.StringFilter<"Reward"> | string
   title?: Prisma.StringFilter<"Reward"> | string
   message?: Prisma.StringNullableFilter<"Reward"> | string | null
+  points?: Prisma.IntFilter<"Reward"> | number
+  milestone?: Prisma.IntNullableFilter<"Reward"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Reward"> | Date | string
   awardedBy?: Prisma.StringFilter<"Reward"> | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -198,6 +252,8 @@ export type RewardOrderByWithRelationInput = {
   userId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   message?: Prisma.SortOrderInput | Prisma.SortOrder
+  points?: Prisma.SortOrder
+  milestone?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   awardedBy?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
@@ -205,27 +261,34 @@ export type RewardOrderByWithRelationInput = {
 
 export type RewardWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  userId_milestone?: Prisma.RewardUserIdMilestoneCompoundUniqueInput
   AND?: Prisma.RewardWhereInput | Prisma.RewardWhereInput[]
   OR?: Prisma.RewardWhereInput[]
   NOT?: Prisma.RewardWhereInput | Prisma.RewardWhereInput[]
   userId?: Prisma.StringFilter<"Reward"> | string
   title?: Prisma.StringFilter<"Reward"> | string
   message?: Prisma.StringNullableFilter<"Reward"> | string | null
+  points?: Prisma.IntFilter<"Reward"> | number
+  milestone?: Prisma.IntNullableFilter<"Reward"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Reward"> | Date | string
   awardedBy?: Prisma.StringFilter<"Reward"> | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-}, "id">
+}, "id" | "userId_milestone">
 
 export type RewardOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   message?: Prisma.SortOrderInput | Prisma.SortOrder
+  points?: Prisma.SortOrder
+  milestone?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   awardedBy?: Prisma.SortOrder
   _count?: Prisma.RewardCountOrderByAggregateInput
+  _avg?: Prisma.RewardAvgOrderByAggregateInput
   _max?: Prisma.RewardMaxOrderByAggregateInput
   _min?: Prisma.RewardMinOrderByAggregateInput
+  _sum?: Prisma.RewardSumOrderByAggregateInput
 }
 
 export type RewardScalarWhereWithAggregatesInput = {
@@ -236,6 +299,8 @@ export type RewardScalarWhereWithAggregatesInput = {
   userId?: Prisma.StringWithAggregatesFilter<"Reward"> | string
   title?: Prisma.StringWithAggregatesFilter<"Reward"> | string
   message?: Prisma.StringNullableWithAggregatesFilter<"Reward"> | string | null
+  points?: Prisma.IntWithAggregatesFilter<"Reward"> | number
+  milestone?: Prisma.IntNullableWithAggregatesFilter<"Reward"> | number | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Reward"> | Date | string
   awardedBy?: Prisma.StringWithAggregatesFilter<"Reward"> | string
 }
@@ -244,6 +309,8 @@ export type RewardCreateInput = {
   id?: string
   title: string
   message?: string | null
+  points?: number
+  milestone?: number | null
   createdAt?: Date | string
   awardedBy: string
   user: Prisma.UserCreateNestedOneWithoutRewardsInput
@@ -254,6 +321,8 @@ export type RewardUncheckedCreateInput = {
   userId: string
   title: string
   message?: string | null
+  points?: number
+  milestone?: number | null
   createdAt?: Date | string
   awardedBy: string
 }
@@ -262,6 +331,8 @@ export type RewardUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  points?: Prisma.IntFieldUpdateOperationsInput | number
+  milestone?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   awardedBy?: Prisma.StringFieldUpdateOperationsInput | string
   user?: Prisma.UserUpdateOneRequiredWithoutRewardsNestedInput
@@ -272,6 +343,8 @@ export type RewardUncheckedUpdateInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  points?: Prisma.IntFieldUpdateOperationsInput | number
+  milestone?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   awardedBy?: Prisma.StringFieldUpdateOperationsInput | string
 }
@@ -281,6 +354,8 @@ export type RewardCreateManyInput = {
   userId: string
   title: string
   message?: string | null
+  points?: number
+  milestone?: number | null
   createdAt?: Date | string
   awardedBy: string
 }
@@ -289,6 +364,8 @@ export type RewardUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  points?: Prisma.IntFieldUpdateOperationsInput | number
+  milestone?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   awardedBy?: Prisma.StringFieldUpdateOperationsInput | string
 }
@@ -298,6 +375,8 @@ export type RewardUncheckedUpdateManyInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  points?: Prisma.IntFieldUpdateOperationsInput | number
+  milestone?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   awardedBy?: Prisma.StringFieldUpdateOperationsInput | string
 }
@@ -312,13 +391,25 @@ export type RewardOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
+export type RewardUserIdMilestoneCompoundUniqueInput = {
+  userId: string
+  milestone: number
+}
+
 export type RewardCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   message?: Prisma.SortOrder
+  points?: Prisma.SortOrder
+  milestone?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   awardedBy?: Prisma.SortOrder
+}
+
+export type RewardAvgOrderByAggregateInput = {
+  points?: Prisma.SortOrder
+  milestone?: Prisma.SortOrder
 }
 
 export type RewardMaxOrderByAggregateInput = {
@@ -326,6 +417,8 @@ export type RewardMaxOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   message?: Prisma.SortOrder
+  points?: Prisma.SortOrder
+  milestone?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   awardedBy?: Prisma.SortOrder
 }
@@ -335,8 +428,15 @@ export type RewardMinOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   message?: Prisma.SortOrder
+  points?: Prisma.SortOrder
+  milestone?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   awardedBy?: Prisma.SortOrder
+}
+
+export type RewardSumOrderByAggregateInput = {
+  points?: Prisma.SortOrder
+  milestone?: Prisma.SortOrder
 }
 
 export type RewardCreateNestedManyWithoutUserInput = {
@@ -381,10 +481,20 @@ export type RewardUncheckedUpdateManyWithoutUserNestedInput = {
   deleteMany?: Prisma.RewardScalarWhereInput | Prisma.RewardScalarWhereInput[]
 }
 
+export type NullableIntFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type RewardCreateWithoutUserInput = {
   id?: string
   title: string
   message?: string | null
+  points?: number
+  milestone?: number | null
   createdAt?: Date | string
   awardedBy: string
 }
@@ -393,6 +503,8 @@ export type RewardUncheckedCreateWithoutUserInput = {
   id?: string
   title: string
   message?: string | null
+  points?: number
+  milestone?: number | null
   createdAt?: Date | string
   awardedBy: string
 }
@@ -431,6 +543,8 @@ export type RewardScalarWhereInput = {
   userId?: Prisma.StringFilter<"Reward"> | string
   title?: Prisma.StringFilter<"Reward"> | string
   message?: Prisma.StringNullableFilter<"Reward"> | string | null
+  points?: Prisma.IntFilter<"Reward"> | number
+  milestone?: Prisma.IntNullableFilter<"Reward"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Reward"> | Date | string
   awardedBy?: Prisma.StringFilter<"Reward"> | string
 }
@@ -439,6 +553,8 @@ export type RewardCreateManyUserInput = {
   id?: string
   title: string
   message?: string | null
+  points?: number
+  milestone?: number | null
   createdAt?: Date | string
   awardedBy: string
 }
@@ -447,6 +563,8 @@ export type RewardUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  points?: Prisma.IntFieldUpdateOperationsInput | number
+  milestone?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   awardedBy?: Prisma.StringFieldUpdateOperationsInput | string
 }
@@ -455,6 +573,8 @@ export type RewardUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  points?: Prisma.IntFieldUpdateOperationsInput | number
+  milestone?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   awardedBy?: Prisma.StringFieldUpdateOperationsInput | string
 }
@@ -463,6 +583,8 @@ export type RewardUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  points?: Prisma.IntFieldUpdateOperationsInput | number
+  milestone?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   awardedBy?: Prisma.StringFieldUpdateOperationsInput | string
 }
@@ -474,6 +596,8 @@ export type RewardSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   userId?: boolean
   title?: boolean
   message?: boolean
+  points?: boolean
+  milestone?: boolean
   createdAt?: boolean
   awardedBy?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -484,6 +608,8 @@ export type RewardSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   userId?: boolean
   title?: boolean
   message?: boolean
+  points?: boolean
+  milestone?: boolean
   createdAt?: boolean
   awardedBy?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -494,6 +620,8 @@ export type RewardSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   userId?: boolean
   title?: boolean
   message?: boolean
+  points?: boolean
+  milestone?: boolean
   createdAt?: boolean
   awardedBy?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -504,11 +632,13 @@ export type RewardSelectScalar = {
   userId?: boolean
   title?: boolean
   message?: boolean
+  points?: boolean
+  milestone?: boolean
   createdAt?: boolean
   awardedBy?: boolean
 }
 
-export type RewardOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "title" | "message" | "createdAt" | "awardedBy", ExtArgs["result"]["reward"]>
+export type RewardOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "title" | "message" | "points" | "milestone" | "createdAt" | "awardedBy", ExtArgs["result"]["reward"]>
 export type RewardInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -529,6 +659,8 @@ export type $RewardPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     userId: string
     title: string
     message: string | null
+    points: number
+    milestone: number | null
     createdAt: Date
     awardedBy: string
   }, ExtArgs["result"]["reward"]>
@@ -959,6 +1091,8 @@ export interface RewardFieldRefs {
   readonly userId: Prisma.FieldRef<"Reward", 'String'>
   readonly title: Prisma.FieldRef<"Reward", 'String'>
   readonly message: Prisma.FieldRef<"Reward", 'String'>
+  readonly points: Prisma.FieldRef<"Reward", 'Int'>
+  readonly milestone: Prisma.FieldRef<"Reward", 'Int'>
   readonly createdAt: Prisma.FieldRef<"Reward", 'DateTime'>
   readonly awardedBy: Prisma.FieldRef<"Reward", 'String'>
 }

@@ -1,12 +1,12 @@
 "use client";
 
-import { Award, Medal, Trophy } from "lucide-react";
+import { Award, Medal, Trophy, Coins } from "lucide-react";
 
 type TopPerformer = {
   id: string;
   email: string;
   completedTasks: number;
-  rewards: number;
+  points: number;
   rank: number;
 };
 
@@ -41,7 +41,6 @@ const RewardSummary = ({
         </div>
 
         <div className="space-y-4!">
-          {/* Total Rewards */}
           <div className="flex items-center justify-between rounded-lg bg-gray-50 p-4!">
             <div>
               <p className="text-xs font-medium text-gray-500">Total Rewards</p>
@@ -54,10 +53,11 @@ const RewardSummary = ({
             <Award className="text-yellow-500" size={22} />
           </div>
 
-          {/* This Month */}
           <div className="flex items-center justify-between rounded-lg bg-gray-50 p-4!">
             <div>
-              <p className="text-xs font-medium text-gray-500">This Month</p>
+              <p className="text-xs font-medium text-gray-500">
+                Rewards This Month
+              </p>
 
               <p className="mt-1! text-2xl font-bold text-indigo-600">
                 {rewardsThisMonth}
@@ -81,7 +81,7 @@ const RewardSummary = ({
             </h2>
 
             <p className="text-sm text-gray-500">
-              Members with the most completed tasks.
+              Members with the most points.
             </p>
           </div>
         </div>
@@ -99,11 +99,11 @@ const RewardSummary = ({
                 </th>
 
                 <th className="px-3! py-3! text-center text-xs font-semibold uppercase tracking-wide text-gray-500">
-                  Completed
+                  Points
                 </th>
 
                 <th className="px-3! py-3! text-center text-xs font-semibold uppercase tracking-wide text-gray-500">
-                  Rewards
+                  Completed
                 </th>
               </tr>
             </thead>
@@ -116,8 +116,12 @@ const RewardSummary = ({
                       <Trophy size={18} className="text-yellow-500" />
                     ) : user.rank === 2 ? (
                       <Medal size={18} className="text-gray-400" />
-                    ) : (
+                    ) : user.rank === 3 ? (
                       <Medal size={18} className="text-orange-500" />
+                    ) : (
+                      <span className="font-semibold text-gray-600">
+                        #{user.rank}
+                      </span>
                     )}
                   </td>
 
@@ -134,15 +138,15 @@ const RewardSummary = ({
                   </td>
 
                   <td className="px-3! py-3! text-center">
-                    <span className="font-semibold text-green-600">
-                      {user.completedTasks}
+                    <span className="inline-flex items-center gap-1 font-semibold text-indigo-600">
+                      <Coins size={15} />
+                      {user.points}
                     </span>
                   </td>
 
                   <td className="px-3! py-3! text-center">
-                    <span className="inline-flex items-center gap-1 text-sm font-medium text-indigo-600">
-                      <Award size={14} />
-                      {user.rewards}
+                    <span className="font-semibold text-green-600">
+                      {user.completedTasks}
                     </span>
                   </td>
                 </tr>

@@ -8,13 +8,23 @@ export type Errorcode =
   | "BAD_REQUEST"
   | "INTERNAL";
 
-export type ErrorResource =
-  | "AUTH"
-  | "USER"
-  | "TASK"
-  | "REWARD"
-  | "LEADERBOARD"
-  | "NOTIFICATION";
+// export type ErrorResource =
+//   | "AUTH"
+//   | "USER"
+//   | "TASK"
+//   | "REWARD"
+//   | "LEADERBOARD"
+//   | "NOTIFICATION";
+export const ErrorResource = {
+  AUTH: "AUTH",
+  USER: "USER",
+  TASK: "TASK",
+  REWARD: "REWARD",
+  LEADERBOARD: "LEADERBOARD",
+  NOTIFICATION: "NOTIFICATION",
+} as const;
+
+export type ErrorResource = (typeof ErrorResource)[keyof typeof ErrorResource];
 
 export class AppError extends Error {
   constructor(

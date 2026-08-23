@@ -8,6 +8,7 @@ type LeaderboardUser = {
   id: string;
   email: string;
   completedTasks: number;
+  points: number;
   rank: number;
 };
 
@@ -23,24 +24,26 @@ export default function LeaderBoardTable({ users }: LeaderBoardTableProps) {
   return (
     <>
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+        {/* Header */}
         <div className="border-b border-gray-200 px-6! py-4!">
           <div className="flex items-center gap-3">
             <Trophy className="text-yellow-500" size={20} />
 
             <div>
               <h2 className="text-base font-semibold text-gray-900">
-                Top Performers
+                Leaderboard
               </h2>
 
               <p className="mt-1! text-sm text-gray-500">
-                Members with the most completed tasks
+                Members ranked by total reward points
               </p>
             </div>
           </div>
         </div>
 
+        {/* Table */}
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[700px]">
+          <table className="w-full min-w-[750px]">
             <thead>
               <tr className="border-b border-gray-200 bg-gray-50">
                 <th className="px-6! py-3! text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
@@ -49,6 +52,10 @@ export default function LeaderBoardTable({ users }: LeaderBoardTableProps) {
 
                 <th className="px-4! py-3! text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
                   User
+                </th>
+
+                <th className="px-4! py-3! text-center text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  Points
                 </th>
 
                 <th className="px-4! py-3! text-center text-xs font-semibold uppercase tracking-wide text-gray-500">
@@ -67,38 +74,70 @@ export default function LeaderBoardTable({ users }: LeaderBoardTableProps) {
                   key={user.id}
                   className="transition-colors hover:bg-gray-50/70"
                 >
+                  {/* Rank */}
                   <td className="px-6! py-4!">
-                    {user.rank === 1 ? (
-                      <Trophy size={20} className="text-yellow-500" />
-                    ) : user.rank === 2 ? (
-                      <Medal size={20} className="text-gray-400" />
-                    ) : user.rank === 3 ? (
-                      <Medal size={20} className="text-orange-500" />
-                    ) : (
-                      <span className="font-semibold text-gray-600">
-                        #{user.rank}
-                      </span>
-                    )}
-                  </td>
-
-                  <td className="px-4! py-4!">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-sm font-semibold text-gray-700">
-                        {user.email.charAt(0).toUpperCase()}
-                      </div>
-
-                      <span className="text-sm font-medium text-gray-900">
-                        {user.email}
-                      </span>
+                    <div className="flex items-center">
+                      {user.rank === 1 ? (
+                        <div className="flex h-9! w-9! items-center justify-center rounded-lg bg-yellow-50">
+                          <Trophy size={20} className="text-yellow-500" />
+                        </div>
+                      ) : user.rank === 2 ? (
+                        <div className="flex h-9! w-9! items-center justify-center rounded-lg bg-gray-100">
+                          <Medal size={20} className="text-gray-500" />
+                        </div>
+                      ) : user.rank === 3 ? (
+                        <div className="flex h-9! w-9! items-center justify-center rounded-lg bg-orange-50">
+                          <Medal size={20} className="text-orange-500" />
+                        </div>
+                      ) : (
+                        <span className="flex h-9! w-9! items-center justify-center rounded-lg bg-gray-50 text-sm font-semibold text-gray-600">
+                          #{user.rank}
+                        </span>
+                      )}
                     </div>
                   </td>
 
-                  <td className="px-4! py-4! text-center">
-                    <span className="font-semibold text-green-600">
-                      {user.completedTasks}
-                    </span>
+                  {/* User */}
+                  <td className="px-4! py-4!">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-9! w-9! items-center justify-center rounded-full bg-indigo-50 text-sm font-semibold text-indigo-600">
+                        {user.email.charAt(0).toUpperCase()}
+                      </div>
+
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">
+                          {user.email}
+                        </p>
+
+                        {user.rank <= 3 && (
+                          <p className="mt-0.5! text-xs text-gray-400">
+                            Top performer
+                          </p>
+                        )}
+                      </div>
+                    </div>
                   </td>
 
+                  {/* Points */}
+                  <td className="px-4! py-4! text-center">
+                    <div className="inline-flex items-center rounded-lg bg-indigo-50 px-3! py-1.5!">
+                      <span className="text-sm font-bold text-indigo-600">
+                        {user.points}
+                      </span>
+
+                      <span className="ml-1! text-xs font-medium text-indigo-500">
+                        pts
+                      </span>
+                    </div>
+                  </td>
+                  <td className="px-4! py-4! text-center">
+                    <span className="text-sm font-semibold text-green-600">
+                      {user.completedTasks}
+                    </span>
+
+                    <span className="ml-1! text-xs text-gray-400">tasks</span>
+                  </td>
+                  {/* Action */}
                   <td className="px-6! py-4! text-right">
                     <button
                       type="button"
@@ -115,6 +154,7 @@ export default function LeaderBoardTable({ users }: LeaderBoardTableProps) {
           </table>
         </div>
       </div>
+
       <RewardUserModal
         user={
           selectedUser

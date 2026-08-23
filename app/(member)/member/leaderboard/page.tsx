@@ -1,5 +1,4 @@
 import { Construction, Trophy } from "lucide-react";
-import React from "react";
 
 const LeaderBoardPage = () => {
   return (

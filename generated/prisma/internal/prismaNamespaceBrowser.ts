@@ -79,6 +79,7 @@ export const UserScalarFieldEnum = {
   passwordHash: 'passwordHash',
   role: 'role',
   status: 'status',
+  points: 'points',
   banReason: 'banReason',
   bannedAt: 'bannedAt',
   createdAt: 'createdAt',
@@ -121,6 +122,8 @@ export const RewardScalarFieldEnum = {
   userId: 'userId',
   title: 'title',
   message: 'message',
+  points: 'points',
+  milestone: 'milestone',
   createdAt: 'createdAt',
   awardedBy: 'awardedBy'
 } as const

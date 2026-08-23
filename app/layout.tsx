@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "sonner";
 import Nav from "./layout/Nav";
+import LenisProvider from "@/lib/provider/lenisProvider";
 
 export const metadata: Metadata = {
   title: "Kanban Task Board",
@@ -16,9 +17,11 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Nav />
-        <Toaster position="top-right" />
-        {children}
+        <LenisProvider>
+          <Nav />
+          <Toaster position="top-right" />
+          {children}
+        </LenisProvider>
       </body>
     </html>
   );

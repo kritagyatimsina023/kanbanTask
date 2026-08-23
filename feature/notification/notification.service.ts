@@ -1,4 +1,6 @@
+import { ErrorResource } from "@/lib/errors/app-error";
 import { Errors } from "@/lib/errors/errors";
+import { normalizeError } from "@/lib/errors/normalizeError";
 import { formatNepalDate } from "@/lib/helper";
 import prisma from "@/lib/prisma";
 
@@ -48,60 +50,70 @@ export class NotificationService {
     taskTitle: string,
     deadline: Date | null,
   ) {
-    const deadlineText = deadline
-      ? ` Deadline: ${deadline.toLocaleString("en-NP", {
-          timeZone: "Asia/Kathmandu",
-        })}.`
-      : "";
-    return prisma.notification.upsert({
-      where: {
-        userId_taskId_type: {
+    try {
+      const deadlineText = deadline
+        ? ` Deadline: ${deadline.toLocaleString("en-NP", {
+            timeZone: "Asia/Kathmandu",
+          })}.`
+        : "";
+      return prisma.notification.upsert({
+        where: {
+          userId_taskId_type: {
+            userId,
+            taskId,
+            type: "TASK_ASSIGNED",
+          },
+        },
+        update: {},
+        create: {
           userId,
           taskId,
           type: "TASK_ASSIGNED",
+          title: "New Task Assigned",
+          message: `You have been assigned the task "${taskTitle}"."${deadlineText}"`,
         },
-      },
-      update: {},
-      create: {
-        userId,
-        taskId,
-        type: "TASK_ASSIGNED",
-        title: "New Task Assigned",
-        message: `You have been assigned the task "${taskTitle}"."${deadlineText}"`,
-      },
-    });
+      });
+    } catch (error) {
+      throw normalizeError(error, ErrorResource.NOTIFICATION);
+    }
   }
   async getUserNotifications(userId: string) {
-    return prisma.notification.findMany({
-      where: {
-        userId,
-      },
-      include: {
-        task: {
-          select: {
-            id: true,
-            title: true,
-            deadline: true,
-            status: true,
+    try {
+      return await prisma.notification.findMany({
+        where: {
+          userId,
+        },
+        include: {
+          task: {
+            select: {
+              id: true,
+              title: true,
+              deadline: true,
+              status: true,
+            },
           },
         },
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+    } catch (error) {
+      throw normalizeError(error, ErrorResource.NOTIFICATION);
+    }
   }
   async createTaskDeletedNotification(userId: string, taskTitle: string) {
-    const notification = await prisma.notification.create({
-      data: {
-        userId,
-        type: "TASK_DELETED",
-        title: "Task Deleted",
-        message: `The task ${taskTitle} assigned to you has been deleted`,
-      },
-    });
-    // console.log(notification, "notification");
-    return notification;
+    try {
+      return await prisma.notification.create({
+        data: {
+          userId,
+          type: "TASK_DELETED",
+          title: "Task Deleted",
+          message: `The task ${taskTitle} assigned to you has been deleted`,
+        },
+      });
+    } catch (error) {
+      throw normalizeError(error, ErrorResource.NOTIFICATION);
+    }
   }
   async createRewardedNotificaiton(
     userId: string,
@@ -109,55 +121,71 @@ export class NotificationService {
     rewardMsg: string | null,
     rewardedAt: Date,
   ) {
-    const notification = await prisma.notification.create({
-      data: {
-        userId,
-        type: "REWARD_GRANTED",
-        title: "Reward Granted",
-        message: `You have been rewarded for ${title} ${rewardMsg} at ${formatNepalDate(rewardedAt)}`,
-      },
-    });
-    console.log(notification);
-    return notification;
+    try {
+      const notification = await prisma.notification.create({
+        data: {
+          userId,
+          type: "REWARD_GRANTED",
+          title: "Reward Granted",
+          message: `You have been rewarded for ${title} ${rewardMsg} at ${formatNepalDate(rewardedAt)}`,
+        },
+      });
+      console.log(notification);
+      return notification;
+    } catch (error) {
+      throw normalizeError(error, ErrorResource.NOTIFICATION);
+    }
   }
   async markAllAsRead(userId: string) {
-    return prisma.notification.updateMany({
-      where: {
-        userId,
-        read: false,
-      },
-      data: {
-        read: true,
-      },
-    });
+    try {
+      return prisma.notification.updateMany({
+        where: {
+          userId,
+          read: false,
+        },
+        data: {
+          read: true,
+        },
+      });
+    } catch (error) {
+      throw normalizeError(error, ErrorResource.NOTIFICATION);
+    }
   }
   async deleteSpecificNotification(notificationId: string, userId: string) {
-    const notification = await prisma.notification.findFirst({
-      where: {
-        id: notificationId,
-        userId,
-      },
-    });
-    if (!notification) {
-      throw Errors.notFound("Notification not found", "NOTIFICATION");
+    try {
+      const notification = await prisma.notification.findFirst({
+        where: {
+          id: notificationId,
+          userId,
+        },
+      });
+      if (!notification) {
+        throw Errors.notFound("Notification not found", "NOTIFICATION");
+      }
+      return prisma.notification.delete({
+        where: {
+          id: notification.id,
+        },
+      });
+    } catch (error) {
+      throw normalizeError(error, ErrorResource.NOTIFICATION);
     }
-    return prisma.notification.delete({
-      where: {
-        id: notification.id,
-      },
-    });
   }
   async deleteAllNotification(userId: string) {
-    const result = await prisma.notification.deleteMany({
-      where: {
-        userId,
-      },
-    });
+    try {
+      const result = await prisma.notification.deleteMany({
+        where: {
+          userId,
+        },
+      });
 
-    if (result.count === 0) {
-      throw Errors.notFound("No notifications found", "NOTIFICATION");
+      if (result.count === 0) {
+        throw Errors.notFound("No notifications found", "NOTIFICATION");
+      }
+      return result;
+    } catch (error) {
+      throw normalizeError(error, ErrorResource.NOTIFICATION);
     }
-    return result;
   }
 }
 export const notificationService = new NotificationService();

@@ -20,8 +20,18 @@ export type UserModel = runtime.Types.Result.DefaultSelection<Prisma.$UserPayloa
 
 export type AggregateUser = {
   _count: UserCountAggregateOutputType | null
+  _avg: UserAvgAggregateOutputType | null
+  _sum: UserSumAggregateOutputType | null
   _min: UserMinAggregateOutputType | null
   _max: UserMaxAggregateOutputType | null
+}
+
+export type UserAvgAggregateOutputType = {
+  points: number | null
+}
+
+export type UserSumAggregateOutputType = {
+  points: number | null
 }
 
 export type UserMinAggregateOutputType = {
@@ -30,6 +40,7 @@ export type UserMinAggregateOutputType = {
   passwordHash: string | null
   role: $Enums.Role | null
   status: $Enums.UserStatus | null
+  points: number | null
   banReason: string | null
   bannedAt: Date | null
   createdAt: Date | null
@@ -42,6 +53,7 @@ export type UserMaxAggregateOutputType = {
   passwordHash: string | null
   role: $Enums.Role | null
   status: $Enums.UserStatus | null
+  points: number | null
   banReason: string | null
   bannedAt: Date | null
   createdAt: Date | null
@@ -54,6 +66,7 @@ export type UserCountAggregateOutputType = {
   passwordHash: number
   role: number
   status: number
+  points: number
   banReason: number
   bannedAt: number
   createdAt: number
@@ -62,12 +75,21 @@ export type UserCountAggregateOutputType = {
 }
 
 
+export type UserAvgAggregateInputType = {
+  points?: true
+}
+
+export type UserSumAggregateInputType = {
+  points?: true
+}
+
 export type UserMinAggregateInputType = {
   id?: true
   email?: true
   passwordHash?: true
   role?: true
   status?: true
+  points?: true
   banReason?: true
   bannedAt?: true
   createdAt?: true
@@ -80,6 +102,7 @@ export type UserMaxAggregateInputType = {
   passwordHash?: true
   role?: true
   status?: true
+  points?: true
   banReason?: true
   bannedAt?: true
   createdAt?: true
@@ -92,6 +115,7 @@ export type UserCountAggregateInputType = {
   passwordHash?: true
   role?: true
   status?: true
+  points?: true
   banReason?: true
   bannedAt?: true
   createdAt?: true
@@ -137,6 +161,18 @@ export type UserAggregateArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: UserAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: UserSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: UserMinAggregateInputType
@@ -167,6 +203,8 @@ export type UserGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
   take?: number
   skip?: number
   _count?: UserCountAggregateInputType | true
+  _avg?: UserAvgAggregateInputType
+  _sum?: UserSumAggregateInputType
   _min?: UserMinAggregateInputType
   _max?: UserMaxAggregateInputType
 }
@@ -177,11 +215,14 @@ export type UserGroupByOutputType = {
   passwordHash: string
   role: $Enums.Role
   status: $Enums.UserStatus
+  points: number
   banReason: string | null
   bannedAt: Date | null
   createdAt: Date
   updatedAt: Date
   _count: UserCountAggregateOutputType | null
+  _avg: UserAvgAggregateOutputType | null
+  _sum: UserSumAggregateOutputType | null
   _min: UserMinAggregateOutputType | null
   _max: UserMaxAggregateOutputType | null
 }
@@ -210,6 +251,7 @@ export type UserWhereInput = {
   passwordHash?: Prisma.StringFilter<"User"> | string
   role?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
   status?: Prisma.EnumUserStatusFilter<"User"> | $Enums.UserStatus
+  points?: Prisma.IntFilter<"User"> | number
   banReason?: Prisma.StringNullableFilter<"User"> | string | null
   bannedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
@@ -225,6 +267,7 @@ export type UserOrderByWithRelationInput = {
   passwordHash?: Prisma.SortOrder
   role?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  points?: Prisma.SortOrder
   banReason?: Prisma.SortOrderInput | Prisma.SortOrder
   bannedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -243,6 +286,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   passwordHash?: Prisma.StringFilter<"User"> | string
   role?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
   status?: Prisma.EnumUserStatusFilter<"User"> | $Enums.UserStatus
+  points?: Prisma.IntFilter<"User"> | number
   banReason?: Prisma.StringNullableFilter<"User"> | string | null
   bannedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
@@ -258,13 +302,16 @@ export type UserOrderByWithAggregationInput = {
   passwordHash?: Prisma.SortOrder
   role?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  points?: Prisma.SortOrder
   banReason?: Prisma.SortOrderInput | Prisma.SortOrder
   bannedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
+  _avg?: Prisma.UserAvgOrderByAggregateInput
   _max?: Prisma.UserMaxOrderByAggregateInput
   _min?: Prisma.UserMinOrderByAggregateInput
+  _sum?: Prisma.UserSumOrderByAggregateInput
 }
 
 export type UserScalarWhereWithAggregatesInput = {
@@ -276,6 +323,7 @@ export type UserScalarWhereWithAggregatesInput = {
   passwordHash?: Prisma.StringWithAggregatesFilter<"User"> | string
   role?: Prisma.EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
   status?: Prisma.EnumUserStatusWithAggregatesFilter<"User"> | $Enums.UserStatus
+  points?: Prisma.IntWithAggregatesFilter<"User"> | number
   banReason?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   bannedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
@@ -288,6 +336,7 @@ export type UserCreateInput = {
   passwordHash: string
   role?: $Enums.Role
   status?: $Enums.UserStatus
+  points?: number
   banReason?: string | null
   bannedAt?: Date | string | null
   createdAt?: Date | string
@@ -303,6 +352,7 @@ export type UserUncheckedCreateInput = {
   passwordHash: string
   role?: $Enums.Role
   status?: $Enums.UserStatus
+  points?: number
   banReason?: string | null
   bannedAt?: Date | string | null
   createdAt?: Date | string
@@ -318,6 +368,7 @@ export type UserUpdateInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  points?: Prisma.IntFieldUpdateOperationsInput | number
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bannedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -333,6 +384,7 @@ export type UserUncheckedUpdateInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  points?: Prisma.IntFieldUpdateOperationsInput | number
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bannedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -348,6 +400,7 @@ export type UserCreateManyInput = {
   passwordHash: string
   role?: $Enums.Role
   status?: $Enums.UserStatus
+  points?: number
   banReason?: string | null
   bannedAt?: Date | string | null
   createdAt?: Date | string
@@ -360,6 +413,7 @@ export type UserUpdateManyMutationInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  points?: Prisma.IntFieldUpdateOperationsInput | number
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bannedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -372,6 +426,7 @@ export type UserUncheckedUpdateManyInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  points?: Prisma.IntFieldUpdateOperationsInput | number
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bannedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -384,10 +439,15 @@ export type UserCountOrderByAggregateInput = {
   passwordHash?: Prisma.SortOrder
   role?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  points?: Prisma.SortOrder
   banReason?: Prisma.SortOrder
   bannedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type UserAvgOrderByAggregateInput = {
+  points?: Prisma.SortOrder
 }
 
 export type UserMaxOrderByAggregateInput = {
@@ -396,6 +456,7 @@ export type UserMaxOrderByAggregateInput = {
   passwordHash?: Prisma.SortOrder
   role?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  points?: Prisma.SortOrder
   banReason?: Prisma.SortOrder
   bannedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -408,10 +469,15 @@ export type UserMinOrderByAggregateInput = {
   passwordHash?: Prisma.SortOrder
   role?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  points?: Prisma.SortOrder
   banReason?: Prisma.SortOrder
   bannedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type UserSumOrderByAggregateInput = {
+  points?: Prisma.SortOrder
 }
 
 export type UserNullableScalarRelationFilter = {
@@ -434,6 +500,14 @@ export type EnumRoleFieldUpdateOperationsInput = {
 
 export type EnumUserStatusFieldUpdateOperationsInput = {
   set?: $Enums.UserStatus
+}
+
+export type IntFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
 }
 
 export type NullableStringFieldUpdateOperationsInput = {
@@ -498,6 +572,7 @@ export type UserCreateWithoutTasksInput = {
   passwordHash: string
   role?: $Enums.Role
   status?: $Enums.UserStatus
+  points?: number
   banReason?: string | null
   bannedAt?: Date | string | null
   createdAt?: Date | string
@@ -512,6 +587,7 @@ export type UserUncheckedCreateWithoutTasksInput = {
   passwordHash: string
   role?: $Enums.Role
   status?: $Enums.UserStatus
+  points?: number
   banReason?: string | null
   bannedAt?: Date | string | null
   createdAt?: Date | string
@@ -542,6 +618,7 @@ export type UserUpdateWithoutTasksInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  points?: Prisma.IntFieldUpdateOperationsInput | number
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bannedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -556,6 +633,7 @@ export type UserUncheckedUpdateWithoutTasksInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  points?: Prisma.IntFieldUpdateOperationsInput | number
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bannedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -570,6 +648,7 @@ export type UserCreateWithoutNotificationsInput = {
   passwordHash: string
   role?: $Enums.Role
   status?: $Enums.UserStatus
+  points?: number
   banReason?: string | null
   bannedAt?: Date | string | null
   createdAt?: Date | string
@@ -584,6 +663,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   passwordHash: string
   role?: $Enums.Role
   status?: $Enums.UserStatus
+  points?: number
   banReason?: string | null
   bannedAt?: Date | string | null
   createdAt?: Date | string
@@ -614,6 +694,7 @@ export type UserUpdateWithoutNotificationsInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  points?: Prisma.IntFieldUpdateOperationsInput | number
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bannedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -628,6 +709,7 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  points?: Prisma.IntFieldUpdateOperationsInput | number
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bannedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -642,6 +724,7 @@ export type UserCreateWithoutRewardsInput = {
   passwordHash: string
   role?: $Enums.Role
   status?: $Enums.UserStatus
+  points?: number
   banReason?: string | null
   bannedAt?: Date | string | null
   createdAt?: Date | string
@@ -656,6 +739,7 @@ export type UserUncheckedCreateWithoutRewardsInput = {
   passwordHash: string
   role?: $Enums.Role
   status?: $Enums.UserStatus
+  points?: number
   banReason?: string | null
   bannedAt?: Date | string | null
   createdAt?: Date | string
@@ -686,6 +770,7 @@ export type UserUpdateWithoutRewardsInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  points?: Prisma.IntFieldUpdateOperationsInput | number
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bannedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -700,6 +785,7 @@ export type UserUncheckedUpdateWithoutRewardsInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  points?: Prisma.IntFieldUpdateOperationsInput | number
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bannedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -763,6 +849,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   passwordHash?: boolean
   role?: boolean
   status?: boolean
+  points?: boolean
   banReason?: boolean
   bannedAt?: boolean
   createdAt?: boolean
@@ -779,6 +866,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   passwordHash?: boolean
   role?: boolean
   status?: boolean
+  points?: boolean
   banReason?: boolean
   bannedAt?: boolean
   createdAt?: boolean
@@ -791,6 +879,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   passwordHash?: boolean
   role?: boolean
   status?: boolean
+  points?: boolean
   banReason?: boolean
   bannedAt?: boolean
   createdAt?: boolean
@@ -803,13 +892,14 @@ export type UserSelectScalar = {
   passwordHash?: boolean
   role?: boolean
   status?: boolean
+  points?: boolean
   banReason?: boolean
   bannedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "passwordHash" | "role" | "status" | "banReason" | "bannedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "passwordHash" | "role" | "status" | "points" | "banReason" | "bannedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tasks?: boolean | Prisma.User$tasksArgs<ExtArgs>
   rewards?: boolean | Prisma.User$rewardsArgs<ExtArgs>
@@ -832,6 +922,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     passwordHash: string
     role: $Enums.Role
     status: $Enums.UserStatus
+    points: number
     banReason: string | null
     bannedAt: Date | null
     createdAt: Date
@@ -1267,6 +1358,7 @@ export interface UserFieldRefs {
   readonly passwordHash: Prisma.FieldRef<"User", 'String'>
   readonly role: Prisma.FieldRef<"User", 'Role'>
   readonly status: Prisma.FieldRef<"User", 'UserStatus'>
+  readonly points: Prisma.FieldRef<"User", 'Int'>
   readonly banReason: Prisma.FieldRef<"User", 'String'>
   readonly bannedAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>

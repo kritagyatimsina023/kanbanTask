@@ -30,6 +30,7 @@ model User {
   role         Role       @default(MEMBER)
   tasks        Task[]
   status       UserStatus @default(ACTIVE)
+  points       Int        @default(0)
 
   banReason String?
   bannedAt  DateTime?
@@ -90,8 +91,14 @@ model Reward {
   user      User     @relation(fields: [userId], references: [id])
   title     String
   message   String?
+  points Int @default(0)
+
+  milestone Int?
+
   createdAt DateTime @default(now())
   awardedBy String
+
+  @@unique([userId,milestone])
   @@index([userId, createdAt])
   
 }
