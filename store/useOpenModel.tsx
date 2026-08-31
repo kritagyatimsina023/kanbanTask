@@ -1,4 +1,3 @@
-// import { Task } from "@/app/types/task.types";
 import { Task } from "@/generated/prisma/client";
 import { create } from "zustand";
 

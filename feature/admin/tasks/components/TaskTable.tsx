@@ -1,17 +1,13 @@
 "use client";
 import { taskService } from "@/feature/member/task.service";
 import {
-  CalendarDays,
-  CircleUserRound,
   ClipboardList,
   ChevronLeft,
   ChevronRight,
   CalendarClock,
 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { DateOnly, formatNepalDate, TimeOnly } from "@/lib/helper";
-import { useEffect } from "react";
-import { getTask } from "@/app/actions/tasks.action";
+import { DateOnly, TimeOnly } from "@/lib/helper";
 
 type TaskTableProps = {
   data: Awaited<ReturnType<typeof taskService.getAllTasks>>;

@@ -61,3 +61,23 @@ export type Notification = Prisma.NotificationModel
  * 
  */
 export type Reward = Prisma.RewardModel
+/**
+ * Model TaskMessage
+ * 
+ */
+export type TaskMessage = Prisma.TaskMessageModel
+/**
+ * Model ChatRoom
+ * 
+ */
+export type ChatRoom = Prisma.ChatRoomModel
+/**
+ * Model ChatRoomMember
+ * 
+ */
+export type ChatRoomMember = Prisma.ChatRoomMemberModel
+/**
+ * Model ChatMessage
+ * 
+ */
+export type ChatMessage = Prisma.ChatMessageModel

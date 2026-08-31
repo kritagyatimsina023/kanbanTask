@@ -10,8 +10,6 @@ const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
-  // console.log("Seeding database...");
-
   const adminPassword = await bcrypt.hash("admin123", 10);
   const memberPassword = await bcrypt.hash("member123", 10);
 
@@ -24,7 +22,6 @@ async function main() {
       role: Role.ADMIN,
     },
   });
-
   const member1 = await prisma.user.upsert({
     where: { email: "member1@example.com" },
     update: {},
@@ -44,34 +41,33 @@ async function main() {
       role: Role.MEMBER,
     },
   });
-  const member3 = await prisma.user.upsert({
-    where: { email: "member3@example.com" },
-    update: {},
-    create: {
-      email: "member3@example.com",
-      passwordHash: memberPassword,
-      role: Role.MEMBER,
-    },
-  });
-  const member4 = await prisma.user.upsert({
-    where: { email: "member4@example.com" },
-    update: {},
-    create: {
-      email: "member4@example.com",
-      passwordHash: memberPassword,
-      role: Role.MEMBER,
-    },
-  });
-  const member5 = await prisma.user.upsert({
-    where: { email: "member5@example.com" },
-    update: {},
-    create: {
-      email: "member5@example.com",
-      passwordHash: memberPassword,
-      role: Role.MEMBER,
-    },
-  });
-
+  // const member3 = await prisma.user.upsert({
+  //   where: { email: "member3@example.com" },
+  //   update: {},
+  //   create: {
+  //     email: "member3@example.com",
+  //     passwordHash: memberPassword,
+  //     role: Role.MEMBER,
+  //   },
+  // });
+  // const member4 = await prisma.user.upsert({
+  //   where: { email: "member4@example.com" },
+  //   update: {},
+  //   create: {
+  //     email: "member4@example.com",
+  //     passwordHash: memberPassword,
+  //     role: Role.MEMBER,
+  //   },
+  // });
+  // const member5 = await prisma.user.upsert({
+  //   where: { email: "member5@example.com" },
+  //   update: {},
+  //   create: {
+  //     email: "member5@example.com",
+  //     passwordHash: memberPassword,
+  //     role: Role.MEMBER,
+  //   },
+  // });
   await prisma.task.createMany({
     data: [
       {

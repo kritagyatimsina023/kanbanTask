@@ -1,7 +1,7 @@
 import TaskBoardContainer from "@/feature/member/_components/TaskBoardContainer";
 import TaskBoardSkeleton from "@/feature/member/_components/TaskBoardSkeleton";
 import TaskViewToggle from "@/feature/member/_components/TaskViewToggle";
-import { getSession, requireAuth } from "@/lib/auth";
+import { requireAuth } from "@/lib/auth";
 import { GripVertical, MousePointer2 } from "lucide-react";
 import React, { Suspense } from "react";
 type Props = {

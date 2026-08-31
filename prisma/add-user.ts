@@ -27,7 +27,7 @@ async function main() {
   ];
 
   for (const email of members) {
-    const user = await prisma.user.upsert({
+    await prisma.user.upsert({
       where: {
         email,
       },
@@ -38,8 +38,6 @@ async function main() {
         role: Role.MEMBER,
       },
     });
-
-    // console.log("User created:", user.email);
   }
 }
 

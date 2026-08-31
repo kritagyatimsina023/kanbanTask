@@ -5,12 +5,11 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   Users,
-  LogOut,
   KanbanSquare,
   Crown,
   ListTodoIcon,
 } from "lucide-react";
-import { logoutAction } from "@/app/actions/auth.action";
+
 import LogoutButton from "./LogoutButton";
 
 const navItems = [
@@ -94,18 +93,6 @@ export default function AdminSidebar() {
 
       <div className="border-t border-gray-200 p-4!">
         <LogoutButton />
-        {/* <form action={logoutAction}>
-          <button
-            type="submit"
-            className="group flex w-full items-center gap-3 rounded-lg px-3! py-2! text-sm font-medium text-red-600 transition hover:bg-red-50 hover:text-red-700"
-          >
-            <LogOut
-              size={18}
-              className="text-red-500 group-hover:text-red-600"
-            />
-            Logout
-          </button>
-        </form> */}
       </div>
     </aside>
   );

@@ -1,7 +1,7 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useActionState, useEffect } from "react";
+
 import { loginAction } from "../actions/auth.action";
 import { useFormStatus } from "react-dom";
 import { LoginState } from "../types/auth";

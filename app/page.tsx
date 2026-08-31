@@ -19,7 +19,6 @@ const HomePage = async () => {
       ? "/admin"
       : "/member";
 
-  console.log(getStartedHref);
   return (
     <main className="overflow-hidden bg-white text-gray-900">
       <Hero getStartedHref={getStartedHref} />

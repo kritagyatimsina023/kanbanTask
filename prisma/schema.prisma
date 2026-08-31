@@ -27,58 +27,85 @@ model User {
   id           String     @id @default(uuid())
   email        String     @unique
   passwordHash String
+
   role         Role       @default(MEMBER)
-  tasks        Task[]
   status       UserStatus @default(ACTIVE)
   points       Int        @default(0)
 
-  banReason String?
-  bannedAt  DateTime?
+  banReason    String?
+  bannedAt     DateTime?
+
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  tasks         Task[]         @relation("AssignedTasks")
+  rewards       Reward[]
+  notifications Notification[] @relation("UserNotifications")
+  taskMessages  TaskMessage[]  @relation("UserTaskMessages")
+
+  chatRoomMemberships ChatRoomMember[]
+  chatMessages        ChatMessage[]
+
+  createdChatRooms ChatRoom[] @relation("ChatRoomCreator")
+}
+
+model Task {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+
+  status      Status   @default(TODO)
+  deadline    DateTime?
+
+  assigneeId String?
+
+  assignee User? @relation("AssignedTasks", fields: [assigneeId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  rewards       Reward[]
-  notifications Notification[]
+  notifications Notification[] @relation("TaskNotifications")
+  messages      TaskMessage[]  @relation("TaskMessages")
+
+  @@index([assigneeId])
+  @@index([status])
 }
 
-model Task {
-  id          String  @id @default(uuid())
-  title       String
-  description String?
-  status      Status  @default(TODO)
 
-  deadline DateTime?
-
-  assigneeId String?
-  assignee   User?    @relation(fields: [assigneeId], references: [id])
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  notifications Notification[]
-}
 
 enum NotificationType {
   TASK_OVERDUE
   TASK_ASSIGNED
   TASK_DELETED
   REWARD_GRANTED
+  TASK_MESSAGE
+
+  CHAT_ROOM_ADDED
+
+  REMOVE_FROM_ROOM
+
+  ADDED_TO_ROOM
 }
 model Notification {
-  id String @id @default(uuid())
+  id        String   @id @default(uuid())
 
-  userId String
-  taskId String?
+  userId    String
+  taskId    String?
+  chatRoomId String?
 
-  type    NotificationType
-  title   String
-  message String
-  read    Boolean          @default(false)
+  type      NotificationType
+  title     String
+  message   String
+
+  read      Boolean  @default(false)
 
   createdAt DateTime @default(now())
 
-  user User  @relation(fields: [userId], references: [id])
-  task Task? @relation(fields: [taskId], references: [id])
+  user User @relation("UserNotifications", fields: [userId], references: [id])
+
+  task Task? @relation("TaskNotifications", fields: [taskId], references: [id])
+
+  chatRoom ChatRoom? @relation("ChatRoomNotifications",fields: [chatRoomId],references: [id])
 
   @@unique([userId, taskId, type])
   @@index([userId, read])
@@ -87,18 +114,89 @@ model Notification {
 
 model Reward {
   id        String   @id @default(cuid())
+
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
+
   title     String
   message   String?
-  points Int @default(0)
 
+  points    Int      @default(0)
   milestone Int?
 
   createdAt DateTime @default(now())
   awardedBy String
 
-  @@unique([userId,milestone])
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([userId, milestone])
   @@index([userId, createdAt])
-  
 }
+
+model TaskMessage {
+  id        String   @id @default(cuid())
+
+  message   String
+
+  taskId    String
+  senderId  String
+
+  isRead    Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  task   Task @relation("TaskMessages", fields: [taskId], references: [id], onDelete: Cascade)
+  sender User @relation("UserTaskMessages", fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([taskId])
+  @@index([senderId])
+  @@index([isRead])
+  @@index([createdAt])
+}
+
+model ChatRoom {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdById String?
+  createdBy   User?   @relation("ChatRoomCreator", fields: [createdById], references: [id])
+
+
+  members  ChatRoomMember[]
+  notifications Notification[] @relation("ChatRoomNotifications")
+  messages ChatMessage[]
+
+  @@index([createdAt])
+}
+
+model ChatRoomMember {
+  id       String   @id @default(cuid())
+  roomId   String
+  userId   String
+  joinedAt DateTime @default(now())
+
+  room ChatRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+
+  @@unique([roomId, userId])
+  @@index([roomId])
+  @@index([userId])
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  roomId    String
+  senderId  String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  room   ChatRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  sender User     @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([roomId, createdAt])
+  @@index([senderId])
+}
+

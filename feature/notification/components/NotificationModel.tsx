@@ -1,9 +1,12 @@
-import React from "react";
 import { Notification } from "@/app/types/notification";
 import { formatNepalDate } from "@/lib/helper";
+import type { LucideIcon } from "lucide-react";
 import {
   ClockAlert,
   Gift,
+  MessageCircleCheck,
+  MessageCircleDashed,
+  StickyNote,
   Trash2,
   Trash2Icon,
   UserPlus,
@@ -12,11 +15,15 @@ import {
 import { NotificationType } from "@/generated/prisma/enums";
 import Tooltip from "@/components/Tooltip";
 
-const notificationIcons = {
+const notificationIcons: Record<NotificationType, LucideIcon> = {
   [NotificationType.TASK_OVERDUE]: ClockAlert,
   [NotificationType.TASK_ASSIGNED]: UserPlus,
   [NotificationType.TASK_DELETED]: Trash2,
   [NotificationType.REWARD_GRANTED]: Gift,
+  [NotificationType.TASK_MESSAGE]: StickyNote,
+  [NotificationType.CHAT_ROOM_ADDED]: MessageCircleCheck,
+  [NotificationType.REMOVE_FROM_ROOM]: MessageCircleDashed,
+  [NotificationType.ADDED_TO_ROOM]: UserPlus,
 };
 
 type ModelProps = {

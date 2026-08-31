@@ -1,11 +1,19 @@
 "use client";
 
-import { Bell, CheckCircle2, Trash2Icon, X } from "lucide-react";
+import {
+  Bell,
+  CheckCircle2,
+  MessageCircleCheck,
+  MessageCircleDashed,
+  StickyNote,
+  Trash2Icon,
+} from "lucide-react";
 import { Notification } from "@/app/types/notification";
-import { useState } from "react";
-import { formatNepalDate } from "@/lib/helper";
-import { NotificationType } from "@/generated/prisma/enums";
+import { useRef, useState } from "react";
+import { formatNepalDate, getNotificationLink } from "@/lib/helper";
+import { NotificationType, Role } from "@/generated/prisma/enums";
 import { ClockAlert, UserPlus, Trash2, Gift } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import {
   deleteNotificaiton,
   markAllNotificationsAsReadAction,
@@ -14,21 +22,27 @@ import { useRouter } from "next/navigation";
 import NotificationModel from "./NotificationModel";
 import { toast } from "sonner";
 import Tooltip from "@/components/Tooltip";
+import { useClickOutside } from "@/hooks/useClickOutside";
 
 type Props = {
   notifications: Notification[];
+  role: Role;
 };
-const notificationIcons = {
+const notificationIcons: Record<NotificationType, LucideIcon> = {
   [NotificationType.TASK_OVERDUE]: ClockAlert,
   [NotificationType.TASK_ASSIGNED]: UserPlus,
   [NotificationType.TASK_DELETED]: Trash2,
   [NotificationType.REWARD_GRANTED]: Gift,
+  [NotificationType.TASK_MESSAGE]: StickyNote,
+  [NotificationType.CHAT_ROOM_ADDED]: MessageCircleCheck,
+  [NotificationType.REMOVE_FROM_ROOM]: MessageCircleDashed,
+  [NotificationType.ADDED_TO_ROOM]: UserPlus,
 };
-export default function NotificationBell({ notifications }: Props) {
+export default function NotificationBell({ notifications, role }: Props) {
   const [open, setOpen] = useState(false);
   const [showAll, setShowAll] = useState(false);
+  const notificationRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
-
   const unreadCount = notifications.filter(
     (notification) => !notification.read,
   ).length;
@@ -47,13 +61,25 @@ export default function NotificationBell({ notifications }: Props) {
       toast.error(result.message);
       return;
     }
-
     toast.success(result.message);
     router.refresh();
   };
+  useClickOutside(notificationRef, () => {
+    setOpen(false);
+  });
+  const handleNotificationClick = (notification: Notification) => {
+    const link = getNotificationLink(notification, role);
+    if (!link) {
+      toast.error("Unable to open notification");
+      return;
+    }
+    setOpen(false);
+    setShowAll(false);
+    router.push(link);
+  };
 
   return (
-    <div className="relative">
+    <div ref={notificationRef} className="relative">
       {/* Bell */}
       <Tooltip text="Notification" side="bottom">
         <button
@@ -103,7 +129,6 @@ export default function NotificationBell({ notifications }: Props) {
                 </span>
               )}
             </div>
-
             {/* Notifications */}
             <div className="max-h-[420px] overflow-y-auto">
               {notifications.length === 0 ? (
@@ -124,6 +149,7 @@ export default function NotificationBell({ notifications }: Props) {
                   return (
                     <div
                       key={notification.id}
+                      onClick={() => handleNotificationClick(notification)}
                       className={`border-b border-gray-100 px-4! py-3! transition hover:bg-gray-50 ${
                         !notification.read ? "bg-indigo-50/40" : ""
                       }`}

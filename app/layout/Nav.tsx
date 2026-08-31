@@ -9,13 +9,11 @@ import { leaderBoardService } from "@/feature/admin/leaderboard/leaderboard.serv
 import RewardBell from "@/feature/member/_components/RewardBell";
 import { RewardSummary } from "../types/Reward";
 import LogoutButton from "@/components/LogoutButton";
-
 import { Role } from "@/generated/prisma/enums";
 import NavigationProfile from "./NavigationProfile";
 
 const Nav = async () => {
   const session = await getSession();
-
   let notifications: Notification[] = [];
   let rewards: RewardSummary[] = [];
   if (session) {
@@ -59,18 +57,18 @@ const Nav = async () => {
                   email={session.email}
                   role={session.role}
                 />
-                <NotificationBell notifications={notifications} />
-                {session.role === "MEMBER" && <RewardBell rewards={rewards} />}
+                <NotificationBell
+                  notifications={notifications}
+                  role={session.role}
+                />
+                {session.role === Role.MEMBER && (
+                  <RewardBell rewards={rewards} />
+                )}
               </div>
               <LogoutButton />
             </div>
           </>
         )}
-        {/* {!session && (
-          <Link href={"/login"}>
-            <button>Get Started</button>
-          </Link>
-        )} */}
       </div>
     </nav>
   );

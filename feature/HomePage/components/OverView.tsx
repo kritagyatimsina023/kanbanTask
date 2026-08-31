@@ -194,7 +194,6 @@ const OverView = () => {
     },
     { scope: wrapperRef },
   );
-
   return (
     <div ref={wrapperRef}>
       <section

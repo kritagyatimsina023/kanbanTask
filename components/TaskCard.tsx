@@ -1,17 +1,26 @@
 "use client";
 import { Status } from "@/generated/prisma/enums";
-import { ChevronLeft, ChevronRight, Pen, Trash2, User } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Pen,
+  Trash2,
+  User,
+  GripVertical,
+} from "lucide-react";
 import { useTaskActions } from "../hooks/useTaskAction";
-import { Task } from "@/app/types/task.types";
+import { TaskWithAssignee } from "@/app/types/task.types";
 import { Member } from "@/app/types/member.types";
 import { Column } from "@/app/types/column.types";
 import { useOpenModel } from "@/store/useOpenModel";
 import DeleteTask from "./DeleteTask";
 import { memo } from "react";
 import { useRouter } from "next/navigation";
+import { useDraggable } from "@dnd-kit/core";
+import { CSS } from "@dnd-kit/utilities";
 
 interface TaskCardProps {
-  task: Task;
+  task: TaskWithAssignee;
   column: Column;
   members: Member[];
   isAdmin: boolean;
@@ -30,29 +39,34 @@ const TaskCard = memo(function TaskCard({
   const { handleStatusChange, handleReassign } = useTaskActions();
   const router = useRouter();
 
-  const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
-    e.dataTransfer.setData("taskId", task.id);
-    e.dataTransfer.setData("taskStatus", task.status);
-    e.dataTransfer.effectAllowed = "move";
-  };
   const { setDeleteOpen, setTask, isDeleteOpen, openEditModal } =
     useOpenModel();
-  const handleTaskDelete = (task: Task) => {
+  const handleTaskDelete = (task: TaskWithAssignee) => {
     setDeleteOpen();
     setTask(task);
     router.refresh();
   };
 
+  const { attributes, listeners, setNodeRef, transform, isDragging } =
+    useDraggable({
+      id: task.id,
+      disabled: !canEdit || isPending,
+    });
+
+  const style = {
+    transform: CSS.Translate.toString(transform),
+    opacity: isDragging || isPending ? 0.7 : 1,
+    zIndex: isDragging ? 50 : "auto",
+  };
+
   return (
     <>
       <div
-        draggable={canEdit && !isPending}
-        onDragStart={handleDragStart}
-        className="relative rounded-xl border border-gray-100 bg-white p-5! shadow-[0_2px_4px_rgba(0,0,0,0.02)] transition-opacity"
-        style={{
-          opacity: isPending ? 0.7 : 1,
-          cursor: canEdit ? "grab" : "default",
-        }}
+        ref={setNodeRef}
+        style={style}
+        className={`relative rounded-xl border border-gray-100 bg-white p-5! shadow-[0_2px_4px_rgba(0,0,0,0.02)] transition-opacity ${
+          isDragging ? "shadow-lg border-blue-200" : ""
+        }`}
       >
         {isPending && (
           <div className="absolute inset-0 z-20 flex items-center justify-center rounded-xl bg-white/70">
@@ -64,9 +78,20 @@ const TaskCard = memo(function TaskCard({
         )}
         {isDeleteOpen && <DeleteTask />}
         <div className="mb-2! flex items-start justify-between">
-          <h4 className="text-[15px] font-semibold text-gray-800">
-            {task.title}
-          </h4>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              className="cursor-grab text-slate-400 hover:text-slate-600 disabled:cursor-default disabled:opacity-50"
+              {...attributes}
+              {...listeners}
+              disabled={!canEdit || isPending}
+            >
+              <GripVertical size={16} />
+            </button>
+            <h4 className="text-[15px] font-semibold text-gray-800">
+              {task.title}
+            </h4>
+          </div>
           <div className="flex items-center gap-2">
             {isAdmin && (
               <button

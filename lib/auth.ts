@@ -25,7 +25,7 @@ export async function verifyToken(
       algorithms: ["HS256"],
     });
     return payload as SessionPayload;
-  } catch (error) {
+  } catch {
     return null;
   }
 }

@@ -13,22 +13,25 @@ export function useTaskActions() {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [pendingTaskId, setPendingTaskId] = useState<string | null>(null);
-  const handleStatusChange = useCallback((taskId: string, status: Status) => {
-    setPendingTaskId(taskId);
-    startTransition(async () => {
-      try {
-        const result = await updateTaskStatusAction(taskId, status);
-        if (!result.success) {
-          toast.error(result.error);
-          return;
+  const handleStatusChange = useCallback(
+    (taskId: string, status: Status) => {
+      setPendingTaskId(taskId);
+      startTransition(async () => {
+        try {
+          const result = await updateTaskStatusAction(taskId, status);
+          if (!result.success) {
+            toast.error(result.error);
+            return;
+          }
+          toast.success("Task status updated");
+          router.refresh();
+        } finally {
+          setPendingTaskId(null);
         }
-        toast.success("Task status updated");
-        router.refresh();
-      } finally {
-        setPendingTaskId(null);
-      }
-    });
-  }, []);
+      });
+    },
+    [router],
+  );
 
   const handleDelete = useCallback(async (taskId: string) => {
     startTransition(async () => {

@@ -4,7 +4,7 @@ import { signToken } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { authService } from "./auth.service";
 import { handleError } from "@/lib/errors/handle-error";
-import { revalidatePath } from "next/cache";
+
 type LoginState = {
   error: string | null;
 };

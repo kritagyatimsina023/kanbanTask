@@ -54,7 +54,11 @@ export const ModelName = {
   User: 'User',
   Task: 'Task',
   Notification: 'Notification',
-  Reward: 'Reward'
+  Reward: 'Reward',
+  TaskMessage: 'TaskMessage',
+  ChatRoom: 'ChatRoom',
+  ChatRoomMember: 'ChatRoomMember',
+  ChatMessage: 'ChatMessage'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -107,6 +111,7 @@ export const NotificationScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   taskId: 'taskId',
+  chatRoomId: 'chatRoomId',
   type: 'type',
   title: 'title',
   message: 'message',
@@ -129,6 +134,52 @@ export const RewardScalarFieldEnum = {
 } as const
 
 export type RewardScalarFieldEnum = (typeof RewardScalarFieldEnum)[keyof typeof RewardScalarFieldEnum]
+
+
+export const TaskMessageScalarFieldEnum = {
+  id: 'id',
+  message: 'message',
+  taskId: 'taskId',
+  senderId: 'senderId',
+  isRead: 'isRead',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TaskMessageScalarFieldEnum = (typeof TaskMessageScalarFieldEnum)[keyof typeof TaskMessageScalarFieldEnum]
+
+
+export const ChatRoomScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdById: 'createdById'
+} as const
+
+export type ChatRoomScalarFieldEnum = (typeof ChatRoomScalarFieldEnum)[keyof typeof ChatRoomScalarFieldEnum]
+
+
+export const ChatRoomMemberScalarFieldEnum = {
+  id: 'id',
+  roomId: 'roomId',
+  userId: 'userId',
+  joinedAt: 'joinedAt'
+} as const
+
+export type ChatRoomMemberScalarFieldEnum = (typeof ChatRoomMemberScalarFieldEnum)[keyof typeof ChatRoomMemberScalarFieldEnum]
+
+
+export const ChatMessageScalarFieldEnum = {
+  id: 'id',
+  roomId: 'roomId',
+  senderId: 'senderId',
+  content: 'content',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ChatMessageScalarFieldEnum = (typeof ChatMessageScalarFieldEnum)[keyof typeof ChatMessageScalarFieldEnum]
 
 
 export const SortOrder = {

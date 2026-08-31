@@ -4,20 +4,31 @@ import { Status, UserStatus } from "@/generated/prisma/enums";
 import { SessionPayload } from "@/lib/auth";
 import { Errors } from "@/lib/errors/errors";
 import { notificationService } from "../notification/notification.service";
-import { MyTaskData } from "@/app/types/task.types";
+import { MyTask, MyTaskData, TaskFilter } from "@/app/types/task.types";
 import { normalizeError } from "@/lib/errors/normalizeError";
 import { leaderBoardService } from "../admin/leaderboard/leaderboard.service";
 import { invalidate } from "@/lib/cache";
+import { buildTaskWhere } from "@/lib/task/taskQuery";
 
 const PAGE_SIZE = 5;
 
 export class TaskService {
-  private getTaskPages = (page: number) =>
+  private getTaskPages = ({
+    page,
+    search,
+    filter,
+  }: {
+    page: number;
+    search?: string;
+    filter?: TaskFilter;
+  }) =>
     (async () => {
       try {
         const skip = (page - 1) * PAGE_SIZE;
+        const where = buildTaskWhere({ search, filter });
         const [tasks, totalTasks] = await Promise.all([
           prisma.task.findMany({
+            where,
             skip,
             take: PAGE_SIZE,
             include: {
@@ -34,7 +45,7 @@ export class TaskService {
               createdAt: "desc",
             },
           }),
-          prisma.task.count(),
+          prisma.task.count({ where }),
         ]);
         return {
           tasks,
@@ -47,8 +58,15 @@ export class TaskService {
         throw normalizeError(error, ErrorResource.TASK);
       }
     })();
-  async getAllTasks(page = 1) {
-    return this.getTaskPages(page);
+  async getAllTasks(
+    params: { page?: number; search?: string; filter?: TaskFilter } = {},
+  ) {
+    const page = params.page || 1;
+    return this.getTaskPages({
+      page,
+      search: params.search,
+      filter: params.filter,
+    });
   }
   async createTask(data: {
     title: string;
@@ -106,24 +124,18 @@ export class TaskService {
           id: taskId,
         },
       });
-
       if (!task) {
         throw Errors.notFound("Task not found", ErrorResource.TASK);
       }
-
-      // Members can only update their own assigned tasks.
       if (session.role !== "ADMIN" && task.assigneeId !== session.id) {
         throw Errors.forbidden(
           "You can only update tasks assigned to you",
           ErrorResource.TASK,
         );
       }
-
-      // No need to update if status hasn't changed.
       if (task.status === status) {
         return task;
       }
-
       const updatedTask = await prisma.task.update({
         where: {
           id: taskId,
@@ -132,12 +144,12 @@ export class TaskService {
           status,
         },
       });
+
       if (
-        task.status !== Status.DONE &&
-        status === Status.DONE &&
-        task.assigneeId
+        task.assigneeId &&
+        (task.status === Status.DONE || status === Status.DONE)
       ) {
-        await leaderBoardService.checkAndAwardTaskMilestone(task.assigneeId);
+        await leaderBoardService.syncTaskMileStoneRewards(task.assigneeId);
       }
       invalidate.leaderboard();
       return updatedTask;
@@ -319,11 +331,8 @@ export class TaskService {
           createdAt: true,
         },
       });
-
       const total = tasks.length;
-
       const todo = tasks.filter((task) => task.status === Status.TODO).length;
-
       const inProgress = tasks.filter(
         (task) => task.status === Status.IN_PROGRESS,
       ).length;
@@ -331,28 +340,20 @@ export class TaskService {
       const completed = tasks.filter(
         (task) => task.status === Status.DONE,
       ).length;
-
-      // const low = tasks.filter(
-      //   (task) => task.priority === Priority.LOW,
-      // ).length;
-
-      // const medium = tasks.filter(
-      //   (task) => task.priority === Priority.MEDIUM,
-      // ).length;
-
-      // const high = tasks.filter(
-      //   (task) => task.priority === Priority.HIGH,
-      // ).length;
+      const activeTasks = tasks.filter(
+        (task) =>
+          task.status === Status.TODO || task.status === Status.IN_PROGRESS,
+      );
 
       return {
         tasks,
+        remainingTasks: activeTasks,
         stats: {
           total,
           todo,
           inProgress,
           completed,
         },
-
         statusDistribution: [
           {
             status: Status.TODO,
@@ -371,6 +372,68 @@ export class TaskService {
           },
         ],
       };
+    } catch (error) {
+      throw normalizeError(error, ErrorResource.TASK);
+    }
+  }
+  async getTaskForAI(userId: string, taskId: string) {
+    try {
+      return await prisma.task.findFirst({
+        where: {
+          id: taskId,
+          assigneeId: userId,
+        },
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          status: true,
+        },
+      });
+    } catch (error) {
+      throw normalizeError(error, ErrorResource.TASK);
+    }
+  }
+  async searchMyTask(userId: string, search: string): Promise<MyTask[]> {
+    try {
+      const trimmedSearch = search.trim();
+      if (!trimmedSearch) return [];
+      const tasks = await prisma.task.findMany({
+        where: buildTaskWhere({ search: trimmedSearch, assigneeId: userId }),
+        orderBy: {
+          createdAt: "desc",
+        },
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          status: true,
+          deadline: true,
+          createdAt: true,
+        },
+      });
+      return tasks;
+    } catch (error) {
+      throw normalizeError(error, ErrorResource.TASK);
+    }
+  }
+  async filterMyTask(userId: string, filter: TaskFilter): Promise<MyTask[]> {
+    try {
+      const where = buildTaskWhere({ filter, assigneeId: userId });
+      return await prisma.task.findMany({
+        where,
+        orderBy: {
+          deadline: "asc",
+        },
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          status: true,
+          deadline: true,
+          createdAt: true,
+        },
+      });
     } catch (error) {
       throw normalizeError(error, ErrorResource.TASK);
     }

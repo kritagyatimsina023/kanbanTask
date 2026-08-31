@@ -10,7 +10,6 @@ type ErrorFallbackProps = {
   title?: string;
   message?: string;
 };
-
 const ErrorFallback = ({
   error,
   reset,

@@ -1,4 +1,3 @@
-// components/NavigationProfile.tsx
 "use client";
 
 import Link from "next/link";
@@ -21,7 +20,6 @@ const NavigationProfile = ({ roleLink, email, role }: Props) => {
       <span className="max-w-[120px] truncate text-xs font-semibold text-gray-700">
         {email.split("@")[0]}
       </span>
-
       <span className="text-[9px] font-bold uppercase tracking-widest text-gray-400">
         {role}
       </span>

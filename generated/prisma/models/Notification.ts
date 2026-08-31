@@ -28,6 +28,7 @@ export type NotificationMinAggregateOutputType = {
   id: string | null
   userId: string | null
   taskId: string | null
+  chatRoomId: string | null
   type: $Enums.NotificationType | null
   title: string | null
   message: string | null
@@ -39,6 +40,7 @@ export type NotificationMaxAggregateOutputType = {
   id: string | null
   userId: string | null
   taskId: string | null
+  chatRoomId: string | null
   type: $Enums.NotificationType | null
   title: string | null
   message: string | null
@@ -50,6 +52,7 @@ export type NotificationCountAggregateOutputType = {
   id: number
   userId: number
   taskId: number
+  chatRoomId: number
   type: number
   title: number
   message: number
@@ -63,6 +66,7 @@ export type NotificationMinAggregateInputType = {
   id?: true
   userId?: true
   taskId?: true
+  chatRoomId?: true
   type?: true
   title?: true
   message?: true
@@ -74,6 +78,7 @@ export type NotificationMaxAggregateInputType = {
   id?: true
   userId?: true
   taskId?: true
+  chatRoomId?: true
   type?: true
   title?: true
   message?: true
@@ -85,6 +90,7 @@ export type NotificationCountAggregateInputType = {
   id?: true
   userId?: true
   taskId?: true
+  chatRoomId?: true
   type?: true
   title?: true
   message?: true
@@ -169,6 +175,7 @@ export type NotificationGroupByOutputType = {
   id: string
   userId: string
   taskId: string | null
+  chatRoomId: string | null
   type: $Enums.NotificationType
   title: string
   message: string
@@ -201,6 +208,7 @@ export type NotificationWhereInput = {
   id?: Prisma.StringFilter<"Notification"> | string
   userId?: Prisma.StringFilter<"Notification"> | string
   taskId?: Prisma.StringNullableFilter<"Notification"> | string | null
+  chatRoomId?: Prisma.StringNullableFilter<"Notification"> | string | null
   type?: Prisma.EnumNotificationTypeFilter<"Notification"> | $Enums.NotificationType
   title?: Prisma.StringFilter<"Notification"> | string
   message?: Prisma.StringFilter<"Notification"> | string
@@ -208,12 +216,14 @@ export type NotificationWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Notification"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   task?: Prisma.XOR<Prisma.TaskNullableScalarRelationFilter, Prisma.TaskWhereInput> | null
+  chatRoom?: Prisma.XOR<Prisma.ChatRoomNullableScalarRelationFilter, Prisma.ChatRoomWhereInput> | null
 }
 
 export type NotificationOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   taskId?: Prisma.SortOrderInput | Prisma.SortOrder
+  chatRoomId?: Prisma.SortOrderInput | Prisma.SortOrder
   type?: Prisma.SortOrder
   title?: Prisma.SortOrder
   message?: Prisma.SortOrder
@@ -221,6 +231,7 @@ export type NotificationOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   task?: Prisma.TaskOrderByWithRelationInput
+  chatRoom?: Prisma.ChatRoomOrderByWithRelationInput
 }
 
 export type NotificationWhereUniqueInput = Prisma.AtLeast<{
@@ -231,6 +242,7 @@ export type NotificationWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.NotificationWhereInput | Prisma.NotificationWhereInput[]
   userId?: Prisma.StringFilter<"Notification"> | string
   taskId?: Prisma.StringNullableFilter<"Notification"> | string | null
+  chatRoomId?: Prisma.StringNullableFilter<"Notification"> | string | null
   type?: Prisma.EnumNotificationTypeFilter<"Notification"> | $Enums.NotificationType
   title?: Prisma.StringFilter<"Notification"> | string
   message?: Prisma.StringFilter<"Notification"> | string
@@ -238,12 +250,14 @@ export type NotificationWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Notification"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   task?: Prisma.XOR<Prisma.TaskNullableScalarRelationFilter, Prisma.TaskWhereInput> | null
+  chatRoom?: Prisma.XOR<Prisma.ChatRoomNullableScalarRelationFilter, Prisma.ChatRoomWhereInput> | null
 }, "id" | "userId_taskId_type">
 
 export type NotificationOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   taskId?: Prisma.SortOrderInput | Prisma.SortOrder
+  chatRoomId?: Prisma.SortOrderInput | Prisma.SortOrder
   type?: Prisma.SortOrder
   title?: Prisma.SortOrder
   message?: Prisma.SortOrder
@@ -261,6 +275,7 @@ export type NotificationScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Notification"> | string
   userId?: Prisma.StringWithAggregatesFilter<"Notification"> | string
   taskId?: Prisma.StringNullableWithAggregatesFilter<"Notification"> | string | null
+  chatRoomId?: Prisma.StringNullableWithAggregatesFilter<"Notification"> | string | null
   type?: Prisma.EnumNotificationTypeWithAggregatesFilter<"Notification"> | $Enums.NotificationType
   title?: Prisma.StringWithAggregatesFilter<"Notification"> | string
   message?: Prisma.StringWithAggregatesFilter<"Notification"> | string
@@ -277,12 +292,14 @@ export type NotificationCreateInput = {
   createdAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutNotificationsInput
   task?: Prisma.TaskCreateNestedOneWithoutNotificationsInput
+  chatRoom?: Prisma.ChatRoomCreateNestedOneWithoutNotificationsInput
 }
 
 export type NotificationUncheckedCreateInput = {
   id?: string
   userId: string
   taskId?: string | null
+  chatRoomId?: string | null
   type: $Enums.NotificationType
   title: string
   message: string
@@ -299,12 +316,14 @@ export type NotificationUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutNotificationsNestedInput
   task?: Prisma.TaskUpdateOneWithoutNotificationsNestedInput
+  chatRoom?: Prisma.ChatRoomUpdateOneWithoutNotificationsNestedInput
 }
 
 export type NotificationUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   taskId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
   title?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
@@ -316,6 +335,7 @@ export type NotificationCreateManyInput = {
   id?: string
   userId: string
   taskId?: string | null
+  chatRoomId?: string | null
   type: $Enums.NotificationType
   title: string
   message: string
@@ -336,6 +356,7 @@ export type NotificationUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   taskId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
   title?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
@@ -363,6 +384,7 @@ export type NotificationCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   taskId?: Prisma.SortOrder
+  chatRoomId?: Prisma.SortOrder
   type?: Prisma.SortOrder
   title?: Prisma.SortOrder
   message?: Prisma.SortOrder
@@ -374,6 +396,7 @@ export type NotificationMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   taskId?: Prisma.SortOrder
+  chatRoomId?: Prisma.SortOrder
   type?: Prisma.SortOrder
   title?: Prisma.SortOrder
   message?: Prisma.SortOrder
@@ -385,6 +408,7 @@ export type NotificationMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   taskId?: Prisma.SortOrder
+  chatRoomId?: Prisma.SortOrder
   type?: Prisma.SortOrder
   title?: Prisma.SortOrder
   message?: Prisma.SortOrder
@@ -484,6 +508,48 @@ export type BoolFieldUpdateOperationsInput = {
   set?: boolean
 }
 
+export type NotificationCreateNestedManyWithoutChatRoomInput = {
+  create?: Prisma.XOR<Prisma.NotificationCreateWithoutChatRoomInput, Prisma.NotificationUncheckedCreateWithoutChatRoomInput> | Prisma.NotificationCreateWithoutChatRoomInput[] | Prisma.NotificationUncheckedCreateWithoutChatRoomInput[]
+  connectOrCreate?: Prisma.NotificationCreateOrConnectWithoutChatRoomInput | Prisma.NotificationCreateOrConnectWithoutChatRoomInput[]
+  createMany?: Prisma.NotificationCreateManyChatRoomInputEnvelope
+  connect?: Prisma.NotificationWhereUniqueInput | Prisma.NotificationWhereUniqueInput[]
+}
+
+export type NotificationUncheckedCreateNestedManyWithoutChatRoomInput = {
+  create?: Prisma.XOR<Prisma.NotificationCreateWithoutChatRoomInput, Prisma.NotificationUncheckedCreateWithoutChatRoomInput> | Prisma.NotificationCreateWithoutChatRoomInput[] | Prisma.NotificationUncheckedCreateWithoutChatRoomInput[]
+  connectOrCreate?: Prisma.NotificationCreateOrConnectWithoutChatRoomInput | Prisma.NotificationCreateOrConnectWithoutChatRoomInput[]
+  createMany?: Prisma.NotificationCreateManyChatRoomInputEnvelope
+  connect?: Prisma.NotificationWhereUniqueInput | Prisma.NotificationWhereUniqueInput[]
+}
+
+export type NotificationUpdateManyWithoutChatRoomNestedInput = {
+  create?: Prisma.XOR<Prisma.NotificationCreateWithoutChatRoomInput, Prisma.NotificationUncheckedCreateWithoutChatRoomInput> | Prisma.NotificationCreateWithoutChatRoomInput[] | Prisma.NotificationUncheckedCreateWithoutChatRoomInput[]
+  connectOrCreate?: Prisma.NotificationCreateOrConnectWithoutChatRoomInput | Prisma.NotificationCreateOrConnectWithoutChatRoomInput[]
+  upsert?: Prisma.NotificationUpsertWithWhereUniqueWithoutChatRoomInput | Prisma.NotificationUpsertWithWhereUniqueWithoutChatRoomInput[]
+  createMany?: Prisma.NotificationCreateManyChatRoomInputEnvelope
+  set?: Prisma.NotificationWhereUniqueInput | Prisma.NotificationWhereUniqueInput[]
+  disconnect?: Prisma.NotificationWhereUniqueInput | Prisma.NotificationWhereUniqueInput[]
+  delete?: Prisma.NotificationWhereUniqueInput | Prisma.NotificationWhereUniqueInput[]
+  connect?: Prisma.NotificationWhereUniqueInput | Prisma.NotificationWhereUniqueInput[]
+  update?: Prisma.NotificationUpdateWithWhereUniqueWithoutChatRoomInput | Prisma.NotificationUpdateWithWhereUniqueWithoutChatRoomInput[]
+  updateMany?: Prisma.NotificationUpdateManyWithWhereWithoutChatRoomInput | Prisma.NotificationUpdateManyWithWhereWithoutChatRoomInput[]
+  deleteMany?: Prisma.NotificationScalarWhereInput | Prisma.NotificationScalarWhereInput[]
+}
+
+export type NotificationUncheckedUpdateManyWithoutChatRoomNestedInput = {
+  create?: Prisma.XOR<Prisma.NotificationCreateWithoutChatRoomInput, Prisma.NotificationUncheckedCreateWithoutChatRoomInput> | Prisma.NotificationCreateWithoutChatRoomInput[] | Prisma.NotificationUncheckedCreateWithoutChatRoomInput[]
+  connectOrCreate?: Prisma.NotificationCreateOrConnectWithoutChatRoomInput | Prisma.NotificationCreateOrConnectWithoutChatRoomInput[]
+  upsert?: Prisma.NotificationUpsertWithWhereUniqueWithoutChatRoomInput | Prisma.NotificationUpsertWithWhereUniqueWithoutChatRoomInput[]
+  createMany?: Prisma.NotificationCreateManyChatRoomInputEnvelope
+  set?: Prisma.NotificationWhereUniqueInput | Prisma.NotificationWhereUniqueInput[]
+  disconnect?: Prisma.NotificationWhereUniqueInput | Prisma.NotificationWhereUniqueInput[]
+  delete?: Prisma.NotificationWhereUniqueInput | Prisma.NotificationWhereUniqueInput[]
+  connect?: Prisma.NotificationWhereUniqueInput | Prisma.NotificationWhereUniqueInput[]
+  update?: Prisma.NotificationUpdateWithWhereUniqueWithoutChatRoomInput | Prisma.NotificationUpdateWithWhereUniqueWithoutChatRoomInput[]
+  updateMany?: Prisma.NotificationUpdateManyWithWhereWithoutChatRoomInput | Prisma.NotificationUpdateManyWithWhereWithoutChatRoomInput[]
+  deleteMany?: Prisma.NotificationScalarWhereInput | Prisma.NotificationScalarWhereInput[]
+}
+
 export type NotificationCreateWithoutUserInput = {
   id?: string
   type: $Enums.NotificationType
@@ -492,11 +558,13 @@ export type NotificationCreateWithoutUserInput = {
   read?: boolean
   createdAt?: Date | string
   task?: Prisma.TaskCreateNestedOneWithoutNotificationsInput
+  chatRoom?: Prisma.ChatRoomCreateNestedOneWithoutNotificationsInput
 }
 
 export type NotificationUncheckedCreateWithoutUserInput = {
   id?: string
   taskId?: string | null
+  chatRoomId?: string | null
   type: $Enums.NotificationType
   title: string
   message: string
@@ -537,6 +605,7 @@ export type NotificationScalarWhereInput = {
   id?: Prisma.StringFilter<"Notification"> | string
   userId?: Prisma.StringFilter<"Notification"> | string
   taskId?: Prisma.StringNullableFilter<"Notification"> | string | null
+  chatRoomId?: Prisma.StringNullableFilter<"Notification"> | string | null
   type?: Prisma.EnumNotificationTypeFilter<"Notification"> | $Enums.NotificationType
   title?: Prisma.StringFilter<"Notification"> | string
   message?: Prisma.StringFilter<"Notification"> | string
@@ -552,11 +621,13 @@ export type NotificationCreateWithoutTaskInput = {
   read?: boolean
   createdAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutNotificationsInput
+  chatRoom?: Prisma.ChatRoomCreateNestedOneWithoutNotificationsInput
 }
 
 export type NotificationUncheckedCreateWithoutTaskInput = {
   id?: string
   userId: string
+  chatRoomId?: string | null
   type: $Enums.NotificationType
   title: string
   message: string
@@ -590,9 +661,58 @@ export type NotificationUpdateManyWithWhereWithoutTaskInput = {
   data: Prisma.XOR<Prisma.NotificationUpdateManyMutationInput, Prisma.NotificationUncheckedUpdateManyWithoutTaskInput>
 }
 
+export type NotificationCreateWithoutChatRoomInput = {
+  id?: string
+  type: $Enums.NotificationType
+  title: string
+  message: string
+  read?: boolean
+  createdAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutNotificationsInput
+  task?: Prisma.TaskCreateNestedOneWithoutNotificationsInput
+}
+
+export type NotificationUncheckedCreateWithoutChatRoomInput = {
+  id?: string
+  userId: string
+  taskId?: string | null
+  type: $Enums.NotificationType
+  title: string
+  message: string
+  read?: boolean
+  createdAt?: Date | string
+}
+
+export type NotificationCreateOrConnectWithoutChatRoomInput = {
+  where: Prisma.NotificationWhereUniqueInput
+  create: Prisma.XOR<Prisma.NotificationCreateWithoutChatRoomInput, Prisma.NotificationUncheckedCreateWithoutChatRoomInput>
+}
+
+export type NotificationCreateManyChatRoomInputEnvelope = {
+  data: Prisma.NotificationCreateManyChatRoomInput | Prisma.NotificationCreateManyChatRoomInput[]
+  skipDuplicates?: boolean
+}
+
+export type NotificationUpsertWithWhereUniqueWithoutChatRoomInput = {
+  where: Prisma.NotificationWhereUniqueInput
+  update: Prisma.XOR<Prisma.NotificationUpdateWithoutChatRoomInput, Prisma.NotificationUncheckedUpdateWithoutChatRoomInput>
+  create: Prisma.XOR<Prisma.NotificationCreateWithoutChatRoomInput, Prisma.NotificationUncheckedCreateWithoutChatRoomInput>
+}
+
+export type NotificationUpdateWithWhereUniqueWithoutChatRoomInput = {
+  where: Prisma.NotificationWhereUniqueInput
+  data: Prisma.XOR<Prisma.NotificationUpdateWithoutChatRoomInput, Prisma.NotificationUncheckedUpdateWithoutChatRoomInput>
+}
+
+export type NotificationUpdateManyWithWhereWithoutChatRoomInput = {
+  where: Prisma.NotificationScalarWhereInput
+  data: Prisma.XOR<Prisma.NotificationUpdateManyMutationInput, Prisma.NotificationUncheckedUpdateManyWithoutChatRoomInput>
+}
+
 export type NotificationCreateManyUserInput = {
   id?: string
   taskId?: string | null
+  chatRoomId?: string | null
   type: $Enums.NotificationType
   title: string
   message: string
@@ -608,11 +728,13 @@ export type NotificationUpdateWithoutUserInput = {
   read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   task?: Prisma.TaskUpdateOneWithoutNotificationsNestedInput
+  chatRoom?: Prisma.ChatRoomUpdateOneWithoutNotificationsNestedInput
 }
 
 export type NotificationUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   taskId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
   title?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
@@ -623,6 +745,7 @@ export type NotificationUncheckedUpdateWithoutUserInput = {
 export type NotificationUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   taskId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
   title?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
@@ -633,6 +756,7 @@ export type NotificationUncheckedUpdateManyWithoutUserInput = {
 export type NotificationCreateManyTaskInput = {
   id?: string
   userId: string
+  chatRoomId?: string | null
   type: $Enums.NotificationType
   title: string
   message: string
@@ -648,11 +772,13 @@ export type NotificationUpdateWithoutTaskInput = {
   read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutNotificationsNestedInput
+  chatRoom?: Prisma.ChatRoomUpdateOneWithoutNotificationsNestedInput
 }
 
 export type NotificationUncheckedUpdateWithoutTaskInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
+  chatRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
   title?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
@@ -663,6 +789,51 @@ export type NotificationUncheckedUpdateWithoutTaskInput = {
 export type NotificationUncheckedUpdateManyWithoutTaskInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
+  chatRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  message?: Prisma.StringFieldUpdateOperationsInput | string
+  read?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type NotificationCreateManyChatRoomInput = {
+  id?: string
+  userId: string
+  taskId?: string | null
+  type: $Enums.NotificationType
+  title: string
+  message: string
+  read?: boolean
+  createdAt?: Date | string
+}
+
+export type NotificationUpdateWithoutChatRoomInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  message?: Prisma.StringFieldUpdateOperationsInput | string
+  read?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutNotificationsNestedInput
+  task?: Prisma.TaskUpdateOneWithoutNotificationsNestedInput
+}
+
+export type NotificationUncheckedUpdateWithoutChatRoomInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  taskId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  message?: Prisma.StringFieldUpdateOperationsInput | string
+  read?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type NotificationUncheckedUpdateManyWithoutChatRoomInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  taskId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
   title?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
@@ -676,6 +847,7 @@ export type NotificationSelect<ExtArgs extends runtime.Types.Extensions.Internal
   id?: boolean
   userId?: boolean
   taskId?: boolean
+  chatRoomId?: boolean
   type?: boolean
   title?: boolean
   message?: boolean
@@ -683,12 +855,14 @@ export type NotificationSelect<ExtArgs extends runtime.Types.Extensions.Internal
   createdAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   task?: boolean | Prisma.Notification$taskArgs<ExtArgs>
+  chatRoom?: boolean | Prisma.Notification$chatRoomArgs<ExtArgs>
 }, ExtArgs["result"]["notification"]>
 
 export type NotificationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   userId?: boolean
   taskId?: boolean
+  chatRoomId?: boolean
   type?: boolean
   title?: boolean
   message?: boolean
@@ -696,12 +870,14 @@ export type NotificationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   createdAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   task?: boolean | Prisma.Notification$taskArgs<ExtArgs>
+  chatRoom?: boolean | Prisma.Notification$chatRoomArgs<ExtArgs>
 }, ExtArgs["result"]["notification"]>
 
 export type NotificationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   userId?: boolean
   taskId?: boolean
+  chatRoomId?: boolean
   type?: boolean
   title?: boolean
   message?: boolean
@@ -709,12 +885,14 @@ export type NotificationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   createdAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   task?: boolean | Prisma.Notification$taskArgs<ExtArgs>
+  chatRoom?: boolean | Prisma.Notification$chatRoomArgs<ExtArgs>
 }, ExtArgs["result"]["notification"]>
 
 export type NotificationSelectScalar = {
   id?: boolean
   userId?: boolean
   taskId?: boolean
+  chatRoomId?: boolean
   type?: boolean
   title?: boolean
   message?: boolean
@@ -722,18 +900,21 @@ export type NotificationSelectScalar = {
   createdAt?: boolean
 }
 
-export type NotificationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "taskId" | "type" | "title" | "message" | "read" | "createdAt", ExtArgs["result"]["notification"]>
+export type NotificationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "taskId" | "chatRoomId" | "type" | "title" | "message" | "read" | "createdAt", ExtArgs["result"]["notification"]>
 export type NotificationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   task?: boolean | Prisma.Notification$taskArgs<ExtArgs>
+  chatRoom?: boolean | Prisma.Notification$chatRoomArgs<ExtArgs>
 }
 export type NotificationIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   task?: boolean | Prisma.Notification$taskArgs<ExtArgs>
+  chatRoom?: boolean | Prisma.Notification$chatRoomArgs<ExtArgs>
 }
 export type NotificationIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   task?: boolean | Prisma.Notification$taskArgs<ExtArgs>
+  chatRoom?: boolean | Prisma.Notification$chatRoomArgs<ExtArgs>
 }
 
 export type $NotificationPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -741,11 +922,13 @@ export type $NotificationPayload<ExtArgs extends runtime.Types.Extensions.Intern
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
     task: Prisma.$TaskPayload<ExtArgs> | null
+    chatRoom: Prisma.$ChatRoomPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     userId: string
     taskId: string | null
+    chatRoomId: string | null
     type: $Enums.NotificationType
     title: string
     message: string
@@ -1147,6 +1330,7 @@ export interface Prisma__NotificationClient<T, Null = never, ExtArgs extends run
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   task<T extends Prisma.Notification$taskArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Notification$taskArgs<ExtArgs>>): Prisma.Prisma__TaskClient<runtime.Types.Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  chatRoom<T extends Prisma.Notification$chatRoomArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Notification$chatRoomArgs<ExtArgs>>): Prisma.Prisma__ChatRoomClient<runtime.Types.Result.GetResult<Prisma.$ChatRoomPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1179,6 +1363,7 @@ export interface NotificationFieldRefs {
   readonly id: Prisma.FieldRef<"Notification", 'String'>
   readonly userId: Prisma.FieldRef<"Notification", 'String'>
   readonly taskId: Prisma.FieldRef<"Notification", 'String'>
+  readonly chatRoomId: Prisma.FieldRef<"Notification", 'String'>
   readonly type: Prisma.FieldRef<"Notification", 'NotificationType'>
   readonly title: Prisma.FieldRef<"Notification", 'String'>
   readonly message: Prisma.FieldRef<"Notification", 'String'>
@@ -1601,6 +1786,25 @@ export type Notification$taskArgs<ExtArgs extends runtime.Types.Extensions.Inter
    */
   include?: Prisma.TaskInclude<ExtArgs> | null
   where?: Prisma.TaskWhereInput
+}
+
+/**
+ * Notification.chatRoom
+ */
+export type Notification$chatRoomArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ChatRoom
+   */
+  select?: Prisma.ChatRoomSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ChatRoom
+   */
+  omit?: Prisma.ChatRoomOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChatRoomInclude<ExtArgs> | null
+  where?: Prisma.ChatRoomWhereInput
 }
 
 /**

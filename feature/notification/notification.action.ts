@@ -38,10 +38,7 @@ export async function deleteNotificaiton(notificationId?: string) {
         message: "Notification deleted successfully",
       };
     }
-    const notificationDeleted = await notificationService.deleteAllNotification(
-      session.id,
-    );
-    console.log("all notification Delete", notificationDeleted);
+    await notificationService.deleteAllNotification(session.id);
     return {
       success: true as const,
       message: "All notifications deleted successfully",

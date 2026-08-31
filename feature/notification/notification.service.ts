@@ -1,8 +1,12 @@
+import { Prisma } from "@/generated/prisma/client";
+import { NotificationType, Role, UserStatus } from "@/generated/prisma/enums";
 import { ErrorResource } from "@/lib/errors/app-error";
 import { Errors } from "@/lib/errors/errors";
 import { normalizeError } from "@/lib/errors/normalizeError";
 import { formatNepalDate } from "@/lib/helper";
 import prisma from "@/lib/prisma";
+
+type TransactionClient = Prisma.TransactionClient;
 
 export class NotificationService {
   // async checkOverdueTasks() {
@@ -130,7 +134,7 @@ export class NotificationService {
           message: `You have been rewarded for ${title} ${rewardMsg} at ${formatNepalDate(rewardedAt)}`,
         },
       });
-      console.log(notification);
+
       return notification;
     } catch (error) {
       throw normalizeError(error, ErrorResource.NOTIFICATION);
@@ -187,5 +191,112 @@ export class NotificationService {
       throw normalizeError(error, ErrorResource.NOTIFICATION);
     }
   }
+  async taskMessageNotification(
+    tx: TransactionClient,
+    senderId: string,
+    taskId: string,
+    message: string,
+  ) {
+    const task = await tx.task.findUnique({
+      where: {
+        id: taskId,
+      },
+      select: {
+        id: true,
+        title: true,
+        assigneeId: true,
+      },
+    });
+    if (!task) {
+      throw Errors.notFound("Task not found", ErrorResource.TASK);
+    }
+
+    const sender = await tx.user.findUnique({
+      where: {
+        id: senderId,
+      },
+      select: {
+        id: true,
+        role: true,
+      },
+    });
+
+    if (!sender) {
+      throw Errors.notFound("User not found", ErrorResource.USER);
+    }
+
+    let receiverId: string | null = null;
+
+    if (sender.role === Role.MEMBER) {
+      const admin = await tx.user.findFirst({
+        where: {
+          role: Role.ADMIN,
+          status: UserStatus.ACTIVE,
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      receiverId = admin?.id ?? null;
+    } else {
+      receiverId = task.assigneeId;
+    }
+
+    if (!receiverId || receiverId === senderId) {
+      return null;
+    }
+    return tx.notification.create({
+      data: {
+        userId: receiverId,
+        taskId: task.id,
+        type: NotificationType.TASK_MESSAGE,
+        title: `New message on "${task.title}"`,
+        message: message.length > 80 ? `${message.slice(0, 80)}...` : message,
+      },
+    });
+  }
+  async chatRoomNotification(
+    tx: Prisma.TransactionClient,
+    chatRoomId: string,
+    chatRoomName: string,
+    memberIds: string[],
+    creator: string,
+  ) {
+    try {
+      await tx.notification.createMany({
+        data: memberIds.map((userId) => ({
+          userId,
+          chatRoomId,
+          type: NotificationType.CHAT_ROOM_ADDED,
+          title: "Added to Chat Room",
+          message: `you have been added to ${chatRoomName} group. By ${creator}`,
+        })),
+        skipDuplicates: true,
+      });
+    } catch (error) {
+      throw normalizeError(error, ErrorResource.NOTIFICATION);
+    }
+  }
+  async removedFromChatRoom(
+    tx: Prisma.TransactionClient,
+    userId: string,
+    roomId: string,
+    roomName: string,
+  ) {
+    try {
+      return await tx.notification.create({
+        data: {
+          userId,
+          type: NotificationType.REMOVE_FROM_ROOM,
+          title: "Removed from chat room",
+          message: `You have been removed from "${roomName}"`,
+        },
+      });
+    } catch (error) {
+      throw normalizeError(error, ErrorResource.NOTIFICATION);
+    }
+  }
 }
+
 export const notificationService = new NotificationService();

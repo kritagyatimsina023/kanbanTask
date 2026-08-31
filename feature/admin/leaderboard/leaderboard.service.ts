@@ -9,6 +9,7 @@ import { ErrorResource } from "@/lib/errors/app-error";
 import { normalizeError } from "@/lib/errors/normalizeError";
 import { Status } from "@/generated/prisma/enums";
 import { invalidate } from "@/lib/cache";
+import { Prisma } from "@/generated/prisma/client";
 
 type LeaderboardUser = {
   id: string;
@@ -186,7 +187,71 @@ export class LeaderboardService {
       throw normalizeError(error, ErrorResource.LEADERBOARD);
     }
   }
-  async checkAndAwardTaskMilestone(userId: string) {
+  // async checkAndAwardTaskMilestone(userId: string) {
+  //   try {
+  //     const completedTasks = await prisma.task.count({
+  //       where: {
+  //         assigneeId: userId,
+  //         status: Status.DONE,
+  //       },
+  //     });
+
+  //     if (completedTasks < 3) {
+  //       return null;
+  //     }
+  //     const milestone = Math.floor(completedTasks / 3);
+  //     const existingReward = await prisma.reward.findFirst({
+  //       where: {
+  //         userId,
+  //         milestone,
+  //       },
+  //       select: {
+  //         id: true,
+  //       },
+  //     });
+
+  //     if (existingReward) {
+  //       return null;
+  //     }
+
+  //     const points = 10;
+
+  //     const [reward] = await prisma.$transaction([
+  //       prisma.reward.create({
+  //         data: {
+  //           userId,
+  //           title: `${milestone * 3} Tasks Completed`,
+  //           message: `You completed ${milestone * 3} tasks and earned ${points} points.`,
+  //           points,
+  //           milestone,
+  //           awardedBy: "SYSTEM",
+  //         },
+  //       }),
+  //       prisma.user.update({
+  //         where: {
+  //           id: userId,
+  //         },
+  //         data: {
+  //           points: {
+  //             increment: points,
+  //           },
+  //         },
+  //       }),
+  //     ]);
+  //     invalidate.leaderboard();
+  //     invalidate.admin();
+  //     await notificationService.createRewardedNotificaiton(
+  //       userId,
+  //       reward.title,
+  //       reward.message,
+  //       reward.createdAt,
+  //     );
+  //     return reward;
+  //   } catch (error) {
+  //     throw normalizeError(error, ErrorResource.REWARD);
+  //   }
+  // }
+  async syncTaskMileStoneRewards(userId: string) {
     try {
       const completedTasks = await prisma.task.count({
         where: {
@@ -194,59 +259,91 @@ export class LeaderboardService {
           status: Status.DONE,
         },
       });
+      const targetMilestone = Math.floor(completedTasks / 3);
+      const pointsPerMilestone = 10;
 
-      if (completedTasks < 3) {
-        return null;
-      }
-      const milestone = Math.floor(completedTasks / 3);
-      const existingReward = await prisma.reward.findFirst({
+      const existingRewards = await prisma.reward.findMany({
         where: {
           userId,
-          milestone,
+          awardedBy: "SYSTEM",
+          milestone: {
+            not: null,
+          },
         },
         select: {
           id: true,
+          milestone: true,
+          points: true,
         },
       });
 
-      if (existingReward) {
-        return null;
-      }
-
-      const points = 10;
-
-      const [reward] = await prisma.$transaction([
-        prisma.reward.create({
-          data: {
-            userId,
-            title: `${milestone * 3} Tasks Completed`,
-            message: `You completed ${milestone * 3} tasks and earned ${points} points.`,
-            points,
-            milestone,
-            awardedBy: "SYSTEM",
-          },
-        }),
-        prisma.user.update({
-          where: {
-            id: userId,
-          },
-          data: {
-            points: {
-              increment: points,
-            },
-          },
-        }),
-      ]);
-      invalidate.leaderboard();
-      invalidate.admin();
-      await notificationService.createRewardedNotificaiton(
-        userId,
-        reward.title,
-        reward.message,
-        reward.createdAt,
+      const existingMilestones = new Set(
+        existingRewards.map((reward) => reward.milestone),
       );
 
-      return reward;
+      const rewardsToCreate: Prisma.RewardCreateManyInput[] = [];
+
+      for (let milestone = 1; milestone <= targetMilestone; milestone++) {
+        if (!existingMilestones.has(milestone)) {
+          rewardsToCreate.push({
+            userId,
+            title: `${milestone * 3} Tasks Completed`,
+            message: `You completed ${milestone * 3} tasks and earned ${pointsPerMilestone} points.`,
+            points: pointsPerMilestone,
+            milestone,
+            awardedBy: "SYSTEM",
+          });
+        }
+      }
+
+      const rewardsToRemove = existingRewards.filter(
+        (reward) =>
+          reward.milestone !== null && reward.milestone > targetMilestone,
+      );
+
+      const pointsToAdd = rewardsToCreate.length * pointsPerMilestone;
+
+      const pointsToRemove = rewardsToRemove.reduce(
+        (total, reward) => total + reward.points,
+        0,
+      );
+
+      const pointDifference = pointsToAdd - pointsToRemove;
+
+      const result = await prisma.$transaction(async (tx) => {
+        if (rewardsToRemove.length > 0) {
+          await tx.reward.deleteMany({
+            where: {
+              id: {
+                in: rewardsToRemove.map((reward) => reward.id),
+              },
+            },
+          });
+        }
+
+        if (rewardsToCreate.length > 0) {
+          await tx.reward.createMany({
+            data: rewardsToCreate,
+          });
+        }
+
+        if (pointDifference !== 0) {
+          await tx.user.update({
+            where: {
+              id: userId,
+            },
+            data: {
+              points: {
+                increment: pointDifference,
+              },
+            },
+          });
+        }
+      });
+      invalidate.leaderboard();
+      invalidate.admin();
+
+      return result;
     } catch (error) {
       throw normalizeError(error, ErrorResource.REWARD);
     }

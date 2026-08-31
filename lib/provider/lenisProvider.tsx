@@ -40,7 +40,7 @@ interface LenisProviderProps {
 
 export const LenisProvider = ({ children, options }: LenisProviderProps) => {
   const lenisRef = useRef<Lenis | null>(null);
-  const rafRef = useRef<number | null>(null);
+  // const rafRef = useRef<number | null>(null);
   const [lenis, setLenis] = useState<Lenis | null>(null);
   const pathname = usePathname();
 
@@ -78,12 +78,12 @@ export const LenisProvider = ({ children, options }: LenisProviderProps) => {
 
     return () => {
       gsap.ticker.remove(update);
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      // if (rafRef.current) cancelAnimationFrame(rafRef.current);
       lenisInstance.destroy();
       lenisRef.current = null;
       setTimeout(() => setLenis(null), 0);
     };
-  }, []);
+  }, [options]);
 
   useEffect(() => {
     const instance = lenisRef.current;

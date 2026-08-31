@@ -1,6 +1,3 @@
-import prisma from "@/lib/prisma";
-import { unstable_cache } from "next/cache";
-
 // export async function getUserLeaderboardData(userId: string) {
 //   const users = await prisma.user.findMany({
 //     where: {

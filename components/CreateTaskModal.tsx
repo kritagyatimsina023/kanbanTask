@@ -55,7 +55,7 @@ export default function CreateTaskModal({ members }: { members: Member[] }) {
         .flat()
         .forEach((error) => toast.error(error));
     }
-  }, [state, setOpen, router]);
+  }, [state, setOpen, router, isEditMode]);
 
   if (!isOpen) return null;
 

@@ -6,10 +6,11 @@ import {
   LayoutDashboard,
   ListTodo,
   KanbanSquare,
-  LogOut,
   Trophy,
+  BotMessageSquare,
+  MessagesSquare,
 } from "lucide-react";
-import { logoutAction } from "@/app/actions/auth.action";
+
 import LogoutButton from "./LogoutButton";
 
 const navItems = [
@@ -33,13 +34,22 @@ const navItems = [
     href: "/member/leaderboard",
     icon: Trophy,
   },
+  {
+    label: "AI workFlow",
+    href: "/member/ai-workflow",
+    icon: BotMessageSquare,
+  },
+  {
+    label: "Chat Room",
+    href: "/member/chat",
+    icon: MessagesSquare,
+  },
 ];
 
 export default function MemberSidebar() {
   const pathname = usePathname();
   return (
     <aside className="fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-gray-200 bg-white pt-5! pb-4!">
-      {/* Logo */}
       <div className="flex flex-shrink-0 items-center px-6!">
         <Link
           href="/"

@@ -38,7 +38,11 @@ export const NotificationType = {
   TASK_OVERDUE: 'TASK_OVERDUE',
   TASK_ASSIGNED: 'TASK_ASSIGNED',
   TASK_DELETED: 'TASK_DELETED',
-  REWARD_GRANTED: 'REWARD_GRANTED'
+  REWARD_GRANTED: 'REWARD_GRANTED',
+  TASK_MESSAGE: 'TASK_MESSAGE',
+  CHAT_ROOM_ADDED: 'CHAT_ROOM_ADDED',
+  REMOVE_FROM_ROOM: 'REMOVE_FROM_ROOM',
+  ADDED_TO_ROOM: 'ADDED_TO_ROOM'
 } as const
 
 export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType]

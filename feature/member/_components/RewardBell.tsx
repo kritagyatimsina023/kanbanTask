@@ -1,9 +1,10 @@
 "use client";
 
 import Tooltip from "@/components/Tooltip";
+import { useClickOutside } from "@/hooks/useClickOutside";
 import { formatNepalDate } from "@/lib/helper";
 import { Award, X } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 type Reward = {
   id: string;
@@ -19,12 +20,16 @@ type Props = {
 export default function RewardBell({ rewards }: Props) {
   const [open, setOpen] = useState(false);
   const [showAll, setShowAll] = useState(false);
+  const rewardRef = useRef<HTMLDivElement>(null);
+  useClickOutside(rewardRef, () => {
+    setOpen(false);
+  });
 
   const recentRewards = rewards.slice(0, 3);
 
   return (
     <>
-      <div className="relative">
+      <div ref={rewardRef} className="relative">
         <Tooltip text="Reward" side="bottom">
           <button
             type="button"

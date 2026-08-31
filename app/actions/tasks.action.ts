@@ -4,7 +4,7 @@ import { requireAuth, requireAdmin } from "@/lib/auth";
 import { Status } from "@/generated/prisma/enums";
 import { createTaskSchema } from "@/validation/Create.schema";
 import { CreateTaskState } from "../types/auth";
-import z, { success } from "zod";
+import z from "zod";
 import { invalidate } from "@/lib/cache";
 import { taskService } from "@/feature/member/task.service";
 import { nepalTimeToUTC } from "@/lib/helper";
@@ -26,7 +26,7 @@ export async function createTaskAction(
     const result = createTaskSchema.safeParse(rawData);
     if (!result.success) {
       const errors = z.treeifyError(result.error);
-      console.log(errors);
+
       return {
         success: false,
         error: "Please fix the validation errors",
@@ -60,6 +60,7 @@ export async function getTask() {
   const task = await taskService.getAllTasks();
   return task;
 }
+
 export async function updateTaskAction(
   prevState: CreateTaskState,
   formData: FormData,
@@ -159,7 +160,7 @@ export async function deleteTaskAction(taskId: string) {
   try {
     await requireAdmin();
     const task = await taskService.deleteTask(taskId);
-    console.log(task, "deleted task details");
+
     if (task.status === Status.DONE) {
       invalidate.leaderboard();
       revalidatePath("/admin/leaderboards");

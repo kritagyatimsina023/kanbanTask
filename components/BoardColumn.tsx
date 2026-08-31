@@ -2,18 +2,18 @@
 
 import TaskCard from "./TaskCard";
 import { Column } from "@/app/types/column.types";
-import { Task } from "@/app/types/task.types";
+import { TaskWithAssignee } from "@/app/types/task.types";
 import { Member } from "@/app/types/member.types";
-import { memo, useState } from "react";
+import { memo } from "react";
+import { useDroppable } from "@dnd-kit/core";
 
 interface Props {
   column: Column;
-  tasks: Task[];
+  tasks: TaskWithAssignee[];
   members: Member[];
   userId: string;
   isAdmin: boolean;
   pendingTaskId: string | null;
-  onDropTask: (taskId: string, status: Column["id"]) => void;
 }
 const BoardColumn = memo(function BoardColumn({
   column,
@@ -22,43 +22,19 @@ const BoardColumn = memo(function BoardColumn({
   userId,
   isAdmin,
   pendingTaskId,
-  onDropTask,
 }: Props) {
-  const [isDragOver, setIsDragOver] = useState(false);
+  const { isOver, setNodeRef } = useDroppable({
+    id: column.id,
+  });
 
-  const canEditTask = (task: Task) => isAdmin || task.assigneeId === userId;
-
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragOver(true);
-  };
-  const handleDragLeave = () => {
-    setIsDragOver(false);
-  };
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragOver(false);
-    const taskId = e.dataTransfer.getData("taskId");
-    const taskStatus = e.dataTransfer.getData("taskStatus");
-
-    console.log("Dropped task:", taskId);
-    console.log("Current status:", taskStatus);
-    console.log("Target status:", column.id);
-
-    if (!taskId || !taskStatus) return;
-
-    if (taskStatus === column.id) return;
-
-    onDropTask(taskId, column.id);
-  };
+  const canEditTask = (task: TaskWithAssignee) =>
+    isAdmin || task.assigneeId === userId;
 
   return (
     <div
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-      onDrop={handleDrop}
+      ref={setNodeRef}
       className={`my-4! flex min-h-[400px] flex-col overflow-hidden rounded-xl border bg-[#fafafa] shadow-md transition ${
-        isDragOver ? "border-blue-400 bg-blue-50/50" : "border-gray-100"
+        isOver ? "border-blue-400 bg-blue-50/50" : "border-gray-100"
       }`}
     >
       <div

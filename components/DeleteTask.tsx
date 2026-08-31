@@ -3,14 +3,6 @@
 import { useTaskActions } from "@/hooks/useTaskAction";
 import { useOpenModel } from "@/store/useOpenModel";
 import { AlertTriangle } from "lucide-react";
-import { toast } from "sonner";
-
-interface DeleteTaskProps {
-  isOpen: boolean;
-  isPending?: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-}
 
 export default function DeleteTask() {
   //   if (!isOpen) return null;
@@ -19,12 +11,8 @@ export default function DeleteTask() {
 
   const handleDeleteTask = async () => {
     if (!task) return;
-    try {
-      await handleDelete(task.id);
-      setDeleteOpen();
-    } catch (err) {
-      toast.error("Error in deleting task");
-    }
+    await handleDelete(task.id);
+    setDeleteOpen();
   };
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-[2px] px-4!">
