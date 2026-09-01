@@ -49,53 +49,11 @@ const ChatHome = (props: ChatHomeProps) => {
 
   return (
     <section className="space-y-6!">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold text-gray-900">Chat Rooms</h1>
-
-            <span className="rounded-full bg-amber-50 px-2.5! py-1! text-[11px] font-medium text-amber-600">
-              In Development
-            </span>
-          </div>
-
-          <p className="mt-1! text-sm text-gray-500">
-            Connect and communicate with other members.
-          </p>
-
-          {/* Development Status */}
-          <div className="mt-3! max-w-xl rounded-lg border border-amber-100 bg-amber-50/50 px-3! py-2.5!">
-            <div className="flex items-center justify-between gap-3">
-              <p className="text-xs font-medium text-gray-700">
-                Production Readiness
-              </p>
-
-              <span className="text-[11px] font-semibold text-amber-600">
-                75%
-              </span>
-            </div>
-
-            <div className="mt-1.5! h-1.5 w-full overflow-hidden rounded-full bg-amber-100">
-              <div
-                className="h-full rounded-full bg-amber-500 transition-all"
-                style={{ width: "75%" }}
-              />
-            </div>
-
-            <p className="mt-1.5! text-[11px] leading-relaxed text-gray-500">
-              Chat messaging, room management, member removal, leaving rooms,
-              and emoji support are implemented. Real-time messaging is not
-              implemented yet, so messages are not automatically delivered to
-              other connected members.
-            </p>
-          </div>
-        </div>
-
+      <div className="w-full flex justify-end">
         <button
           type="button"
           onClick={handleCreateRoom}
-          className="inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4! text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+          className="inline-flex  h-10 shrink-0 items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4! text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-200"
         >
           <Plus size={17} strokeWidth={2.2} />
           Create Room
@@ -121,7 +79,6 @@ const ChatHome = (props: ChatHomeProps) => {
                   key={room.id}
                   className="group flex w-full items-center gap-4 px-5! py-4! transition hover:bg-gray-50"
                 >
-                  {/* Room clickable area */}
                   <button
                     type="button"
                     onClick={() => handleOpenRoom(room.id)}
