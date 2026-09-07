@@ -17,8 +17,7 @@ export async function POST(request: NextRequest) {
 
   const socketId = params.get("socket_id");
   const channelName = params.get("channel_name");
-  console.log(channelName);
-  console.log(socketId);
+
   if (!socketId || !channelName) {
     return new Response("Invalid Request", {
       status: 400,

@@ -22,7 +22,6 @@ export async function rewardUser(
   try {
     const admin = await requireAdmin();
     const userId = formData.get("userId") as string;
-    console.log(userId, "is user id ");
     const title = formData.get("title") as string;
     const message = formData.get("message") as string | undefined;
     const result = await leaderBoardService.rewarduser(

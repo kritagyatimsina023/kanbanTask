@@ -6,7 +6,7 @@ import { pusherClient } from "@/lib/pusher/pusher.client";
 import { REALTIME_EVENTS } from "@/lib/realtime/realtime.events";
 import { MessageCircle } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Volume2, VolumeX } from "lucide-react";
+
 import { useScrollToBottom } from "@/hooks/useScrollToBottom";
 type props = {
   messages: messages[];
@@ -26,7 +26,6 @@ const ChatMessages = ({
   useEffect(() => {
     const channelName = `private-chat-room-${roomId}`;
     const channel = pusherClient.subscribe(channelName);
-    console.log(channelName, "roomId channel name");
 
     const handleNewMessage = (message: messages) => {
       if (message.sender.id !== currentUserId) {

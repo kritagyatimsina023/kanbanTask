@@ -55,7 +55,6 @@ export default function NotificationBell({
   const unreadCount = notifications.filter(
     (notification) => !notification.read,
   ).length;
-  console.log("Notification bell userId", userId);
 
   // const handleOpenNotification = async () => {
   //   setOpen((prev) => !prev);

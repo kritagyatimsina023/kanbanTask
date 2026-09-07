@@ -76,7 +76,7 @@ export class LeaderboardService {
             },
           },
         });
-        console.log(users, "Leader board services");
+
         return this.calculateLeaderboard(users);
       } catch (error) {
         throw normalizeError(error, ErrorResource.LEADERBOARD);

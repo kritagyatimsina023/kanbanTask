@@ -25,7 +25,7 @@ const Nav = async () => {
     rewards = leaderboardData?.rewards ?? [];
   }
   const roleLink = session?.role === Role.ADMIN ? "/admin" : "/member";
-  console.log(session?.id, "from nav");
+
   return (
     <ScrollNav>
       <nav className="sticky top-0 z-40 border-b border-gray-200/60 bg-white/70 backdrop-blur-xl transition-all">
