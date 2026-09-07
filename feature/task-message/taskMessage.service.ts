@@ -3,68 +3,9 @@ import { Errors } from "@/lib/errors/errors";
 import { normalizeError } from "@/lib/errors/normalizeError";
 import prisma from "@/lib/prisma";
 import { notificationService } from "../notification/notification.service";
+import { realtimePublisher } from "@/lib/realtime/realtime.publisher";
 
 class TaskMessageService {
-  // async sendMessage(taskId: string, senderId: string, message: string) {
-  //   try {
-  //     const task = await prisma.task.findUnique({
-  //       where: {
-  //         id: taskId,
-  //       },
-  //       select: {
-  //         id: true,
-  //         title: true,
-  //         assigneeId: true,
-  //       },
-  //     });
-  //     if (!task) {
-  //       throw Errors.notFound("Task not found", ErrorResource.TASK);
-  //     }
-  //     const sender = await prisma.user.findUnique({
-  //       where: {
-  //         id: senderId,
-  //       },
-  //       select: {
-  //         id: true,
-  //         role: true,
-  //       },
-  //     });
-  //     if (!sender) {
-  //       throw Errors.notFound("User not found", ErrorResource.USER);
-  //     }
-  //     if (sender.role !== "ADMIN" && task.assigneeId !== senderId) {
-  //       throw Errors.forbidden(
-  //         "You can only send messages for tasks assigned to you",
-  //         ErrorResource.TASK,
-  //       );
-  //     }
-  //     const taskMessage = await prisma.taskMessage.create({
-  //       data: {
-  //         taskId,
-  //         senderId,
-  //         message,
-  //       },
-  //       include: {
-  //         sender: {
-  //           select: {
-  //             id: true,
-  //             email: true,
-  //             role: true,
-  //           },
-  //         },
-  //       },
-  //     });
-  //     await notificationService.taskMessageNotification(
-  //       senderId,
-  //       taskId,
-  //       message,
-  //     );
-
-  //     return taskMessage;
-  //   } catch (error) {
-  //     throw normalizeError(error, ErrorResource.MESSAGE);
-  //   }
-  // }
   async sendMessage(taskId: string, senderId: string, message: string) {
     try {
       const task = await prisma.task.findUnique({
@@ -147,12 +88,15 @@ class TaskMessageService {
           taskId,
           message,
         );
-
         return {
           taskMessage,
           notification,
         };
       });
+      await realtimePublisher.publishMessageToAdmin(result.taskMessage);
+      if (result.notification) {
+        await realtimePublisher.publishNotification(result.notification);
+      }
       return result.taskMessage;
     } catch (error) {
       throw normalizeError(error, ErrorResource.MESSAGE);

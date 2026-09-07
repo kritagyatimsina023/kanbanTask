@@ -72,7 +72,6 @@ export async function createTaskMessageAction(
 ): Promise<sendTaskMessageState> {
   try {
     const session = await requireAuth();
-
     const rawData = {
       taskId: formData.get("taskId"),
       message: formData.get("message"),
@@ -95,8 +94,8 @@ export async function createTaskMessageAction(
       data: message,
     };
   } catch (error) {
+    console.error(error);
     const handledError = handleError(error);
-
     return {
       success: false,
       error: handledError.message,

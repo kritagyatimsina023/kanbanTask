@@ -1,6 +1,8 @@
 import { requireAuth } from "@/lib/auth";
 
 import MemberDataPage from "@/feature/member/_components/MemberDataPage";
+import { Suspense } from "react";
+import MemberTaskOverviewSkeleton from "@/feature/member/_components/MemberDataPageSkeleton";
 
 export default async function DashboardPage() {
   const session = await requireAuth();
@@ -16,7 +18,9 @@ export default async function DashboardPage() {
             Track your task progress and productivity.
           </p>
         </div>
-        <MemberDataPage />
+        <Suspense fallback={<MemberTaskOverviewSkeleton />}>
+          <MemberDataPage />
+        </Suspense>
       </div>
     </section>
   );

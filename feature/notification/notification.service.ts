@@ -49,6 +49,7 @@ export class NotificationService {
   //   };
   // }
   async createTaskAssignedNotification(
+    tx: TransactionClient,
     userId: string,
     taskId: string,
     taskTitle: string,
@@ -60,7 +61,7 @@ export class NotificationService {
             timeZone: "Asia/Kathmandu",
           })}.`
         : "";
-      return prisma.notification.upsert({
+      return tx.notification.upsert({
         where: {
           userId_taskId_type: {
             userId,
@@ -105,9 +106,13 @@ export class NotificationService {
       throw normalizeError(error, ErrorResource.NOTIFICATION);
     }
   }
-  async createTaskDeletedNotification(userId: string, taskTitle: string) {
+  async createTaskDeletedNotification(
+    tx: TransactionClient,
+    userId: string,
+    taskTitle: string,
+  ) {
     try {
-      return await prisma.notification.create({
+      return await tx.notification.create({
         data: {
           userId,
           type: "TASK_DELETED",
@@ -120,13 +125,14 @@ export class NotificationService {
     }
   }
   async createRewardedNotificaiton(
+    tx: TransactionClient,
     userId: string,
     title: string,
     rewardMsg: string | null,
     rewardedAt: Date,
   ) {
     try {
-      const notification = await prisma.notification.create({
+      const notification = await tx.notification.create({
         data: {
           userId,
           type: "REWARD_GRANTED",
@@ -210,7 +216,6 @@ export class NotificationService {
     if (!task) {
       throw Errors.notFound("Task not found", ErrorResource.TASK);
     }
-
     const sender = await tx.user.findUnique({
       where: {
         id: senderId,
@@ -263,21 +268,45 @@ export class NotificationService {
     memberIds: string[],
     creator: string,
   ) {
-    try {
-      await tx.notification.createMany({
-        data: memberIds.map((userId) => ({
-          userId,
-          chatRoomId,
-          type: NotificationType.CHAT_ROOM_ADDED,
-          title: "Added to Chat Room",
-          message: `you have been added to ${chatRoomName} group. By ${creator}`,
-        })),
-        skipDuplicates: true,
-      });
-    } catch (error) {
-      throw normalizeError(error, ErrorResource.NOTIFICATION);
-    }
+    return await Promise.all(
+      memberIds.map((userId) =>
+        tx.notification.create({
+          data: {
+            userId,
+            chatRoomId,
+            type: NotificationType.CHAT_ROOM_ADDED,
+            title: "Added to Chat Room",
+            message: `You have been added to ${chatRoomName} group by ${creator}`,
+          },
+        }),
+      ),
+    );
   }
+  // async chatRoomNotification(
+  //   tx: Prisma.TransactionClient,
+  //   chatRoomId: string,
+  //   chatRoomName: string,
+  //   memberIds: string[],
+  //   creator: string,
+  // ) {
+  //   try {
+  //     return await Promise.all(
+  //       memberIds.map((userId) =>
+  //         tx.notification.create({
+  //           data: {
+  //             userId,
+  //             chatRoomId,
+  //             type: NotificationType.CHAT_ROOM_ADDED,
+  //             title: "Added to Chat Room",
+  //             message: `You have been added to ${chatRoomName} group by ${creator}`,
+  //           },
+  //         }),
+  //       ),
+  //     );
+  //   } catch (error) {
+  //     throw normalizeError(error, ErrorResource.NOTIFICATION);
+  //   }
+  // }
   async removedFromChatRoom(
     tx: Prisma.TransactionClient,
     userId: string,

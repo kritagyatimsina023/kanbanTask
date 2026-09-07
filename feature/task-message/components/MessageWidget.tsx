@@ -1,13 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, MessageCircle, X } from "lucide-react";
 import { ConversationView } from "./ConversationView";
 import { ConversationList } from "./ConversationList";
-import { Conversation } from "@/app/types/taskMessage.types";
+import { Conversation, TaskMessageData } from "@/app/types/taskMessage.types";
 import { Role } from "@/generated/prisma/enums";
 import { markTaskMessageAsRead } from "@/feature/task-message/taskMessage.action";
+import {
+  REALTIME_CHANNELS,
+  REALTIME_EVENTS,
+} from "@/lib/realtime/realtime.events";
+import { pusherClient } from "@/lib/pusher/pusher.client";
+import { TaskMessage } from "@/generated/prisma/browser";
 
 type Props = {
   conversations: Conversation[];
@@ -15,11 +21,69 @@ type Props = {
   userId: string;
 };
 
-const MessageWidget = ({ conversations, role, userId }: Props) => {
+const MessageWidget = ({
+  conversations: initialConversations,
+  role,
+  userId,
+}: Props) => {
   const router = useRouter();
-
   const [isOpen, setIsOpen] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+  const [conversations, setConversations] = useState(initialConversations);
+
+  const taskIds = conversations
+    .map((conversation) => conversation.taskId)
+    .join(",");
+
+  useEffect(() => {
+    const channels = conversations.map((conversation) => {
+      const channelName = REALTIME_CHANNELS.taskMessage(conversation.taskId);
+
+      const channel = pusherClient.subscribe(channelName);
+
+      const handleNewMessage = (message: TaskMessageData) => {
+        setConversations((current) =>
+          current.map((conversation) => {
+            if (conversation.taskId !== message.taskId) {
+              return conversation;
+            }
+
+            const alreadyExists = conversation.messages.some(
+              (item) => item.id === message.id,
+            );
+
+            if (alreadyExists) {
+              return conversation;
+            }
+
+            return {
+              ...conversation,
+              messages: [...conversation.messages, message],
+            };
+          }),
+        );
+      };
+
+      channel.bind(REALTIME_EVENTS.TASK_MESSAGE_WITH_ADMIN, handleNewMessage);
+
+      return {
+        channelName,
+        channel,
+        handleNewMessage,
+      };
+    });
+
+    return () => {
+      channels.forEach(({ channelName, channel, handleNewMessage }) => {
+        channel.unbind(
+          REALTIME_EVENTS.TASK_MESSAGE_WITH_ADMIN,
+          handleNewMessage,
+        );
+
+        pusherClient.unsubscribe(channelName);
+      });
+    };
+  }, [taskIds]);
 
   const selectedConversation = conversations.find(
     (conversation) => conversation.taskId === selectedTaskId,
@@ -37,12 +101,46 @@ const MessageWidget = ({ conversations, role, userId }: Props) => {
     setSelectedTaskId(taskId);
     const result = await markTaskMessageAsRead(taskId);
     if (result.success) {
+      setConversations((current) =>
+        current.map((conversation) => {
+          if (conversation.taskId !== taskId) {
+            return conversation;
+          }
+
+          return {
+            ...conversation,
+            messages: conversation.messages.map((message) => ({
+              ...message,
+              isRead: true,
+            })),
+          };
+        }),
+      );
       router.refresh();
     }
   };
+
   const handleBack = () => {
     setSelectedTaskId(null);
   };
+  const handleMessageSent = useCallback((message: TaskMessageData) => {
+    setConversations((current) =>
+      current.map((conversation) => {
+        if (conversation.taskId !== message.taskId) {
+          return conversation;
+        }
+
+        if (conversation.messages.some((item) => item.id === message.id)) {
+          return conversation;
+        }
+
+        return {
+          ...conversation,
+          messages: [...conversation.messages, message],
+        };
+      }),
+    );
+  }, []);
 
   return (
     <>
@@ -111,6 +209,8 @@ const MessageWidget = ({ conversations, role, userId }: Props) => {
                 userId={userId}
                 taskId={selectedTaskId}
                 role={role}
+                messages={selectedConversation?.messages ?? []}
+                onMessageSent={handleMessageSent}
               />
             ) : (
               <ConversationList

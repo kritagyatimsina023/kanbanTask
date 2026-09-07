@@ -9,7 +9,7 @@ import {
   Trash2Icon,
 } from "lucide-react";
 import { Notification } from "@/app/types/notification";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { formatNepalDate, getNotificationLink } from "@/lib/helper";
 import { NotificationType, Role } from "@/generated/prisma/enums";
 import { ClockAlert, UserPlus, Trash2, Gift } from "lucide-react";
@@ -23,10 +23,13 @@ import NotificationModel from "./NotificationModel";
 import { toast } from "sonner";
 import Tooltip from "@/components/Tooltip";
 import { useClickOutside } from "@/hooks/useClickOutside";
+import { pusherClient } from "@/lib/pusher/pusher.client";
+import { REALTIME_EVENTS } from "@/lib/realtime/realtime.events";
 
 type Props = {
   notifications: Notification[];
   role: Role;
+  userId: string;
 };
 const notificationIcons: Record<NotificationType, LucideIcon> = {
   [NotificationType.TASK_OVERDUE]: ClockAlert,
@@ -38,7 +41,13 @@ const notificationIcons: Record<NotificationType, LucideIcon> = {
   [NotificationType.REMOVE_FROM_ROOM]: MessageCircleDashed,
   [NotificationType.ADDED_TO_ROOM]: UserPlus,
 };
-export default function NotificationBell({ notifications, role }: Props) {
+export default function NotificationBell({
+  notifications: initialNotifications,
+  role,
+  userId,
+}: Props) {
+  const [notifications, setNotifications] =
+    useState<Notification[]>(initialNotifications);
   const [open, setOpen] = useState(false);
   const [showAll, setShowAll] = useState(false);
   const notificationRef = useRef<HTMLDivElement>(null);
@@ -46,14 +55,49 @@ export default function NotificationBell({ notifications, role }: Props) {
   const unreadCount = notifications.filter(
     (notification) => !notification.read,
   ).length;
+  console.log("Notification bell userId", userId);
+
+  // const handleOpenNotification = async () => {
+  //   setOpen((prev) => !prev);
+  //   if (unreadCount > 0) {
+  //     await markAllNotificationsAsReadAction();
+  //     router.refresh();
+  //   }
+  // };
 
   const handleOpenNotification = async () => {
     setOpen((prev) => !prev);
-    if (unreadCount > 0) {
-      await markAllNotificationsAsReadAction();
-      router.refresh();
+
+    if (unreadCount === 0) {
+      return;
     }
+
+    const result = await markAllNotificationsAsReadAction();
+
+    if (!result.success) {
+      toast.error(result.message);
+      return;
+    }
+
+    setNotifications((current) =>
+      current.map((notification) => ({
+        ...notification,
+        read: true,
+      })),
+    );
   };
+
+  // const handleDeleteNotification = async (notificationId?: string) => {
+  //   const result = await deleteNotificaiton(notificationId);
+
+  //   if (!result.success) {
+  //     toast.error(result.message);
+  //     return;
+  //   }
+  //   toast.success(result.message);
+  //   router.refresh();
+  // };
+
   const handleDeleteNotification = async (notificationId?: string) => {
     const result = await deleteNotificaiton(notificationId);
 
@@ -61,9 +105,48 @@ export default function NotificationBell({ notifications, role }: Props) {
       toast.error(result.message);
       return;
     }
+
+    setNotifications((current) =>
+      current.filter((notification) => notification.id !== notificationId),
+    );
+
     toast.success(result.message);
-    router.refresh();
   };
+
+  // const handleDeleteNotification = async (notificationId?: string) => {
+  //   const result = await deleteNotificaiton(notificationId);
+
+  //   if (!result.success) {
+  //     toast.error(result.message);
+  //     return;
+  //   }
+
+  //   setNotifications((current) =>
+  //     current.filter((notification) => notification.id !== notificationId),
+  //   );
+
+  //   toast.success(result.message);
+  // };
+
+  // const handleOpenNotification = async () => {
+  //   setOpen((prev) => !prev);
+
+  //   if (unreadCount > 0) {
+  //     const result = await markAllNotificationsAsReadAction();
+
+  //     if (!result.success) {
+  //       toast.error(result.message);
+  //       return;
+  //     }
+
+  //     setNotifications((current) =>
+  //       current.map((notification) => ({
+  //         ...notification,
+  //         read: true,
+  //       })),
+  //     );
+  //   }
+  // };
   useClickOutside(notificationRef, () => {
     setOpen(false);
   });
@@ -77,9 +160,26 @@ export default function NotificationBell({ notifications, role }: Props) {
     setShowAll(false);
     router.push(link);
   };
+  useEffect(() => {
+    const channelName = `private-user-${userId}`;
+    const channel = pusherClient.subscribe(channelName);
+    const handleNewNotification = (notification: Notification) => {
+      setNotifications((current) => {
+        if (current.some((item) => item.id === notification.id)) {
+          return current;
+        }
+        return [notification, ...current];
+      });
+    };
+    channel.bind(REALTIME_EVENTS.NOTIFICATION_NEW, handleNewNotification);
+    return () => {
+      channel.unbind(REALTIME_EVENTS.NOTIFICATION_NEW, handleNewNotification);
+      pusherClient.unsubscribe(channelName);
+    };
+  }, [userId]);
 
   return (
-    <div ref={notificationRef} className="relative">
+    <div ref={notificationRef} className="relative ">
       {/* Bell */}
       <Tooltip text="Notification" side="bottom">
         <button
@@ -97,17 +197,16 @@ export default function NotificationBell({ notifications, role }: Props) {
         </button>
       </Tooltip>
 
-      {/* Notification Dropdown */}
       {open && (
-        <>
+        <div className="relative z-[99999]">
           <button
             type="button"
             aria-label="Close notifications"
             onClick={() => setOpen(false)}
-            className="fixed inset-0 z-40 cursor-default"
+            className="fixed inset-0 z-[9999] cursor-default"
           />
 
-          <div className="absolute right-0 top-12 z-50 w-[360px] overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.12)]">
+          <div className="absolute right-0  z-50 w-[360px] overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.12)]">
             {/* Header */}
             <div className="flex items-center justify-between border-b border-gray-100 px-4! py-3!">
               <div>
@@ -228,7 +327,7 @@ export default function NotificationBell({ notifications, role }: Props) {
               </div>
             )}
           </div>
-        </>
+        </div>
       )}
 
       {showAll && (

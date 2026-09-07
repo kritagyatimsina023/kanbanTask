@@ -1,54 +1,41 @@
 "use client";
 
 import { X, Award } from "lucide-react";
-import { FormEvent, useState, useTransition } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { toast } from "sonner";
-import { rewardUser } from "../leaderboard.action";
+import { rewardState, rewardUser } from "../leaderboard.action";
 
 type RewardUser = {
   id: string;
   email: string;
 };
-
 interface RewardUserModalProps {
   user: RewardUser | null;
   onClose: () => void;
 }
-
+const initialState: rewardState = {
+  error: null,
+  success: false,
+};
 export default function RewardUserModal({
   user,
   onClose,
 }: RewardUserModalProps) {
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
-  const [isPending, startTransition] = useTransition();
-
+  const [state, fromAction, pending] = useActionState(rewardUser, initialState);
+  useEffect(() => {
+    if (state.success) {
+      toast.success(state.message || "Reward granted to user");
+      onClose();
+    }
+    if (state.error) {
+      toast.error(state.error);
+    }
+  }, [state, onClose]);
   if (!user) {
     return null;
   }
-
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (!title.trim()) {
-      toast.error("Reward title is required");
-      return;
-    }
-    startTransition(async () => {
-      try {
-        await rewardUser(user.id, title, message);
-        toast.success("Reward awarded successfully");
-        setTitle("");
-        setMessage("");
-        onClose();
-      } catch (error) {
-        toast.error(
-          error instanceof Error ? error.message : "Failed to award reward",
-        );
-      }
-    });
-  };
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
       <div className="w-full max-w-md rounded-xl bg-white shadow-xl">
@@ -69,14 +56,14 @@ export default function RewardUserModal({
           <button
             type="button"
             onClick={onClose}
-            disabled={isPending}
+            disabled={pending}
             className="rounded-lg p-2 text-gray-400 transition hover:bg-gray-100 hover:text-gray-600"
           >
             <X size={18} />
           </button>
         </div>
-
-        <form onSubmit={handleSubmit} className="space-y-4 px-6! py-5!">
+        <form action={fromAction} className="space-y-4 px-6! py-5!">
+          <input type="hidden" value={user.id} name="userId" />
           <div>
             <label
               htmlFor="reward-title"
@@ -84,17 +71,16 @@ export default function RewardUserModal({
             >
               Reward Title
             </label>
-
             <input
               id="reward-title"
+              name="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Outstanding Performance"
-              disabled={isPending}
+              disabled={pending}
               className="w-full rounded-lg border border-gray-200 px-3! py-2.5! text-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
             />
           </div>
-
           <div>
             <label
               htmlFor="reward-message"
@@ -105,14 +91,14 @@ export default function RewardUserModal({
                 (optional)
               </span>
             </label>
-
             <textarea
               id="reward-message"
               value={message}
+              name="message"
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Great work completing so many tasks!"
               rows={4}
-              disabled={isPending}
+              disabled={pending}
               className="w-full resize-none rounded-lg border border-gray-200 px-3! py-2.5! text-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
             />
           </div>
@@ -121,20 +107,19 @@ export default function RewardUserModal({
             <button
               type="button"
               onClick={onClose}
-              disabled={isPending}
+              disabled={pending}
               className="rounded-lg px-4! py-2! text-sm font-medium text-gray-600 transition hover:bg-gray-100"
             >
               Cancel
             </button>
-
             <button
               type="submit"
-              disabled={isPending}
+              disabled={pending}
               className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4! py-2! text-sm font-medium text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
             >
               <Award size={15} />
 
-              {isPending ? "Awarding..." : "Give Reward"}
+              {pending ? "Awarding..." : "Give Reward"}
             </button>
           </div>
         </form>

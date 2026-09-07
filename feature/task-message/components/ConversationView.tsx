@@ -11,48 +11,17 @@ type ConversationViewProps = {
   taskId: string;
   role: Role;
   userId: string;
+  messages: TaskMessageData[];
+  onMessageSent: (message: TaskMessageData) => void;
 };
 
 export const ConversationView = ({
   taskId,
   role,
   userId,
+  messages,
+  onMessageSent,
 }: ConversationViewProps) => {
-  const [messages, setMessages] = useState<TaskMessageData[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const loadMessages = async () => {
-      try {
-        setLoading(true);
-
-        const result = await getTaskMessages(taskId);
-
-        if (result.success) {
-          setMessages(result.data);
-        }
-      } catch (error) {
-        console.error("Failed to load task messages:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadMessages();
-  }, [taskId]);
-
-  const handleMessageSent = useCallback((message: TaskMessageData) => {
-    setMessages((current) => [...current, message]);
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="flex min-h-0 flex-1 items-center justify-center">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-gray-200 border-t-indigo-600" />
-      </div>
-    );
-  }
-
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain bg-gray-50/50 px-4! py-5!">
@@ -102,7 +71,7 @@ export const ConversationView = ({
 
       {role === Role.ADMIN && (
         <div className="shrink-0">
-          <AdminReplyInput taskId={taskId} onMessageSent={handleMessageSent} />
+          <AdminReplyInput taskId={taskId} onMessageSent={onMessageSent} />
         </div>
       )}
     </div>

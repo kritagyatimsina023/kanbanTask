@@ -4,10 +4,7 @@ import { signToken } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { authService } from "./auth.service";
 import { handleError } from "@/lib/errors/handle-error";
-
-type LoginState = {
-  error: string | null;
-};
+import { LoginState } from "../types/auth";
 
 export async function loginAction(
   prevState: LoginState,
@@ -19,6 +16,7 @@ export async function loginAction(
   if (!email || !password) {
     return {
       error: "Email and password are required",
+      success: false,
     };
   }
   let user;
@@ -41,6 +39,7 @@ export async function loginAction(
     const handledError = handleError(error);
     return {
       error: handledError.message,
+      success: false,
     };
   }
   if (user.role === "ADMIN") {

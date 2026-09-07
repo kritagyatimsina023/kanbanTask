@@ -1,10 +1,12 @@
 "use client";
 
 import { Ban, CheckCircle2, Shield, UserRound } from "lucide-react";
-import { useState, useTransition } from "react";
+import { useActionState, useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import BanUserModal from "./BanUserModal";
 import { toggleBanUser } from "../user.action";
+import { Role } from "@/generated/prisma/enums";
+import { toast } from "sonner";
 
 type User = {
   id: string;
@@ -21,34 +23,30 @@ type User = {
 interface UsersTableProps {
   users: User[];
 }
+const initialState = {
+  success: false,
+  error: null,
+  message: "",
+};
 
 export default function UsersTable({ users }: UsersTableProps) {
-  const router = useRouter();
-
   const [selectedUser, setSelectedUser] = useState<{
     id: string;
     email: string;
   } | null>(null);
 
-  const [isPending, startTransition] = useTransition();
-
-  const handleUserAction = (user: User) => {
-    if (user.status === "ACTIVE") {
-      setSelectedUser({
-        id: user.id,
-        email: user.email,
-      });
-      return;
+  const [state, formAction, isPending] = useActionState(
+    toggleBanUser,
+    initialState,
+  );
+  useEffect(() => {
+    if (state.success) {
+      toast.success(state.message);
     }
-    startTransition(async () => {
-      try {
-        await toggleBanUser(user.id);
-        router.refresh();
-      } catch (error) {
-        console.error("Failed to unban user:", error);
-      }
-    });
-  };
+    if (state.error) {
+      toast.error(state.error);
+    }
+  }, [state.success, state.error, state.message]);
 
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
@@ -154,7 +152,6 @@ export default function UsersTable({ users }: UsersTableProps) {
                     {user.completed}
                   </span>
                 </td>
-
                 <td className="px-4! py-4! text-center">
                   {user.status === "ACTIVE" ? (
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-2.5! py-1! text-xs font-semibold text-green-600">
@@ -168,32 +165,38 @@ export default function UsersTable({ users }: UsersTableProps) {
                     </span>
                   )}
                 </td>
-
                 <td className="px-6! py-4! text-right">
-                  {user.role !== "ADMIN" && (
-                    <button
-                      type="button"
-                      disabled={isPending}
-                      onClick={() => handleUserAction(user)}
-                      className={`inline-flex items-center gap-2 rounded-lg px-3! py-2! text-sm font-medium transition ${
-                        user.status === "ACTIVE"
-                          ? "text-red-600 hover:bg-red-50"
-                          : "text-green-600 hover:bg-green-50"
-                      } disabled:cursor-not-allowed disabled:opacity-50`}
-                    >
+                  {user.role !== Role.ADMIN && (
+                    <>
                       {user.status === "ACTIVE" ? (
-                        <>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectedUser({
+                              id: user.id,
+                              email: user.email,
+                            });
+                          }}
+                          className="inline-flex items-center gap-2 rounded-lg px-3! py-2! text-sm font-medium text-red-600 transition hover:bg-red-50"
+                        >
                           <Ban size={15} />
                           Ban
-                        </>
+                        </button>
                       ) : (
-                        <>
-                          <CheckCircle2 size={15} />
-
-                          {isPending ? "Unbanning..." : "Unban"}
-                        </>
+                        <form action={formAction}>
+                          <input type="hidden" name="userId" value={user.id} />
+                          <input type="hidden" name="action" value={"unban"} />
+                          <button
+                            type="submit"
+                            disabled={isPending}
+                            className="inline-flex items-center gap-2 rounded-lg px-3! py-2! text-sm font-medium text-green-600 transition hover:bg-green-50 disabled:cursor-not-allowed disabled:opacity-50"
+                          >
+                            <CheckCircle2 size={15} />
+                            {isPending ? "Unbanning..." : "Unban"}
+                          </button>
+                        </form>
                       )}
-                    </button>
+                    </>
                   )}
                 </td>
               </tr>
@@ -201,7 +204,6 @@ export default function UsersTable({ users }: UsersTableProps) {
           </tbody>
         </table>
       </div>
-
       <BanUserModal user={selectedUser} onClose={() => setSelectedUser(null)} />
     </div>
   );

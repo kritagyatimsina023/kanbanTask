@@ -1,15 +1,56 @@
+"use client";
 import { messages } from "@/app/types/chatMessage.types";
+import { useMessageSound } from "@/hooks/useMessageSound";
 import { formatNepalDate } from "@/lib/helper";
+import { pusherClient } from "@/lib/pusher/pusher.client";
+import { REALTIME_EVENTS } from "@/lib/realtime/realtime.events";
 import { MessageCircle } from "lucide-react";
-import React from "react";
+import { useEffect, useState } from "react";
+import { Volume2, VolumeX } from "lucide-react";
+import { useScrollToBottom } from "@/hooks/useScrollToBottom";
 type props = {
   messages: messages[];
   currentUserId: string;
+  roomId: string;
 };
 
-const ChatMessages = ({ messages, currentUserId }: props) => {
+const ChatMessages = ({
+  messages: initialMessages,
+  currentUserId,
+  roomId,
+}: props) => {
+  const [messages, setMessages] = useState<messages[]>(initialMessages);
+  const { playSound } = useMessageSound();
+  const messageContainerRef = useScrollToBottom(messages);
+
+  useEffect(() => {
+    const channelName = `private-chat-room-${roomId}`;
+    const channel = pusherClient.subscribe(channelName);
+    console.log(channelName, "roomId channel name");
+
+    const handleNewMessage = (message: messages) => {
+      if (message.sender.id !== currentUserId) {
+        playSound();
+      }
+      setMessages((currentMessages) => {
+        if (currentMessages.some((item) => item.id === message.id)) {
+          return currentMessages;
+        }
+        return [...currentMessages, message];
+      });
+    };
+    channel.bind(REALTIME_EVENTS.CHAT_MESSAGE_NEW, handleNewMessage);
+    return () => {
+      channel.unbind(REALTIME_EVENTS.CHAT_MESSAGE_NEW, handleNewMessage);
+      pusherClient.unsubscribe(channelName);
+    };
+  }, [roomId, playSound, currentUserId]);
+
   return (
-    <div className="min-h-0 flex-1 overflow-y-auto bg-gray-50 px-4! py-5! sm:px-6!">
+    <div
+      ref={messageContainerRef}
+      className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-contain bg-gray-50 px-4! py-5! sm:px-6!"
+    >
       <div className="mx-auto flex max-w-4xl flex-col gap-4">
         {/* Date */}
         <div className="flex justify-center">
@@ -17,7 +58,6 @@ const ChatMessages = ({ messages, currentUserId }: props) => {
             Today
           </span>
         </div>
-
         {messages.length === 0 ? (
           <div className="flex flex-1 items-center justify-center">
             <div className="text-center">

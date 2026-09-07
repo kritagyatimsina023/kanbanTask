@@ -9,13 +9,11 @@ type TopPerformer = {
   points: number;
   rank: number;
 };
-
 interface RewardSummaryProps {
   totalRewards: number;
   rewardsThisMonth: number;
   topPerformers: TopPerformer[];
 }
-
 const RewardSummary = ({
   totalRewards,
   rewardsThisMonth,

@@ -1,5 +1,6 @@
 "use client";
 
+import { useDebounce } from "@/hooks/useDebounce";
 import { Search, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -17,24 +18,17 @@ const TaskSearch = ({
   debounceMs = 400,
 }: Props) => {
   const [searchTerm, setSearchTerm] = useState(value);
-
   const isTyping = searchTerm.trim() !== value.trim();
-
+  const debouncedSearch = useDebounce(searchTerm.trim(), debounceMs);
   useEffect(() => {
-    if (!isTyping) return;
-
-    const timeout = setTimeout(() => {
-      onChange(searchTerm.trim());
-    }, debounceMs);
-
-    return () => clearTimeout(timeout);
-  }, [searchTerm, debounceMs, onChange, isTyping]);
-
+    if (debouncedSearch !== value.trim()) {
+      onChange(debouncedSearch);
+    }
+  }, [debouncedSearch, value, onChange]);
   const clearSearch = () => {
     setSearchTerm("");
     onChange("");
   };
-
   return (
     <div className="relative w-full max-w-sm">
       <Search

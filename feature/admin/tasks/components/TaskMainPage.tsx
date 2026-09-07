@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import TaskTableDataPage from "./TaskTableDataPage";
 import TaskTableSkeleton from "./TaskTableSkeleton";
-import AdminTaskControls from "./AdminTaskControls";
+import MyTaskControls from "@/components/task/MyTaskControls";
 
 type TaskMainPage = {
   searchParams: Promise<{
@@ -10,10 +10,8 @@ type TaskMainPage = {
     filter?: string;
   }>;
 };
-
 export default async function TaskMainPage({ searchParams }: TaskMainPage) {
   const params = await searchParams;
-
   return (
     <div>
       <div className="mb-8! flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -23,9 +21,9 @@ export default async function TaskMainPage({ searchParams }: TaskMainPage) {
             Manage tasks, monitor assignments, and track task progress.
           </p>
         </div>
-        <AdminTaskControls 
-          initialSearch={params.search || ""} 
-          initialFilter={params.filter || ""} 
+        <MyTaskControls
+          initialSearch={params.search || ""}
+          initialFilter={params.filter || ""}
         />
       </div>
       <Suspense fallback={<TaskTableSkeleton />}>

@@ -74,7 +74,6 @@ export default function LeaderBoardTable({ users }: LeaderBoardTableProps) {
                   key={user.id}
                   className="transition-colors hover:bg-gray-50/70"
                 >
-                  {/* Rank */}
                   <td className="px-6! py-4!">
                     <div className="flex items-center">
                       {user.rank === 1 ? (
@@ -96,7 +95,6 @@ export default function LeaderBoardTable({ users }: LeaderBoardTableProps) {
                       )}
                     </div>
                   </td>
-
                   {/* User */}
                   <td className="px-4! py-4!">
                     <div className="flex items-center gap-3">
@@ -154,18 +152,19 @@ export default function LeaderBoardTable({ users }: LeaderBoardTableProps) {
           </table>
         </div>
       </div>
-
-      <RewardUserModal
-        user={
-          selectedUser
-            ? {
-                id: selectedUser.id,
-                email: selectedUser.email,
-              }
-            : null
-        }
-        onClose={() => setSelectedUser(null)}
-      />
+      {selectedUser && (
+        <RewardUserModal
+          user={
+            selectedUser
+              ? {
+                  id: selectedUser.id,
+                  email: selectedUser.email,
+                }
+              : null
+          }
+          onClose={() => setSelectedUser(null)}
+        />
+      )}
     </>
   );
 }

@@ -35,7 +35,6 @@ export default function TaskBoardContent({
   const isAdmin = currentUser.role === "ADMIN";
   const { handleStatusChange, pendingTaskId } = useTaskActions();
   const [activeTask, setActiveTask] = useState<TaskWithAssignee | null>(null);
-
   const handleDragStart = useCallback(
     (event: DragStartEvent) => {
       const { active } = event;
@@ -44,9 +43,8 @@ export default function TaskBoardContent({
         setActiveTask(task);
       }
     },
-    [initialTasks]
+    [initialTasks],
   );
-
   const handleDragEnd = useCallback(
     (event: DragEndEvent) => {
       setActiveTask(null);
@@ -67,7 +65,7 @@ export default function TaskBoardContent({
 
       handleStatusChange(taskId, destinationStatus);
     },
-    [initialTasks, isAdmin, currentUser.id, handleStatusChange]
+    [initialTasks, isAdmin, currentUser.id, handleStatusChange],
   );
 
   const handleDragCancel = useCallback(() => {

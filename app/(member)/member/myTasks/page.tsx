@@ -1,16 +1,15 @@
-import MyTaskHome from "@/feature/member/myTask/components/MyTaskHome";
-import { taskService } from "@/feature/member/task.service";
-import { requireAuth } from "@/lib/auth";
-import React from "react";
+import MyTaskMainPage from "@/feature/member/myTask/components/MyTaskMainPage";
 
-const MyTaskMain = async () => {
-  const session = await requireAuth();
-  const data = await taskService.getMyTask(session.id);
-  return (
-    <>
-      <MyTaskHome taskData={data} />
-    </>
-  );
+type TaskHomeProps = {
+  searchParams: Promise<{
+    page?: string;
+    search?: string;
+    filter?: string;
+  }>;
 };
 
-export default MyTaskMain;
+const MyTaskPage = ({ searchParams }: TaskHomeProps) => {
+  return <MyTaskMainPage searchParams={searchParams} />;
+};
+
+export default MyTaskPage;

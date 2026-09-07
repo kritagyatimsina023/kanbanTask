@@ -6,13 +6,13 @@ import {
   ChevronRight,
   CalendarClock,
 } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
+
 import { DateOnly, TimeOnly } from "@/lib/helper";
+import { useTaskFilters } from "@/hooks/useTaskFilters";
 
 type TaskTableProps = {
   data: Awaited<ReturnType<typeof taskService.getAllTasks>>;
 };
-
 const statusStyles = {
   TODO: "bg-gray-100 text-gray-700",
   IN_PROGRESS: "bg-yellow-50 text-yellow-700 ",
@@ -20,18 +20,8 @@ const statusStyles = {
 };
 
 const TaskTable = ({ data }: TaskTableProps) => {
-  const router = useRouter();
-  const searchParams = useSearchParams();
   const { tasks, totalTasks, totalPages, currentPage } = data;
-  const handlePageChange = (page: number) => {
-    const params = new URLSearchParams(searchParams.toString());
-    if (page === 1) {
-      params.delete("page");
-    } else {
-      params.set("page", page.toString());
-    }
-    router.push(`/admin/tasks?${params.toString()}`);
-  };
+  const { updatePage } = useTaskFilters();
 
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
@@ -126,10 +116,6 @@ const TaskTable = ({ data }: TaskTableProps) => {
                   <td className="px-4! py-3!">
                     {task.assignee ? (
                       <div className="flex min-w-0 items-center gap-2!">
-                        {/* <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-indigo-50 text-indigo-600">
-                          <CircleUserRound size={14} />
-                        </div> */}
-
                         <div className="min-w-0">
                           <p
                             className="truncate text-sm font-medium text-gray-800"
@@ -177,24 +163,13 @@ const TaskTable = ({ data }: TaskTableProps) => {
                   <td className="px-4! py-3!">
                     <div className="flex items-center gap-1.5! text-xs text-gray-600">
                       <span className="whitespace-nowrap">
-                        {/* {formatNepalDate(task.createdAt)} */}
                         {DateOnly(task.createdAt)}
-                        {/* {new Date(task.createdAt).toLocaleDateString("en-NP", {
-                          year: "numeric",
-                          month: "short",
-                          day: "numeric",
-                        })} */}
                       </span>
                     </div>
                   </td>
 
                   <td className="px-4! py-3!">
                     <span className="whitespace-nowrap text-xs text-gray-600">
-                      {/* {new Date(task.updatedAt).toLocaleDateString("en-NP", {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      })} */}
                       {DateOnly(task.createdAt)}
                     </span>
                   </td>
@@ -220,11 +195,6 @@ const TaskTable = ({ data }: TaskTableProps) => {
                                 }`}
                               >
                                 {DateOnly(deadline)}
-                                {/* {deadline.toLocaleDateString("en-NP", {
-                                  year: "numeric",
-                                  month: "short",
-                                  day: "numeric",
-                                })} */}
                               </p>
                               <p
                                 className={`whitespace-nowrap text-[11px] ${
@@ -232,10 +202,6 @@ const TaskTable = ({ data }: TaskTableProps) => {
                                 }`}
                               >
                                 {TimeOnly(deadline)}
-                                {/* {deadline.toLocaleTimeString("en-NP", {
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                })} */}
                               </p>
                             </div>
                             {isOverdue && (
@@ -271,7 +237,7 @@ const TaskTable = ({ data }: TaskTableProps) => {
             <button
               type="button"
               disabled={currentPage === 1}
-              onClick={() => handlePageChange(currentPage - 1)}
+              onClick={() => updatePage(currentPage - 1)}
               className="flex items-center gap-1! rounded-lg border border-gray-200 bg-white px-3! py-2! text-sm text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
             >
               <ChevronLeft size={15} />
@@ -280,7 +246,7 @@ const TaskTable = ({ data }: TaskTableProps) => {
             <button
               type="button"
               disabled={currentPage === totalPages}
-              onClick={() => handlePageChange(currentPage + 1)}
+              onClick={() => updatePage(currentPage + 1)}
               className="flex items-center gap-1! rounded-lg border border-gray-200 bg-white px-3! py-2! text-sm text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
             >
               Next

@@ -4,7 +4,6 @@ type TaskHomeProps = {
     page?: string;
   }>;
 };
-
 const TaskHome = ({ searchParams }: TaskHomeProps) => {
   return <TaskMainPage searchParams={searchParams} />;
 };

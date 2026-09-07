@@ -1,7 +1,7 @@
 "use client";
 
 import { ImageIcon, Paperclip, Send, Smile } from "lucide-react";
-import { useRouter } from "next/navigation";
+
 import React, { useActionState, useEffect, useRef, useState } from "react";
 import { sendChatMessageAction } from "../chatMessage.action";
 import { ChatMessageActionState, Room } from "@/app/types/chatMessage.types";
@@ -18,8 +18,6 @@ type Props = {
 };
 
 const MessageInput = ({ room }: Props) => {
-  const router = useRouter();
-
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -33,8 +31,6 @@ const MessageInput = ({ room }: Props) => {
 
   const handleMessageChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const textarea = e.currentTarget;
-
-    setMessage(textarea.value);
 
     textarea.style.height = "auto";
 
@@ -65,10 +61,6 @@ const MessageInput = ({ room }: Props) => {
     if (!state.message && !state.fieldErrors) return;
 
     if (!state.success) {
-      if (state.message) {
-        toast.error(state.message);
-      }
-
       if (state.fieldErrors) {
         Object.values(state.fieldErrors).forEach((errors) => {
           errors?.forEach((error) => {
@@ -76,18 +68,18 @@ const MessageInput = ({ room }: Props) => {
           });
         });
       }
-
       return;
     }
-
+    if (textareaRef.current) {
+      textareaRef.current.value = "";
+      textareaRef.current.style.height = "auto";
+    }
     if (textareaRef.current) {
       textareaRef.current.style.height = "40px";
     }
 
     toast.success(state.message || "Message was sent successfully");
-
-    router.refresh();
-  }, [state, router]);
+  }, [state]);
 
   return (
     <div className="shrink-0 border-t border-gray-200 bg-white p-3! sm:p-4!">
@@ -112,7 +104,6 @@ const MessageInput = ({ room }: Props) => {
           <textarea
             ref={textareaRef}
             name="content"
-            value={message}
             onChange={handleMessageChange}
             onKeyDown={handleKeyDown}
             placeholder="Type a message..."
@@ -157,7 +148,7 @@ const MessageInput = ({ room }: Props) => {
         {/* Send */}
         <button
           type="submit"
-          disabled={pending || !message.trim()}
+          disabled={pending}
           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-400"
           aria-label="Send message"
         >

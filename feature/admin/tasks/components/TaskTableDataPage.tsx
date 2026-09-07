@@ -1,7 +1,6 @@
-// import { taskService } from "../tasks.service";
 import { taskService } from "@/feature/member/task.service";
 import TaskTable from "./TaskTable";
-import { isValidTaskFilter } from "@/constants/taskFilters.constants";
+import { parseTaskSearchParam } from "../task.utils";
 
 type TaskTableDataPageProps = {
   searchParams: Promise<{
@@ -13,12 +12,9 @@ type TaskTableDataPageProps = {
 
 const TaskTableDataPage = async ({ searchParams }: TaskTableDataPageProps) => {
   const params = await searchParams;
-  const page = Math.max(1, Number(params.page) || 1);
-  const search = params.search || undefined;
-  const filter = isValidTaskFilter(params.filter) ? params.filter : undefined;
-  const tasks = await taskService.getAllTasks({ page, search, filter });
+  const query = parseTaskSearchParam(params);
+  const tasks = await taskService.getAllTasks(query);
 
   return <TaskTable data={tasks} />;
 };
-
 export default TaskTableDataPage;

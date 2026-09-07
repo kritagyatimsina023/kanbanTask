@@ -119,10 +119,8 @@ model Reward {
 
   title     String
   message   String?
-
   points    Int      @default(0)
   milestone Int?
-
   createdAt DateTime @default(now())
   awardedBy String
 

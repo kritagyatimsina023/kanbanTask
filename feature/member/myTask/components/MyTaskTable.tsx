@@ -1,7 +1,9 @@
-import { MyTask } from "@/app/types/task.types";
+import { MyTask, MyTaskData } from "@/app/types/task.types";
 import { DateOnly, formatNepalDate } from "@/lib/helper";
 import {
   CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
   Clock3,
   Eye,
   ListTodo,
@@ -9,9 +11,15 @@ import {
 } from "lucide-react";
 
 import { memo } from "react";
+import { taskService } from "../../task.service";
+import { useTaskFilters } from "@/hooks/useTaskFilters";
+type TaskTableProps = {
+  data: Awaited<ReturnType<typeof taskService.getAllTasks>>;
+};
 type props = {
-  displayedTasks: MyTask[];
+  // displayedTasks: MyTask[];
   onSelectedTask: (task: MyTask) => void;
+  data: MyTaskData;
 };
 const statusConfig = {
   TODO: {
@@ -19,13 +27,11 @@ const statusConfig = {
     className: "bg-gray-100 text-gray-700",
     icon: ListTodo,
   },
-
   IN_PROGRESS: {
     label: "In Progress",
     className: "bg-amber-50 text-amber-700",
     icon: Clock3,
   },
-
   DONE: {
     label: "Completed",
     className: "bg-emerald-50 text-emerald-700",
@@ -33,7 +39,10 @@ const statusConfig = {
   },
 };
 
-const MyTaskTable = ({ displayedTasks, onSelectedTask }: props) => {
+const MyTaskTable = ({ onSelectedTask, data }: props) => {
+  const { totalPages, currentPage } = data;
+  const { updatePage } = useTaskFilters();
+
   return (
     <div className="overflow-x-auto">
       <table className="w-full min-w-[700px]">
@@ -58,7 +67,7 @@ const MyTaskTable = ({ displayedTasks, onSelectedTask }: props) => {
         </thead>
 
         <tbody>
-          {displayedTasks.map((task) => {
+          {data.tasks.map((task) => {
             const statusItem = statusConfig[task.status];
             const StatusIcon = statusItem.icon;
             return (
@@ -77,7 +86,6 @@ const MyTaskTable = ({ displayedTasks, onSelectedTask }: props) => {
                     </p>
                   </div>
                 </td>
-
                 <td className="px-5! py-4!">
                   <span
                     className={`inline-flex items-center gap-1.5 rounded-full px-2.5! py-1! text-[11px] font-medium ${statusItem.className}`}
@@ -124,6 +132,33 @@ const MyTaskTable = ({ displayedTasks, onSelectedTask }: props) => {
           })}
         </tbody>
       </table>
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between border-t border-gray-200 bg-gray-50/50 px-6! py-3!">
+          <p className="text-xs text-gray-500">
+            Page {currentPage} of {totalPages}
+          </p>
+          <div className="flex items-center gap-2!">
+            <button
+              type="button"
+              disabled={currentPage === 1}
+              onClick={() => updatePage(currentPage - 1)}
+              className="flex items-center gap-1! rounded-lg border border-gray-200 bg-white px-3! py-2! text-sm text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <ChevronLeft size={15} />
+              Previous
+            </button>
+            <button
+              type="button"
+              disabled={currentPage === totalPages}
+              onClick={() => updatePage(currentPage + 1)}
+              className="flex items-center gap-1! rounded-lg border border-gray-200 bg-white px-3! py-2! text-sm text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Next
+              <ChevronRight size={15} />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

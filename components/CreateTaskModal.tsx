@@ -6,7 +6,8 @@ import {
   updateTaskAction,
 } from "../app/actions/tasks.action";
 import { useOpenModel } from "@/store/useOpenModel";
-import { CreateTaskState } from "@/app/types/auth";
+// import { CreateTaskState } from "@/app/types/auth";
+import { CreateTaskState } from "@/app/types/task.types";
 import { Member } from "@/app/types/member.types";
 import { toast } from "sonner";
 import { utcToNepalInput } from "@/lib/helper";

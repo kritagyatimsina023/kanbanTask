@@ -4,6 +4,7 @@ import { ErrorResource } from "@/lib/errors/app-error";
 import { Errors } from "@/lib/errors/errors";
 import { normalizeError } from "@/lib/errors/normalizeError";
 import prisma from "@/lib/prisma";
+import { realtimePublisher } from "@/lib/realtime/realtime.publisher";
 import { CreateChartRoomInput } from "@/validation/chatRoom.schema";
 
 export class chatService {
@@ -12,7 +13,6 @@ export class chatService {
       const membersIds = [...new Set(data.membersIds)].filter(
         (id) => id !== creatorId,
       );
-
       const users = await prisma.user.findMany({
         where: {
           id: {
@@ -31,12 +31,13 @@ export class chatService {
           ErrorResource.USER,
         );
       }
-      return await prisma.$transaction(async (tx) => {
+      const result = await prisma.$transaction(async (tx) => {
         const chatRoom = await tx.chatRoom.create({
           data: {
             name: data.name,
 
             createdById: creatorId,
+
             members: {
               create: [
                 ...membersIds.map((userId) => ({
@@ -48,8 +49,10 @@ export class chatService {
               ],
             },
           },
+
           include: {
             createdBy: true,
+
             members: {
               include: {
                 user: true,
@@ -57,51 +60,117 @@ export class chatService {
             },
           },
         });
+
         const creatorUser = await tx.user.findUnique({
           where: {
             id: creatorId,
           },
+
           select: {
             email: true,
           },
         });
-        await notificationService.chatRoomNotification(
+        const notifications = await notificationService.chatRoomNotification(
           tx,
           chatRoom.id,
           chatRoom.name,
           membersIds,
           creatorUser?.email ?? "A member",
         );
-        return chatRoom;
+        return {
+          chatRoom,
+          notifications,
+        };
       });
-      //   return await prisma.chatRoom.create({
-      //     data: {
-      //       name: data.name,
-      //       createdById: creatorId,
-      //       members: {
-      //         create: [
-      //           ...membersIds.map((userId) => ({
-      //             userId,
-      //           })),
-      //           {
-      //             userId: creatorId,
-      //           },
-      //         ],
-      //       },
-      //     },
-      //     include: {
-      //       createdBy: true,
-      //       members: {
-      //         include: {
-      //           user: true,
-      //         },
-      //       },
-      //     },
-      //   });
+      await realtimePublisher.publishNotifications(result.notifications);
+      return result.chatRoom;
     } catch (error) {
       throw normalizeError(error, ErrorResource.CHATROOM);
     }
   }
+  // async createChatRoom(data: CreateChartRoomInput, creatorId: string) {
+  //   try {
+  //     const membersIds = [...new Set(data.membersIds)].filter(
+  //       (id) => id !== creatorId,
+  //     );
+
+  //     const users = await prisma.user.findMany({
+  //       where: {
+  //         id: {
+  //           in: membersIds,
+  //         },
+  //         status: UserStatus.ACTIVE,
+  //         role: Role.MEMBER,
+  //       },
+  //       select: {
+  //         id: true,
+  //       },
+  //     });
+
+  //     if (users.length !== membersIds.length) {
+  //       throw Errors.validation(
+  //         "one or more selected members are invalid",
+  //         ErrorResource.USER,
+  //       );
+  //     }
+
+  //     const result = await prisma.$transaction(async (tx) => {
+  //       const chatRoom = await tx.chatRoom.create({
+  //         data: {
+  //           name: data.name,
+  //           createdById: creatorId,
+
+  //           members: {
+  //             create: [
+  //               ...membersIds.map((userId) => ({
+  //                 userId,
+  //               })),
+  //               {
+  //                 userId: creatorId,
+  //               },
+  //             ],
+  //           },
+  //         },
+
+  //         include: {
+  //           createdBy: true,
+
+  //           members: {
+  //             include: {
+  //               user: true,
+  //             },
+  //           },
+  //         },
+  //       });
+
+  //       const creatorUser = await tx.user.findUnique({
+  //         where: {
+  //           id: creatorId,
+  //         },
+  //         select: {
+  //           email: true,
+  //         },
+  //       });
+
+  //       const notifications = await notificationService.chatRoomNotification(
+  //         tx,
+  //         chatRoom.id,
+  //         chatRoom.name,
+  //         membersIds,
+  //         creatorUser?.email ?? "A member",
+  //       );
+
+  //       return {
+  //         chatRoom,
+  //         notifications,
+  //       };
+  //     });
+  //     realtimePublisher.publishNotifications(result.notifications);
+  //     return result.chatRoom;
+  //   } catch (error) {
+  //     throw normalizeError(error, ErrorResource.CHATROOM);
+  //   }
+  // }
   async getChatRooms(userId: string) {
     try {
       const chatRooms = await prisma.chatRoom.findMany({

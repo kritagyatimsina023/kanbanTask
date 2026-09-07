@@ -4,11 +4,12 @@ import { Status, UserStatus } from "@/generated/prisma/enums";
 import { SessionPayload } from "@/lib/auth";
 import { Errors } from "@/lib/errors/errors";
 import { notificationService } from "../notification/notification.service";
-import { MyTask, MyTaskData, TaskFilter } from "@/app/types/task.types";
+import { MyTask, MyTaskStatsData, TaskFilter } from "@/app/types/task.types";
 import { normalizeError } from "@/lib/errors/normalizeError";
 import { leaderBoardService } from "../admin/leaderboard/leaderboard.service";
 import { invalidate } from "@/lib/cache";
 import { buildTaskWhere } from "@/lib/task/taskQuery";
+import { realtimePublisher } from "@/lib/realtime/realtime.publisher";
 
 const PAGE_SIZE = 5;
 
@@ -96,23 +97,37 @@ export class TaskService {
           );
         }
       }
-      const task = await prisma.task.create({
-        data: {
-          title: data.title,
-          description: data.description,
-          assigneeId: data.assigneeId,
-          status: Status.TODO,
-          deadline: data.deadline,
-        },
+
+      const result = await prisma.$transaction(async (tx) => {
+        const task = await tx.task.create({
+          data: {
+            title: data.title,
+            description: data.description,
+            assigneeId: data.assigneeId,
+            status: Status.TODO,
+            deadline: data.deadline,
+          },
+        });
+        let notification = null;
+        if (task.assigneeId) {
+          notification =
+            await notificationService.createTaskAssignedNotification(
+              tx,
+              task.assigneeId,
+              task.id,
+              task.title,
+              task.deadline,
+            );
+        }
+        return {
+          task,
+          notification,
+        };
       });
-      if (task.assigneeId) {
-        await notificationService.createTaskAssignedNotification(
-          task.assigneeId,
-          task.id,
-          task.title,
-          task.deadline,
-        );
+      if (result.notification) {
+        await realtimePublisher.publishNotification(result.notification);
       }
+      return result.task;
     } catch (error) {
       throw normalizeError(error, ErrorResource.TASK);
     }
@@ -192,22 +207,31 @@ export class TaskService {
   }
   async deleteTask(taskId: string) {
     try {
-      const task = await prisma.task.findUnique({
-        where: { id: taskId },
+      const result = await prisma.$transaction(async (tx) => {
+        const task = await tx.task.findUnique({
+          where: { id: taskId },
+        });
+        if (!task) {
+          throw Errors.notFound("Task not found", "TASK");
+        }
+        await prisma.task.delete({
+          where: { id: taskId },
+        });
+        let notification = null;
+        if (task.assigneeId && task.status !== Status.DONE) {
+          notification =
+            await notificationService.createTaskDeletedNotification(
+              tx,
+              task.assigneeId,
+              task.title,
+            );
+        }
+        return { task, notification };
       });
-      if (!task) {
-        throw Errors.notFound("Task not found", "TASK");
+      if (result.notification) {
+        await realtimePublisher.publishNotification(result.notification);
       }
-      if (task.assigneeId && task.status !== Status.DONE) {
-        await notificationService.createTaskDeletedNotification(
-          task.assigneeId,
-          task.title,
-        );
-      }
-      await prisma.task.delete({
-        where: { id: taskId },
-      });
-      return task;
+      return result.task;
     } catch (error) {
       throw normalizeError(error, ErrorResource.TASK);
     }
@@ -313,68 +337,76 @@ export class TaskService {
       throw normalizeError(error, ErrorResource.TASK);
     }
   }
-  async getMyTask(userId: string): Promise<MyTaskData> {
-    try {
-      const tasks = await prisma.task.findMany({
-        where: {
+  private getMyTaskPages = ({
+    userId,
+    page,
+    search,
+    filter,
+  }: {
+    userId: string;
+    page: number;
+    search?: string;
+    filter?: TaskFilter;
+  }) =>
+    (async () => {
+      try {
+        const skip = (page - 1) * PAGE_SIZE;
+        const where = buildTaskWhere({
           assigneeId: userId,
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-        select: {
-          id: true,
-          title: true,
-          description: true,
-          status: true,
-          deadline: true,
-          createdAt: true,
-        },
-      });
-      const total = tasks.length;
-      const todo = tasks.filter((task) => task.status === Status.TODO).length;
-      const inProgress = tasks.filter(
-        (task) => task.status === Status.IN_PROGRESS,
-      ).length;
+          search,
+          filter,
+        });
+        const [tasks, totalTasks] = await Promise.all([
+          prisma.task.findMany({
+            where,
+            skip,
+            take: PAGE_SIZE,
 
-      const completed = tasks.filter(
-        (task) => task.status === Status.DONE,
-      ).length;
-      const activeTasks = tasks.filter(
-        (task) =>
-          task.status === Status.TODO || task.status === Status.IN_PROGRESS,
-      );
+            select: {
+              id: true,
+              title: true,
+              description: true,
+              status: true,
+              deadline: true,
+              createdAt: true,
+            },
 
-      return {
-        tasks,
-        remainingTasks: activeTasks,
-        stats: {
-          total,
-          todo,
-          inProgress,
-          completed,
-        },
-        statusDistribution: [
-          {
-            status: Status.TODO,
-            label: "Todo",
-            count: todo,
-          },
-          {
-            status: Status.IN_PROGRESS,
-            label: "In Progress",
-            count: inProgress,
-          },
-          {
-            status: Status.DONE,
-            label: "Completed",
-            count: completed,
-          },
-        ],
-      };
-    } catch (error) {
-      throw normalizeError(error, ErrorResource.TASK);
-    }
+            orderBy: {
+              createdAt: "desc",
+            },
+          }),
+
+          prisma.task.count({
+            where,
+          }),
+        ]);
+
+        return {
+          tasks,
+          totalTasks,
+          totalPages: Math.ceil(totalTasks / PAGE_SIZE),
+          currentPage: page,
+          pageSize: PAGE_SIZE,
+        };
+      } catch (error) {
+        throw normalizeError(error, ErrorResource.TASK);
+      }
+    })();
+  async getMyTasks(
+    userId: string,
+    params: {
+      page?: number;
+      search?: string;
+      filter?: TaskFilter;
+    } = {},
+  ) {
+    const page = params.page || 1;
+    return this.getMyTaskPages({
+      userId,
+      page,
+      search: params.search,
+      filter: params.filter,
+    });
   }
   async getTaskForAI(userId: string, taskId: string) {
     try {
@@ -434,6 +466,69 @@ export class TaskService {
           createdAt: true,
         },
       });
+    } catch (error) {
+      throw normalizeError(error, ErrorResource.TASK);
+    }
+  }
+  async getMyTask(userId: string): Promise<MyTaskStatsData> {
+    try {
+      const tasks = await prisma.task.findMany({
+        where: {
+          assigneeId: userId,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          status: true,
+          deadline: true,
+          createdAt: true,
+        },
+      });
+      const total = tasks.length;
+      const todo = tasks.filter((task) => task.status === Status.TODO).length;
+      const inProgress = tasks.filter(
+        (task) => task.status === Status.IN_PROGRESS,
+      ).length;
+
+      const completed = tasks.filter(
+        (task) => task.status === Status.DONE,
+      ).length;
+      const activeTasks = tasks.filter(
+        (task) =>
+          task.status === Status.TODO || task.status === Status.IN_PROGRESS,
+      );
+
+      return {
+        tasks,
+        remainingTasks: activeTasks,
+        stats: {
+          total,
+          todo,
+          inProgress,
+          completed,
+        },
+        statusDistribution: [
+          {
+            status: Status.TODO,
+            label: "Todo",
+            count: todo,
+          },
+          {
+            status: Status.IN_PROGRESS,
+            label: "In Progress",
+            count: inProgress,
+          },
+          {
+            status: Status.DONE,
+            label: "Completed",
+            count: completed,
+          },
+        ],
+      };
     } catch (error) {
       throw normalizeError(error, ErrorResource.TASK);
     }

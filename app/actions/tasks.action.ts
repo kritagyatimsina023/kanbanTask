@@ -3,15 +3,14 @@ import { revalidatePath } from "next/cache";
 import { requireAuth, requireAdmin } from "@/lib/auth";
 import { Status } from "@/generated/prisma/enums";
 import { createTaskSchema } from "@/validation/Create.schema";
-import { CreateTaskState } from "../types/auth";
-import z from "zod";
+import { CreateTaskState } from "../types/task.types";
 import { invalidate } from "@/lib/cache";
 import { taskService } from "@/feature/member/task.service";
 import { nepalTimeToUTC } from "@/lib/helper";
 import { handleError } from "@/lib/errors/handle-error";
 
 export async function createTaskAction(
-  prevState: CreateTaskState,
+  _prevState: CreateTaskState,
   formData: FormData,
 ): Promise<CreateTaskState> {
   try {
@@ -25,18 +24,13 @@ export async function createTaskAction(
     };
     const result = createTaskSchema.safeParse(rawData);
     if (!result.success) {
-      const errors = z.treeifyError(result.error);
-
+      const errors = result.error.flatten().fieldErrors;
+      const messages = Object.values(errors)
+        .map((fieldError) => fieldError?.[0])
+        .filter(Boolean);
       return {
-        success: false,
-        error: "Please fix the validation errors",
-        fieldErrors: {
-          // remove this redundancy of handling error
-          title: errors.properties?.title?.errors,
-          description: errors.properties?.description?.errors,
-          assigneeId: errors.properties?.assigneeId?.errors,
-          deadline: errors.properties?.deadline?.errors,
-        },
+        success: false as const,
+        fieldErrors: messages,
       };
     }
     await taskService.createTask(result.data);
@@ -52,7 +46,6 @@ export async function createTaskAction(
     return {
       success: false,
       error: handledError.message,
-      fieldErrors: {},
     };
   }
 }
@@ -62,7 +55,7 @@ export async function getTask() {
 }
 
 export async function updateTaskAction(
-  prevState: CreateTaskState,
+  _prevState: CreateTaskState,
   formData: FormData,
 ): Promise<CreateTaskState> {
   try {
@@ -71,11 +64,10 @@ export async function updateTaskAction(
     if (!taskId || typeof taskId !== "string") {
       return {
         success: false,
-        error: "Task ID is required",
+        error: null,
       };
     }
     const deadline = formData.get("deadline");
-
     const rawData = {
       title: formData.get("title"),
       description: formData.get("description"),
@@ -83,19 +75,15 @@ export async function updateTaskAction(
       deadline: deadline ? nepalTimeToUTC(String(deadline)) : null,
     };
     const result = createTaskSchema.safeParse(rawData);
-
     if (!result.success) {
-      const errors = z.treeifyError(result.error);
-
+      const errors = result.error.flatten().fieldErrors;
+      const messages = Object.values(errors)
+        .map((fieldError) => fieldError?.[0])
+        .filter(Boolean);
       return {
         success: false,
-        error: "Please fix the validation errors",
-        fieldErrors: {
-          title: errors.properties?.title?.errors,
-          description: errors.properties?.description?.errors,
-          assigneeId: errors.properties?.assigneeId?.errors,
-          deadline: errors.properties?.deadline?.errors,
-        },
+        error: null,
+        fieldErrors: messages,
       };
     }
     await taskService.updateTask(taskId, result.data);
@@ -109,7 +97,6 @@ export async function updateTaskAction(
     return {
       success: false,
       error: handledError.message,
-      fieldErrors: {},
     };
   }
 }

@@ -4,12 +4,12 @@ import { ErrorResource } from "@/lib/errors/app-error";
 import { Errors } from "@/lib/errors/errors";
 import { normalizeError } from "@/lib/errors/normalizeError";
 import prisma from "@/lib/prisma";
+import { realtimePublisher } from "@/lib/realtime/realtime.publisher";
 import { error } from "console";
 
 export class chatMessageService {
   async sendMessage(roomId: string, senderId: string, content: string) {
     try {
-      // verify if the sender belongs to the roomId or not?
       const memberShip = await prisma.chatRoomMember.findUnique({
         where: {
           roomId_userId: {
@@ -42,6 +42,7 @@ export class chatMessageService {
           },
         },
       });
+      await realtimePublisher.publishMessage(message);
       return message;
     } catch (error) {
       throw normalizeError(error, ErrorResource.CHATROOM);

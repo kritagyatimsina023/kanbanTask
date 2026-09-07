@@ -1,7 +1,18 @@
 import { Prisma, Task } from "@/generated/prisma/client";
 import { Status } from "@/generated/prisma/enums";
+export interface CreateTaskState {
+  error?: string | null;
+  success: boolean;
+  // fieldErrors?: {
+  //   title?: string[];
+  //   description?: string[];
+  //   assigneeId?: string[];
+  //   deadline?: string[];
+  // };
+  fieldErrors?: string[];
+}
 export type MyTask = Omit<Task, "assigneeId" | "updatedAt" | "assignee">;
-export type MyTaskData = {
+export type MyTaskStatsData = {
   tasks: {
     id: string;
     title: string;
@@ -24,6 +35,15 @@ export type MyTaskData = {
     count: number;
   }[];
 };
+export type MyTaskData = {
+  tasks: MyTask[];
+
+  totalTasks: number;
+  totalPages: number;
+  currentPage: number;
+  pageSize: number;
+};
+
 export type TaskWithAssignee = Prisma.TaskGetPayload<{
   include: {
     assignee: {
@@ -40,3 +60,9 @@ export type TaskFilter =
   | "DONE"
   | "CLOSE_TO_DEADLINE"
   | "OVERDUE";
+export type TaskQuery = {
+  page: number;
+  limit: number;
+  search?: string;
+  filter?: TaskFilter;
+};

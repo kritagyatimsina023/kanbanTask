@@ -3,6 +3,7 @@ import "./globals.css";
 import { Toaster } from "sonner";
 import Nav from "./layout/Nav";
 import LenisProvider from "@/lib/provider/lenisProvider";
+// import RealtimeProvider from "@/lib/provider/RealtimeProvider";
 
 export const metadata: Metadata = {
   title: "Kanban Task Board",

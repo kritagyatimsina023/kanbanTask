@@ -20,7 +20,7 @@ const ChatRoom = async () => {
         </p>
 
         {/* Development Status */}
-        <div className="mt-3! max-w-xl rounded-lg border border-amber-100 bg-amber-50/50 px-3! py-2.5!">
+        {/* <div className="mt-3! max-w-xl rounded-lg border border-amber-100 bg-amber-50/50 px-3! py-2.5!">
           <div className="flex items-center justify-between gap-3">
             <p className="text-xs font-medium text-gray-700">
               Production Readiness
@@ -34,7 +34,7 @@ const ChatRoom = async () => {
           <div className="mt-1.5! h-1.5 w-full overflow-hidden rounded-full bg-amber-100">
             <div
               className="h-full rounded-full bg-amber-500 transition-all"
-              style={{ width: "75%" }}
+              style={{ width: "95%" }}
             />
           </div>
 
@@ -44,7 +44,7 @@ const ChatRoom = async () => {
             implemented yet, so messages are not automatically delivered to
             other connected members.
           </p>
-        </div>
+        </div> */}
       </div>
       <Suspense fallback={<ChatHomeSkeleton />}>
         <ChatServerMain />

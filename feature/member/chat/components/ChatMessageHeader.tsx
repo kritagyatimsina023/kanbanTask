@@ -1,11 +1,12 @@
 "use client";
 import { Room } from "@/app/types/chatMessage.types";
 import Tooltip from "@/components/Tooltip";
-import { ArrowLeft, MoreVertical, Users } from "lucide-react";
+import { ArrowLeft, MoreVertical, Users, Volume2, VolumeX } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import MessageSettings from "./MessageSettings";
 import ChatMembers from "./ChatMembers";
+import { useMessageSound } from "@/hooks/useMessageSound";
 type props = {
   room: Room;
 };
@@ -14,9 +15,9 @@ const ChatMessageHeader = ({ room }: props) => {
   const router = useRouter();
   const [openSetting, setOpenSettings] = useState(false);
   const [openMembers, setOpenMembers] = useState(false);
-
+  const { toggleSound, soundEnabled } = useMessageSound();
   return (
-    <header className="flex shrink-0 items-center justify-between border-b border-gray-200 bg-white px-4! py-3!">
+    <header className=" flex shrink-0 items-center justify-between border-b border-gray-200 bg-white px-4! py-3!">
       <div className="flex min-w-0 items-center gap-3">
         <button
           type="button"
@@ -29,6 +30,18 @@ const ChatMessageHeader = ({ room }: props) => {
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-indigo-50 text-indigo-600">
           <Users size={19} />
         </div>
+        <button
+          type="button"
+          onClick={toggleSound}
+          title={
+            soundEnabled
+              ? "Mute message notifications"
+              : "Enable message notifications"
+          }
+          className="rounded-lg p-2 hover:bg-slate-100"
+        >
+          {soundEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}
+        </button>
 
         {/* Room Info */}
         <div className="min-w-0">

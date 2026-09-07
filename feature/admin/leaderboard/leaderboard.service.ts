@@ -10,7 +10,9 @@ import { normalizeError } from "@/lib/errors/normalizeError";
 import { Status } from "@/generated/prisma/enums";
 import { invalidate } from "@/lib/cache";
 import { Prisma } from "@/generated/prisma/client";
+import { realtimePublisher } from "@/lib/realtime/realtime.publisher";
 
+// type rewardsType = Readonly<Pick<Reward, "points">>;
 type LeaderboardUser = {
   id: string;
   email: string;
@@ -18,6 +20,7 @@ type LeaderboardUser = {
   _count: {
     tasks: number;
   };
+  // rewards: rewardsType[];
 };
 export class LeaderboardService {
   calculateLeaderboard(users: LeaderboardUser[]) {
@@ -73,6 +76,7 @@ export class LeaderboardService {
             },
           },
         });
+        console.log(users, "Leader board services");
         return this.calculateLeaderboard(users);
       } catch (error) {
         throw normalizeError(error, ErrorResource.LEADERBOARD);
@@ -128,12 +132,21 @@ export class LeaderboardService {
     try {
       const trimmedTitle = title.trim();
       const trimmedMessage = message?.trim() || null;
+
       if (!trimmedTitle) {
-        throw new Error("Reward title is required");
+        throw Errors.badRequest(
+          "Reward title is required",
+          ErrorResource.REWARD,
+        );
       }
+
       if (trimmedTitle.length < 3) {
-        throw new Error("Reward title must be at least 3 characters");
+        throw Errors.badRequest(
+          "Reward title is must be at least 3 characters",
+          ErrorResource.REWARD,
+        );
       }
+
       const user = await prisma.user.findUnique({
         where: {
           id: userId,
@@ -144,45 +157,66 @@ export class LeaderboardService {
           status: true,
         },
       });
+
       if (!user) {
         throw Errors.notFound("user not found", ErrorResource.USER);
       }
+
       if (user.role === "ADMIN") {
         throw Errors.forbidden(
           "Admins cannot receive rewards",
           ErrorResource.USER,
         );
       }
+
       if (user.status !== "ACTIVE") {
         throw Errors.forbidden(
-          "Banned users cannot be rewareded",
+          "Banned users cannot be rewarded",
           ErrorResource.USER,
         );
       }
-      const rewardData = await prisma.reward.create({
-        data: {
-          userId: user.id,
-          title: trimmedTitle,
-          message: trimmedMessage,
-          awardedBy: adminId,
-        },
+
+      // const points = 10;
+      const result = await prisma.$transaction(async (tx) => {
+        const reward = await tx.reward.create({
+          data: {
+            userId: user.id,
+            title: trimmedTitle,
+            message: trimmedMessage,
+            awardedBy: adminId,
+            // points,
+          },
+        });
+
+        // await tx.user.update({
+        //   where: {
+        //     id: user.id,
+        //   },
+        //   data: {
+        //     points: {
+        //       increment: points,
+        //     },
+        //   },
+        // });
+
+        const notification =
+          await notificationService.createRewardedNotificaiton(
+            tx,
+            user.id,
+            trimmedTitle,
+            trimmedMessage,
+            reward.createdAt,
+          );
+
+        return {
+          reward,
+          notification,
+        };
       });
-      await notificationService.createRewardedNotificaiton(
-        userId,
-        trimmedTitle,
-        trimmedMessage,
-        rewardData.createdAt,
-      );
-      const points = 10;
-      return prisma.reward.create({
-        data: {
-          userId: user.id,
-          title: trimmedTitle,
-          message: trimmedMessage,
-          awardedBy: adminId,
-          points,
-        },
-      });
+
+      await realtimePublisher.publishNotification(result.notification);
+
+      return result.reward;
     } catch (error) {
       throw normalizeError(error, ErrorResource.LEADERBOARD);
     }

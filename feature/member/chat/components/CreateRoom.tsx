@@ -24,7 +24,6 @@ const CreateRoom = ({ members, onClose }: CreateRoomProps) => {
   const router = useRouter();
   const [search, setSearch] = useState("");
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
-  const [isCreating, setIsCreating] = useState(false);
   const [state, formAction, isPending] = useActionState(
     createChatRoomAction,
     initialState,
@@ -37,14 +36,20 @@ const CreateRoom = ({ members, onClose }: CreateRoomProps) => {
     );
   };
   useEffect(() => {
-    if (!state.message) return;
+    document.body.style.overflow = "hidden";
 
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!state.message) return;
     if (state.success) {
       toast.success(state.message);
       router.refresh();
       onClose();
     } else {
-      // General action error
       if (state.fieldErrors?.general?.length) {
         toast.error(state.fieldErrors.general[0]);
       } else {
@@ -58,7 +63,7 @@ const CreateRoom = ({ members, onClose }: CreateRoomProps) => {
   );
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4! py-6! backdrop-blur-sm"
+      className="fixed inset-0  z-50 flex items-center justify-center bg-black/40 px-4! py-6! backdrop-blur-sm"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) {
           onClose();
@@ -95,7 +100,7 @@ const CreateRoom = ({ members, onClose }: CreateRoomProps) => {
             <X size={19} />
           </button>
         </div>
-        <div className="min-h-0 overflow-y-auto">
+        <div className="min-h-0 flex-1 overflow-y-auto">
           <div className="border-b border-gray-100 px-6! py-5!">
             <h2 className="mb-3! text-sm font-semibold text-gray-900">
               Room details
@@ -103,7 +108,6 @@ const CreateRoom = ({ members, onClose }: CreateRoomProps) => {
             <label className="mb-1.5! block text-xs font-medium text-gray-700">
               Room name
             </label>
-
             <input
               type="text"
               name="name"
@@ -138,7 +142,6 @@ const CreateRoom = ({ members, onClose }: CreateRoomProps) => {
               </span>
             </div>
 
-            {/* Selected Members */}
             {selectedMembers.length > 0 && (
               <div className="mb-4! flex flex-wrap gap-2">
                 {selectedMembers.map((id) => {
@@ -173,8 +176,7 @@ const CreateRoom = ({ members, onClose }: CreateRoomProps) => {
               </div>
             )}
 
-            {/* Members List */}
-            <div className="overflow-hidden rounded-xl border border-gray-200">
+            <div className="overflow-y-auto rounded-xl border border-gray-200">
               {filteredMembers.length > 0 ? (
                 filteredMembers.map((member) => {
                   const selected = selectedMembers.includes(member.id);
@@ -197,7 +199,7 @@ const CreateRoom = ({ members, onClose }: CreateRoomProps) => {
                           value={memberId}
                         />
                       ))}
-                      {/* Avatar */}
+
                       <div
                         className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold uppercase ${
                           selected
@@ -208,7 +210,6 @@ const CreateRoom = ({ members, onClose }: CreateRoomProps) => {
                         {member.email.charAt(0)}
                       </div>
 
-                      {/* Member Email */}
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-sm font-medium text-gray-900">
                           {member.email}
@@ -218,8 +219,6 @@ const CreateRoom = ({ members, onClose }: CreateRoomProps) => {
                           Member
                         </p>
                       </div>
-
-                      {/* Checkbox */}
                       <div
                         className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition ${
                           selected

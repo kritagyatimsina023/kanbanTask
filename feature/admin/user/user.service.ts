@@ -68,7 +68,6 @@ export class UserServices {
   async getUserWithStats() {
     return this.getCachedUsersWithStats();
   }
-
   async toggleBanUser(userId: string, reason?: string) {
     try {
       const user = await prisma.user.findUnique({
@@ -107,22 +106,22 @@ export class UserServices {
           action: "UNBANNED" as const,
         };
       }
-      const trimmedReason = reason?.trim();
+      // const trimmedReason = reason?.trim();
 
-      if (!trimmedReason) {
-        throw new Error("Ban reason is required");
-      }
+      // if (!trimmedReason) {
+      //   throw new Error("Ban reason is required");
+      // }
 
-      if (trimmedReason.length < 5) {
-        throw new Error("Ban reason must be at least 5 characters");
-      }
+      // if (trimmedReason.length < 5) {
+      //   throw new Error("Ban reason must be at least 5 characters");
+      // }
       await prisma.user.update({
         where: {
           id: userId,
         },
         data: {
           status: "BANNED",
-          banReason: trimmedReason,
+          banReason: reason,
           bannedAt: new Date(),
         },
       });
