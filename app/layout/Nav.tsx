@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { KanbanSquare } from "lucide-react";
-
 import { getSession } from "@/lib/auth";
 import { Notification } from "../types/notification";
 import { notificationService } from "@/feature/notification/notification.service";
@@ -25,7 +24,6 @@ const Nav = async () => {
     rewards = leaderboardData?.rewards ?? [];
   }
   const roleLink = session?.role === Role.ADMIN ? "/admin" : "/member";
-
   return (
     <ScrollNav>
       <nav className="sticky top-0 z-40 border-b border-gray-200/60 bg-white/70 backdrop-blur-xl transition-all">

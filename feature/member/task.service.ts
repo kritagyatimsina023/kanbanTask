@@ -88,16 +88,15 @@ export class TaskService {
           },
         });
         if (!assignee) {
-          throw Errors.notFound("Assignee not found", "USER");
+          throw Errors.notFound("Assignee not found", ErrorResource.USER);
         }
         if (assignee.status === UserStatus.BANNED) {
           throw Errors.badRequest(
             "A banned user cannot be assigned a task",
-            "TASK",
+            ErrorResource.TASK,
           );
         }
       }
-
       const result = await prisma.$transaction(async (tx) => {
         const task = await tx.task.create({
           data: {
@@ -214,7 +213,7 @@ export class TaskService {
         if (!task) {
           throw Errors.notFound("Task not found", "TASK");
         }
-        await prisma.task.delete({
+        await tx.task.delete({
           where: { id: taskId },
         });
         let notification = null;

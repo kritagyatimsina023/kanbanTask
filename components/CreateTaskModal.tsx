@@ -41,7 +41,6 @@ export default function CreateTaskModal({ members }: { members: Member[] }) {
   const isEditMode = mode === "edit";
   const action = isEditMode ? updateTaskAction : createTaskAction;
   const [state, formAction] = useActionState(action, initialState);
-
   useEffect(() => {
     if (state.success) {
       setOpen();

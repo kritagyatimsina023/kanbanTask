@@ -9,7 +9,6 @@ export function normalizeError(
   if (error instanceof AppError) {
     return error;
   }
-
   if (error instanceof ZodError) {
     return new AppError(
       error.issues[0]?.message ?? "Invalid input",

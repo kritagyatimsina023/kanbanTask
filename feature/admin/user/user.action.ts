@@ -14,7 +14,6 @@ type BanUserState = {
   error: string | null;
   message?: string;
 };
-
 export async function toggleBanUser(
   _previousState: BanUserState,
   formData: FormData,

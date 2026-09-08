@@ -147,7 +147,6 @@ export async function deleteTaskAction(taskId: string) {
   try {
     await requireAdmin();
     const task = await taskService.deleteTask(taskId);
-
     if (task.status === Status.DONE) {
       invalidate.leaderboard();
       revalidatePath("/admin/leaderboards");
@@ -156,12 +155,14 @@ export async function deleteTaskAction(taskId: string) {
     invalidate.taskDeleted();
     return {
       success: true,
+      message: "Task Deleted Successfully",
     };
   } catch (error) {
+    console.error(error);
     const handledError = handleError(error);
     return {
-      success: false,
-      data: null,
+      success: false as const,
+      message: handledError.message,
       error: handledError.message,
       code: handledError.code,
       resource: handledError.resource,

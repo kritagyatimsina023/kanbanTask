@@ -19,7 +19,6 @@
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
 
-  /* Kanban Colors */
   --column-todo: #e2e8f0;
   --column-in-progress: #fef08a;
   --column-done: #bbf7d0;
@@ -54,7 +53,6 @@ body {
   min-height: 100vh;
 }
 
-/* Utilities */
 .container {
   max-width: 1200px;
   margin: 0 auto;

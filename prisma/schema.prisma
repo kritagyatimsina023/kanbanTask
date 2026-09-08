@@ -72,7 +72,6 @@ model Task {
 }
 
 
-
 enum NotificationType {
   TASK_OVERDUE
   TASK_ASSIGNED

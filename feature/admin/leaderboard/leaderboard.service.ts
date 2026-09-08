@@ -69,15 +69,17 @@ export class LeaderboardService {
                 },
               },
             },
-            rewards: {
-              select: {
-                points: true,
-              },
-            },
+            // rewards: {
+            //   select: {
+            //     points: true,
+            //   },
+            // },
           },
         });
 
-        return this.calculateLeaderboard(users);
+        const leaderboard = this.calculateLeaderboard(users);
+
+        return leaderboard;
       } catch (error) {
         throw normalizeError(error, ErrorResource.LEADERBOARD);
       }
@@ -295,7 +297,6 @@ export class LeaderboardService {
       });
       const targetMilestone = Math.floor(completedTasks / 3);
       const pointsPerMilestone = 10;
-
       const existingRewards = await prisma.reward.findMany({
         where: {
           userId,
@@ -329,7 +330,6 @@ export class LeaderboardService {
           });
         }
       }
-
       const rewardsToRemove = existingRewards.filter(
         (reward) =>
           reward.milestone !== null && reward.milestone > targetMilestone,

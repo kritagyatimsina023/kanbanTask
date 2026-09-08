@@ -3,6 +3,7 @@ import "./globals.css";
 import { Toaster } from "sonner";
 import Nav from "./layout/Nav";
 import LenisProvider from "@/lib/provider/lenisProvider";
+import GlobalDeleteModal from "@/components/GlobalDeleteModal";
 // import RealtimeProvider from "@/lib/provider/RealtimeProvider";
 
 export const metadata: Metadata = {
@@ -22,6 +23,8 @@ export default async function RootLayout({
           <Nav />
           <Toaster position="top-right" />
           {children}
+          <GlobalDeleteModal />
+          <div id="modal-root" />
         </LenisProvider>
       </body>
     </html>

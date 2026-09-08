@@ -18,6 +18,7 @@ import { memo } from "react";
 import { useRouter } from "next/navigation";
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
+import useDeleteModalStore from "@/store/useDeleteModal";
 
 interface TaskCardProps {
   task: TaskWithAssignee;
@@ -38,6 +39,7 @@ const TaskCard = memo(function TaskCard({
 }: TaskCardProps) {
   const { handleStatusChange, handleReassign } = useTaskActions();
   const router = useRouter();
+  const openDeleteModal = useDeleteModalStore((state) => state.openDeleteModal);
 
   const { setDeleteOpen, setTask, isDeleteOpen, openEditModal } =
     useOpenModel();
@@ -58,6 +60,13 @@ const TaskCard = memo(function TaskCard({
     opacity: isDragging || isPending ? 0.7 : 1,
     zIndex: isDragging ? 50 : "auto",
   };
+  const handleDeleteClick = () => {
+    openDeleteModal({
+      itemId: task.id,
+      itemName: task.title,
+      deleteType: "task",
+    });
+  };
 
   return (
     <>
@@ -76,14 +85,14 @@ const TaskCard = memo(function TaskCard({
             </div>
           </div>
         )}
-        {isDeleteOpen && <DeleteTask />}
+        {/* {isDeleteOpen && <DeleteTask />} */}
         <div className="mb-2! flex items-start justify-between">
           <div className="flex items-center gap-2">
             <button
               type="button"
               className="cursor-grab text-slate-400 hover:text-slate-600 disabled:cursor-default disabled:opacity-50"
-              {...attributes}
-              {...listeners}
+              // {...attributes}
+              // {...listeners}
               disabled={!canEdit || isPending}
             >
               <GripVertical size={16} />
@@ -93,9 +102,18 @@ const TaskCard = memo(function TaskCard({
             </h4>
           </div>
           <div className="flex items-center gap-2">
-            {isAdmin && (
+            {/* {isAdmin && (
               <button
                 onClick={() => handleTaskDelete(task)}
+                className="text-red-400 transition hover:text-red-500"
+                title="Delete Task"
+              >
+                <Trash2 size={16} strokeWidth={2} />
+              </button>
+            )} */}
+            {isAdmin && (
+              <button
+                onClick={handleDeleteClick}
                 className="text-red-400 transition hover:text-red-500"
                 title="Delete Task"
               >

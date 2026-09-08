@@ -38,7 +38,7 @@ const NotificationModel = ({
   handleDeleteNotification,
 }: ModelProps) => {
   return (
-    <div className="fixed inset-0 min-h-screen z-[100] flex items-center justify-center bg-black/40 px-4">
+    <div className="fixed inset-0 z-[9999] flex min-h-screen items-center justify-center bg-black/20 backdrop-blur-md px-4!">
       <div className="relative max-h-[85vh] w-full max-w-2xl overflow-hidden rounded-2xl bg-white shadow-2xl">
         <div className="flex items-center justify-between border-b border-gray-200 px-6! py-4!">
           <div>

@@ -1,5 +1,6 @@
 "use client";
 
+import Portal from "@/components/Portal";
 import Tooltip from "@/components/Tooltip";
 import { useClickOutside } from "@/hooks/useClickOutside";
 import { formatNepalDate } from "@/lib/helper";
@@ -158,75 +159,77 @@ export default function RewardBell({ rewards }: Props) {
         )}
       </div>
       {/* All rewards modal */}
-      {showAll && (
-        <div className="fixed inset-0 min-h-screen z-[100] flex items-center justify-center bg-black/40 p-4!">
-          <div className="w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl">
-            {/* Modal header */}
-            <div className="flex items-center justify-between border-b border-gray-100 px-5! py-4!">
-              <div className="flex items-center gap-2">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-yellow-50">
-                  <Award size={19} className="text-yellow-600" />
+      <Portal>
+        {showAll && (
+          <div className="fixed inset-0 min-h-screen z-[100] flex items-center justify-center bg-black/20 backdrop-blur-md p-4!">
+            <div className="w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl">
+              {/* Modal header */}
+              <div className="flex items-center justify-between border-b border-gray-100 px-5! py-4!">
+                <div className="flex items-center gap-2">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-yellow-50">
+                    <Award size={19} className="text-yellow-600" />
+                  </div>
+
+                  <div>
+                    <h2 className="font-semibold text-gray-900">All Rewards</h2>
+                    <p className="text-xs text-gray-500">
+                      {rewards.length} reward
+                      {rewards.length !== 1 ? "s" : ""}
+                    </p>
+                  </div>
                 </div>
 
-                <div>
-                  <h2 className="font-semibold text-gray-900">All Rewards</h2>
-                  <p className="text-xs text-gray-500">
-                    {rewards.length} reward
-                    {rewards.length !== 1 ? "s" : ""}
-                  </p>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowAll(false)}
+                  className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-gray-100 hover:text-gray-700"
+                >
+                  <X size={18} />
+                </button>
               </div>
 
-              <button
-                type="button"
-                onClick={() => setShowAll(false)}
-                className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-gray-100 hover:text-gray-700"
-              >
-                <X size={18} />
-              </button>
-            </div>
+              {/* Modal content */}
+              <div className="max-h-[70vh] overflow-y-auto p-5!">
+                <div className="space-y-3!">
+                  {rewards.map((reward) => (
+                    <div
+                      key={reward.id}
+                      className="rounded-xl border border-gray-200 bg-white p-4! transition hover:border-yellow-200 hover:bg-yellow-50/30"
+                    >
+                      <div className="flex gap-3">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-yellow-50">
+                          <Award size={18} className="text-yellow-600" />
+                        </div>
 
-            {/* Modal content */}
-            <div className="max-h-[70vh] overflow-y-auto p-5!">
-              <div className="space-y-3!">
-                {rewards.map((reward) => (
-                  <div
-                    key={reward.id}
-                    className="rounded-xl border border-gray-200 bg-white p-4! transition hover:border-yellow-200 hover:bg-yellow-50/30"
-                  >
-                    <div className="flex gap-3">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-yellow-50">
-                        <Award size={18} className="text-yellow-600" />
-                      </div>
+                        <div className="min-w-0 flex-1">
+                          <h3 className="text-sm font-semibold text-gray-900">
+                            {reward.title}
+                          </h3>
 
-                      <div className="min-w-0 flex-1">
-                        <h3 className="text-sm font-semibold text-gray-900">
-                          {reward.title}
-                        </h3>
+                          {reward.message && (
+                            <p className="mt-1! text-sm text-gray-600">
+                              {reward.message}
+                            </p>
+                          )}
 
-                        {reward.message && (
-                          <p className="mt-1! text-sm text-gray-600">
-                            {reward.message}
-                          </p>
-                        )}
-
-                        <p className="mt-2! text-xs text-gray-400">
-                          {formatNepalDate(reward.createdAt)}
-                          {/* {new Date(reward.createdAt).toLocaleString("en-NP", {
+                          <p className="mt-2! text-xs text-gray-400">
+                            {formatNepalDate(reward.createdAt)}
+                            {/* {new Date(reward.createdAt).toLocaleString("en-NP", {
                             timeZone: "Asia/Kathmandu",
                             dateStyle: "medium",
                             timeStyle: "short",
                           })} */}
-                        </p>
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </Portal>
     </>
   );
 }

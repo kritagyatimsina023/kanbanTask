@@ -26,7 +26,6 @@ const ChatMessages = ({
   useEffect(() => {
     const channelName = `private-chat-room-${roomId}`;
     const channel = pusherClient.subscribe(channelName);
-
     const handleNewMessage = (message: messages) => {
       if (message.sender.id !== currentUserId) {
         playSound();

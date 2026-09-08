@@ -27,7 +27,6 @@ export async function deleteNotificaiton(notificationId?: string) {
     if (!session) {
       throw Errors.unauthorized("Unauthorized", "AUTH");
     }
-
     if (notificationId) {
       await notificationService.deleteSpecificNotification(
         notificationId,

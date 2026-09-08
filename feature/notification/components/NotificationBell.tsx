@@ -25,6 +25,7 @@ import Tooltip from "@/components/Tooltip";
 import { useClickOutside } from "@/hooks/useClickOutside";
 import { pusherClient } from "@/lib/pusher/pusher.client";
 import { REALTIME_EVENTS } from "@/lib/realtime/realtime.events";
+import Portal from "@/components/Portal";
 
 type Props = {
   notifications: Notification[];
@@ -56,14 +57,6 @@ export default function NotificationBell({
     (notification) => !notification.read,
   ).length;
 
-  // const handleOpenNotification = async () => {
-  //   setOpen((prev) => !prev);
-  //   if (unreadCount > 0) {
-  //     await markAllNotificationsAsReadAction();
-  //     router.refresh();
-  //   }
-  // };
-
   const handleOpenNotification = async () => {
     setOpen((prev) => !prev);
 
@@ -86,66 +79,21 @@ export default function NotificationBell({
     );
   };
 
-  // const handleDeleteNotification = async (notificationId?: string) => {
-  //   const result = await deleteNotificaiton(notificationId);
-
-  //   if (!result.success) {
-  //     toast.error(result.message);
-  //     return;
-  //   }
-  //   toast.success(result.message);
-  //   router.refresh();
-  // };
-
   const handleDeleteNotification = async (notificationId?: string) => {
     const result = await deleteNotificaiton(notificationId);
-
+    if (notificationId) {
+      setNotifications((current) =>
+        current.filter((notification) => notification.id !== notificationId),
+      );
+    } else {
+      setNotifications([]);
+    }
     if (!result.success) {
       toast.error(result.message);
       return;
     }
-
-    setNotifications((current) =>
-      current.filter((notification) => notification.id !== notificationId),
-    );
-
     toast.success(result.message);
   };
-
-  // const handleDeleteNotification = async (notificationId?: string) => {
-  //   const result = await deleteNotificaiton(notificationId);
-
-  //   if (!result.success) {
-  //     toast.error(result.message);
-  //     return;
-  //   }
-
-  //   setNotifications((current) =>
-  //     current.filter((notification) => notification.id !== notificationId),
-  //   );
-
-  //   toast.success(result.message);
-  // };
-
-  // const handleOpenNotification = async () => {
-  //   setOpen((prev) => !prev);
-
-  //   if (unreadCount > 0) {
-  //     const result = await markAllNotificationsAsReadAction();
-
-  //     if (!result.success) {
-  //       toast.error(result.message);
-  //       return;
-  //     }
-
-  //     setNotifications((current) =>
-  //       current.map((notification) => ({
-  //         ...notification,
-  //         read: true,
-  //       })),
-  //     );
-  //   }
-  // };
   useClickOutside(notificationRef, () => {
     setOpen(false);
   });
@@ -204,7 +152,6 @@ export default function NotificationBell({
             onClick={() => setOpen(false)}
             className="fixed inset-0 z-[9999] cursor-default"
           />
-
           <div className="absolute right-0  z-50 w-[360px] overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.12)]">
             {/* Header */}
             <div className="flex items-center justify-between border-b border-gray-100 px-4! py-3!">
@@ -330,13 +277,13 @@ export default function NotificationBell({
       )}
 
       {showAll && (
-        <>
+        <Portal>
           <NotificationModel
             handleDeleteNotification={handleDeleteNotification}
             notifications={notifications}
             setShowAll={setShowAll}
           />
-        </>
+        </Portal>
       )}
     </div>
   );
