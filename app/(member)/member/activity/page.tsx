@@ -1,18 +1,22 @@
+import CommonLoader from "@/components/CommonLoader";
 import RealTimeUnderDevelopment from "@/components/RealTimeUnderDevelopment";
 import { activityService } from "@/feature/activitylog/activity.service";
 import ActivityLog from "@/feature/activitylog/components/ActivityLog";
+import MemberDataPage from "@/feature/member/_components/MemberDataPage";
+import MemberActivityData from "@/feature/member/activitylog/components/MemberActivityData";
 import { requireAuth } from "@/lib/auth";
+import { Suspense } from "react";
 
 const ActivityMemberHome = async () => {
-  const session = await requireAuth();
+  // const session = await requireAuth();
 
-  const activities = await activityService.getMemberActivities(session.id);
+  // const activities = await activityService.getMemberActivities(session.id);
 
   return (
-    <div className="space-y-6!">
-      {/* Header */}
-      <div className="flex mt-4!  items-center justify-between gap-6">
-        <div>
+    <div className="relative grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_auto]">
+      {/* Left side */}
+      <div className="min-w-0">
+        <div className="mt-4!">
           <h1 className="text-2xl font-bold text-neutral-900">Activity</h1>
 
           <p className="mt-1 text-sm text-neutral-500">
@@ -20,10 +24,16 @@ const ActivityMemberHome = async () => {
           </p>
         </div>
 
-        <RealTimeUnderDevelopment />
+        <div className="my-8!">
+          <Suspense fallback={<CommonLoader />}>
+            <MemberActivityData />
+          </Suspense>
+          {/* <ActivityLog activities={activities ?? []} /> */}
+        </div>
       </div>
-      <div className="my-8!">
-        <ActivityLog activities={activities ?? []} />
+      {/* Right side */}
+      <div className="sticky top-18 z-50 self-start">
+        <RealTimeUnderDevelopment />
       </div>
     </div>
   );

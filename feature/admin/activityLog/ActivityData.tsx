@@ -1,6 +1,6 @@
 import React from "react";
-import { activityService } from "../activity.service";
-import ActivityLog from "./ActivityLog";
+import { activityService } from "../../activitylog/activity.service";
+import ActivityLog from "../../activitylog/components/ActivityLog";
 
 const ActivityData = async () => {
   const activity = await activityService.getAllActivity();

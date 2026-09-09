@@ -1,37 +1,34 @@
 import CommonLoader from "@/components/CommonLoader";
 import RealTimeUnderDevelopment from "@/components/RealTimeUnderDevelopment";
 
-import ActivityData from "@/feature/activitylog/components/ActivityData";
+import ActivityData from "@/feature/admin/activityLog/ActivityData";
 
 import { Suspense } from "react";
 
 const ActivityHome = async () => {
-  // const activity = await activityService.getAllActivity();
-  // console.log("Activity", activity);
   return (
-    <div>
-      <div className="flex items-center justify-between border-b border-neutral-200 px-6! py-5!">
-        <div>
-          <div className="flex items-center gap-2">
-            <h2 className="text-base font-semibold text-neutral-900">
-              Activity Log
-            </h2>
+    <div className="relative grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_auto]">
+      {/* Left side */}
+      <div className="min-w-0">
+        <div className="mt-4!">
+          <h1 className="text-2xl font-bold text-neutral-900">Activity</h1>
 
-            {/* Live indicator */}
-            <span className="relative flex size-2">
-              <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex size-2 rounded-full bg-emerald-500" />
-            </span>
-          </div>
-          <p className="mt-1! text-sm text-neutral-500">
-            Recent activity across the system
+          <p className="mt-1 text-sm text-neutral-500">
+            Recent activity related to your tasks and work.
           </p>
         </div>
+
+        <div className="my-8!">
+          <Suspense fallback={<CommonLoader />}>
+            <ActivityData />
+          </Suspense>
+        </div>
+      </div>
+
+      {/* Right side */}
+      <div className="sticky top-18 z-50 self-start">
         <RealTimeUnderDevelopment />
       </div>
-      <Suspense fallback={<CommonLoader />}>
-        <ActivityData />
-      </Suspense>
     </div>
   );
 };
