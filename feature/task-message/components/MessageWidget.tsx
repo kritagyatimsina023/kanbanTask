@@ -13,7 +13,6 @@ import {
   REALTIME_EVENTS,
 } from "@/lib/realtime/realtime.events";
 import { pusherClient } from "@/lib/pusher/pusher.client";
-import { TaskMessage } from "@/generated/prisma/browser";
 
 type Props = {
   conversations: Conversation[];
@@ -83,7 +82,7 @@ const MessageWidget = ({
         pusherClient.unsubscribe(channelName);
       });
     };
-  }, [taskIds]);
+  }, [taskIds, conversations]);
 
   const selectedConversation = conversations.find(
     (conversation) => conversation.taskId === selectedTaskId,

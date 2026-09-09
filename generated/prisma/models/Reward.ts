@@ -245,6 +245,7 @@ export type RewardWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Reward"> | Date | string
   awardedBy?: Prisma.StringFilter<"Reward"> | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  ActivityLogs?: Prisma.ActivityLogListRelationFilter
 }
 
 export type RewardOrderByWithRelationInput = {
@@ -257,6 +258,7 @@ export type RewardOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   awardedBy?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
+  ActivityLogs?: Prisma.ActivityLogOrderByRelationAggregateInput
 }
 
 export type RewardWhereUniqueInput = Prisma.AtLeast<{
@@ -273,6 +275,7 @@ export type RewardWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Reward"> | Date | string
   awardedBy?: Prisma.StringFilter<"Reward"> | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  ActivityLogs?: Prisma.ActivityLogListRelationFilter
 }, "id" | "userId_milestone">
 
 export type RewardOrderByWithAggregationInput = {
@@ -314,6 +317,7 @@ export type RewardCreateInput = {
   createdAt?: Date | string
   awardedBy: string
   user: Prisma.UserCreateNestedOneWithoutRewardsInput
+  ActivityLogs?: Prisma.ActivityLogCreateNestedManyWithoutRewardInput
 }
 
 export type RewardUncheckedCreateInput = {
@@ -325,6 +329,7 @@ export type RewardUncheckedCreateInput = {
   milestone?: number | null
   createdAt?: Date | string
   awardedBy: string
+  ActivityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutRewardInput
 }
 
 export type RewardUpdateInput = {
@@ -336,6 +341,7 @@ export type RewardUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   awardedBy?: Prisma.StringFieldUpdateOperationsInput | string
   user?: Prisma.UserUpdateOneRequiredWithoutRewardsNestedInput
+  ActivityLogs?: Prisma.ActivityLogUpdateManyWithoutRewardNestedInput
 }
 
 export type RewardUncheckedUpdateInput = {
@@ -347,6 +353,7 @@ export type RewardUncheckedUpdateInput = {
   milestone?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   awardedBy?: Prisma.StringFieldUpdateOperationsInput | string
+  ActivityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutRewardNestedInput
 }
 
 export type RewardCreateManyInput = {
@@ -439,6 +446,11 @@ export type RewardSumOrderByAggregateInput = {
   milestone?: Prisma.SortOrder
 }
 
+export type RewardNullableScalarRelationFilter = {
+  is?: Prisma.RewardWhereInput | null
+  isNot?: Prisma.RewardWhereInput | null
+}
+
 export type RewardCreateNestedManyWithoutUserInput = {
   create?: Prisma.XOR<Prisma.RewardCreateWithoutUserInput, Prisma.RewardUncheckedCreateWithoutUserInput> | Prisma.RewardCreateWithoutUserInput[] | Prisma.RewardUncheckedCreateWithoutUserInput[]
   connectOrCreate?: Prisma.RewardCreateOrConnectWithoutUserInput | Prisma.RewardCreateOrConnectWithoutUserInput[]
@@ -489,6 +501,22 @@ export type NullableIntFieldUpdateOperationsInput = {
   divide?: number
 }
 
+export type RewardCreateNestedOneWithoutActivityLogsInput = {
+  create?: Prisma.XOR<Prisma.RewardCreateWithoutActivityLogsInput, Prisma.RewardUncheckedCreateWithoutActivityLogsInput>
+  connectOrCreate?: Prisma.RewardCreateOrConnectWithoutActivityLogsInput
+  connect?: Prisma.RewardWhereUniqueInput
+}
+
+export type RewardUpdateOneWithoutActivityLogsNestedInput = {
+  create?: Prisma.XOR<Prisma.RewardCreateWithoutActivityLogsInput, Prisma.RewardUncheckedCreateWithoutActivityLogsInput>
+  connectOrCreate?: Prisma.RewardCreateOrConnectWithoutActivityLogsInput
+  upsert?: Prisma.RewardUpsertWithoutActivityLogsInput
+  disconnect?: Prisma.RewardWhereInput | boolean
+  delete?: Prisma.RewardWhereInput | boolean
+  connect?: Prisma.RewardWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.RewardUpdateToOneWithWhereWithoutActivityLogsInput, Prisma.RewardUpdateWithoutActivityLogsInput>, Prisma.RewardUncheckedUpdateWithoutActivityLogsInput>
+}
+
 export type RewardCreateWithoutUserInput = {
   id?: string
   title: string
@@ -497,6 +525,7 @@ export type RewardCreateWithoutUserInput = {
   milestone?: number | null
   createdAt?: Date | string
   awardedBy: string
+  ActivityLogs?: Prisma.ActivityLogCreateNestedManyWithoutRewardInput
 }
 
 export type RewardUncheckedCreateWithoutUserInput = {
@@ -507,6 +536,7 @@ export type RewardUncheckedCreateWithoutUserInput = {
   milestone?: number | null
   createdAt?: Date | string
   awardedBy: string
+  ActivityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutRewardInput
 }
 
 export type RewardCreateOrConnectWithoutUserInput = {
@@ -549,6 +579,66 @@ export type RewardScalarWhereInput = {
   awardedBy?: Prisma.StringFilter<"Reward"> | string
 }
 
+export type RewardCreateWithoutActivityLogsInput = {
+  id?: string
+  title: string
+  message?: string | null
+  points?: number
+  milestone?: number | null
+  createdAt?: Date | string
+  awardedBy: string
+  user: Prisma.UserCreateNestedOneWithoutRewardsInput
+}
+
+export type RewardUncheckedCreateWithoutActivityLogsInput = {
+  id?: string
+  userId: string
+  title: string
+  message?: string | null
+  points?: number
+  milestone?: number | null
+  createdAt?: Date | string
+  awardedBy: string
+}
+
+export type RewardCreateOrConnectWithoutActivityLogsInput = {
+  where: Prisma.RewardWhereUniqueInput
+  create: Prisma.XOR<Prisma.RewardCreateWithoutActivityLogsInput, Prisma.RewardUncheckedCreateWithoutActivityLogsInput>
+}
+
+export type RewardUpsertWithoutActivityLogsInput = {
+  update: Prisma.XOR<Prisma.RewardUpdateWithoutActivityLogsInput, Prisma.RewardUncheckedUpdateWithoutActivityLogsInput>
+  create: Prisma.XOR<Prisma.RewardCreateWithoutActivityLogsInput, Prisma.RewardUncheckedCreateWithoutActivityLogsInput>
+  where?: Prisma.RewardWhereInput
+}
+
+export type RewardUpdateToOneWithWhereWithoutActivityLogsInput = {
+  where?: Prisma.RewardWhereInput
+  data: Prisma.XOR<Prisma.RewardUpdateWithoutActivityLogsInput, Prisma.RewardUncheckedUpdateWithoutActivityLogsInput>
+}
+
+export type RewardUpdateWithoutActivityLogsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  message?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  points?: Prisma.IntFieldUpdateOperationsInput | number
+  milestone?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  awardedBy?: Prisma.StringFieldUpdateOperationsInput | string
+  user?: Prisma.UserUpdateOneRequiredWithoutRewardsNestedInput
+}
+
+export type RewardUncheckedUpdateWithoutActivityLogsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  message?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  points?: Prisma.IntFieldUpdateOperationsInput | number
+  milestone?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  awardedBy?: Prisma.StringFieldUpdateOperationsInput | string
+}
+
 export type RewardCreateManyUserInput = {
   id?: string
   title: string
@@ -567,6 +657,7 @@ export type RewardUpdateWithoutUserInput = {
   milestone?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   awardedBy?: Prisma.StringFieldUpdateOperationsInput | string
+  ActivityLogs?: Prisma.ActivityLogUpdateManyWithoutRewardNestedInput
 }
 
 export type RewardUncheckedUpdateWithoutUserInput = {
@@ -577,6 +668,7 @@ export type RewardUncheckedUpdateWithoutUserInput = {
   milestone?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   awardedBy?: Prisma.StringFieldUpdateOperationsInput | string
+  ActivityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutRewardNestedInput
 }
 
 export type RewardUncheckedUpdateManyWithoutUserInput = {
@@ -590,6 +682,35 @@ export type RewardUncheckedUpdateManyWithoutUserInput = {
 }
 
 
+/**
+ * Count Type RewardCountOutputType
+ */
+
+export type RewardCountOutputType = {
+  ActivityLogs: number
+}
+
+export type RewardCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  ActivityLogs?: boolean | RewardCountOutputTypeCountActivityLogsArgs
+}
+
+/**
+ * RewardCountOutputType without action
+ */
+export type RewardCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the RewardCountOutputType
+   */
+  select?: Prisma.RewardCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * RewardCountOutputType without action
+ */
+export type RewardCountOutputTypeCountActivityLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ActivityLogWhereInput
+}
+
 
 export type RewardSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -601,6 +722,8 @@ export type RewardSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   createdAt?: boolean
   awardedBy?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  ActivityLogs?: boolean | Prisma.Reward$ActivityLogsArgs<ExtArgs>
+  _count?: boolean | Prisma.RewardCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["reward"]>
 
 export type RewardSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -641,6 +764,8 @@ export type RewardSelectScalar = {
 export type RewardOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "title" | "message" | "points" | "milestone" | "createdAt" | "awardedBy", ExtArgs["result"]["reward"]>
 export type RewardInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  ActivityLogs?: boolean | Prisma.Reward$ActivityLogsArgs<ExtArgs>
+  _count?: boolean | Prisma.RewardCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type RewardIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -653,6 +778,7 @@ export type $RewardPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
   name: "Reward"
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
+    ActivityLogs: Prisma.$ActivityLogPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1058,6 +1184,7 @@ readonly fields: RewardFieldRefs;
 export interface Prisma__RewardClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  ActivityLogs<T extends Prisma.Reward$ActivityLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Reward$ActivityLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ActivityLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1493,6 +1620,30 @@ export type RewardDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Intern
    * Limit how many Rewards to delete.
    */
   limit?: number
+}
+
+/**
+ * Reward.ActivityLogs
+ */
+export type Reward$ActivityLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ActivityLog
+   */
+  select?: Prisma.ActivityLogSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ActivityLog
+   */
+  omit?: Prisma.ActivityLogOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ActivityLogInclude<ExtArgs> | null
+  where?: Prisma.ActivityLogWhereInput
+  orderBy?: Prisma.ActivityLogOrderByWithRelationInput | Prisma.ActivityLogOrderByWithRelationInput[]
+  cursor?: Prisma.ActivityLogWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ActivityLogScalarFieldEnum | Prisma.ActivityLogScalarFieldEnum[]
 }
 
 /**

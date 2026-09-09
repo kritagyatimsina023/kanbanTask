@@ -46,6 +46,12 @@ model User {
   chatRoomMemberships ChatRoomMember[]
   chatMessages        ChatMessage[]
 
+
+  activitiesAsActor ActivityLog[] @relation("ActivityActor")
+
+  activitiesAsTarget ActivityLog[] @relation("ActivityTarget")
+
+
   createdChatRooms ChatRoom[] @relation("ChatRoomCreator")
 }
 
@@ -66,6 +72,8 @@ model Task {
 
   notifications Notification[] @relation("TaskNotifications")
   messages      TaskMessage[]  @relation("TaskMessages")
+  ActivityLogs ActivityLog[]
+
 
   @@index([assigneeId])
   @@index([status])
@@ -124,6 +132,8 @@ model Reward {
   awardedBy String
 
   user User @relation(fields: [userId], references: [id])
+  ActivityLogs ActivityLog[]
+
 
   @@unique([userId, milestone])
   @@index([userId, createdAt])
@@ -145,6 +155,8 @@ model TaskMessage {
   task   Task @relation("TaskMessages", fields: [taskId], references: [id], onDelete: Cascade)
   sender User @relation("UserTaskMessages", fields: [senderId], references: [id], onDelete: Cascade)
 
+
+
   @@index([taskId])
   @@index([senderId])
   @@index([isRead])
@@ -163,6 +175,8 @@ model ChatRoom {
   members  ChatRoomMember[]
   notifications Notification[] @relation("ChatRoomNotifications")
   messages ChatMessage[]
+  ActivityLogs ActivityLog[]
+
 
   @@index([createdAt])
 }
@@ -195,5 +209,78 @@ model ChatMessage {
 
   @@index([roomId, createdAt])
   @@index([senderId])
+}
+
+enum ActivityAction{
+  TASK_CREATED
+  TASK_UPDATED
+  TASK_DELETED
+  TASK_COMPLETED
+  TASK_REOPENED
+  TASK_ASSIGNED
+  TASK_UNASSIGNED
+  TASK_REASSIGNED
+  TASK_STATUS_CHANGED
+  TASK_COMMENTED
+  REWARD_GRANTED
+  USER_BANNED
+  USER_UNBANNED
+  USER_ROLE_CHANGED
+  CHAT_ROOM_CREATED
+  CHAT_ROOM_DELETED
+  CHAT_ROOM_MEMBER_ADDED
+  CHAT_ROOM_MEMBER_REMOVED
+}
+
+// model ActivityLog{
+//   id String @id @default(cuid())
+//   action ActivityAction
+//   userId String
+//   targetUserId String?
+//   taskId String?
+//   rewardId String?
+//   chatRoomId String?
+//   createdAt DateTime @default(now())
+//   metadata Json?
+
+//   user User @relation(fields:[userId], references:[id],onDelete: Cascade)
+//   task Task? @relation(fields:[taskId], references:[id])
+//   reward Reward? @relation(fields:[rewardId], references:[id])
+//   chatRoom ChatRoom? @relation(fields:[chatRoomId], references:[id])
+
+//   @@index([userId, createdAt])
+//   @@index([taskId, createdAt])
+//   @@index([rewardId, createdAt])
+//   @@index([chatRoomId, createdAt])
+//   @@index([createdAt])
+
+// }
+model ActivityLog {
+  id String @id @default(cuid())
+
+  action ActivityAction
+
+  userId       String
+  targetUserId String?
+
+  taskId     String?
+  rewardId   String?
+  chatRoomId String?
+
+  createdAt DateTime @default(now())
+
+  metadata Json?
+
+  user       User  @relation("ActivityActor", fields: [userId], references: [id])
+  targetUser User? @relation("ActivityTarget", fields: [targetUserId], references: [id])
+
+  task     Task?     @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  reward   Reward?   @relation(fields: [rewardId], references: [id], onDelete: SetNull)
+  chatRoom ChatRoom? @relation(fields: [chatRoomId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
+  @@index([targetUserId, createdAt])
+  @@index([chatRoomId, createdAt])
+  @@index([createdAt])
 }
 

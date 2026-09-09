@@ -186,6 +186,7 @@ export type ChatRoomWhereInput = {
   members?: Prisma.ChatRoomMemberListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
   messages?: Prisma.ChatMessageListRelationFilter
+  ActivityLogs?: Prisma.ActivityLogListRelationFilter
 }
 
 export type ChatRoomOrderByWithRelationInput = {
@@ -198,6 +199,7 @@ export type ChatRoomOrderByWithRelationInput = {
   members?: Prisma.ChatRoomMemberOrderByRelationAggregateInput
   notifications?: Prisma.NotificationOrderByRelationAggregateInput
   messages?: Prisma.ChatMessageOrderByRelationAggregateInput
+  ActivityLogs?: Prisma.ActivityLogOrderByRelationAggregateInput
 }
 
 export type ChatRoomWhereUniqueInput = Prisma.AtLeast<{
@@ -213,6 +215,7 @@ export type ChatRoomWhereUniqueInput = Prisma.AtLeast<{
   members?: Prisma.ChatRoomMemberListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
   messages?: Prisma.ChatMessageListRelationFilter
+  ActivityLogs?: Prisma.ActivityLogListRelationFilter
 }, "id">
 
 export type ChatRoomOrderByWithAggregationInput = {
@@ -246,6 +249,7 @@ export type ChatRoomCreateInput = {
   members?: Prisma.ChatRoomMemberCreateNestedManyWithoutRoomInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutChatRoomInput
   messages?: Prisma.ChatMessageCreateNestedManyWithoutRoomInput
+  ActivityLogs?: Prisma.ActivityLogCreateNestedManyWithoutChatRoomInput
 }
 
 export type ChatRoomUncheckedCreateInput = {
@@ -257,6 +261,7 @@ export type ChatRoomUncheckedCreateInput = {
   members?: Prisma.ChatRoomMemberUncheckedCreateNestedManyWithoutRoomInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutChatRoomInput
   messages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutRoomInput
+  ActivityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutChatRoomInput
 }
 
 export type ChatRoomUpdateInput = {
@@ -268,6 +273,7 @@ export type ChatRoomUpdateInput = {
   members?: Prisma.ChatRoomMemberUpdateManyWithoutRoomNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutChatRoomNestedInput
   messages?: Prisma.ChatMessageUpdateManyWithoutRoomNestedInput
+  ActivityLogs?: Prisma.ActivityLogUpdateManyWithoutChatRoomNestedInput
 }
 
 export type ChatRoomUncheckedUpdateInput = {
@@ -279,6 +285,7 @@ export type ChatRoomUncheckedUpdateInput = {
   members?: Prisma.ChatRoomMemberUncheckedUpdateManyWithoutRoomNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutChatRoomNestedInput
   messages?: Prisma.ChatMessageUncheckedUpdateManyWithoutRoomNestedInput
+  ActivityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutChatRoomNestedInput
 }
 
 export type ChatRoomCreateManyInput = {
@@ -434,6 +441,22 @@ export type ChatRoomUpdateOneRequiredWithoutMessagesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ChatRoomUpdateToOneWithWhereWithoutMessagesInput, Prisma.ChatRoomUpdateWithoutMessagesInput>, Prisma.ChatRoomUncheckedUpdateWithoutMessagesInput>
 }
 
+export type ChatRoomCreateNestedOneWithoutActivityLogsInput = {
+  create?: Prisma.XOR<Prisma.ChatRoomCreateWithoutActivityLogsInput, Prisma.ChatRoomUncheckedCreateWithoutActivityLogsInput>
+  connectOrCreate?: Prisma.ChatRoomCreateOrConnectWithoutActivityLogsInput
+  connect?: Prisma.ChatRoomWhereUniqueInput
+}
+
+export type ChatRoomUpdateOneWithoutActivityLogsNestedInput = {
+  create?: Prisma.XOR<Prisma.ChatRoomCreateWithoutActivityLogsInput, Prisma.ChatRoomUncheckedCreateWithoutActivityLogsInput>
+  connectOrCreate?: Prisma.ChatRoomCreateOrConnectWithoutActivityLogsInput
+  upsert?: Prisma.ChatRoomUpsertWithoutActivityLogsInput
+  disconnect?: Prisma.ChatRoomWhereInput | boolean
+  delete?: Prisma.ChatRoomWhereInput | boolean
+  connect?: Prisma.ChatRoomWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ChatRoomUpdateToOneWithWhereWithoutActivityLogsInput, Prisma.ChatRoomUpdateWithoutActivityLogsInput>, Prisma.ChatRoomUncheckedUpdateWithoutActivityLogsInput>
+}
+
 export type ChatRoomCreateWithoutCreatedByInput = {
   id?: string
   name: string
@@ -442,6 +465,7 @@ export type ChatRoomCreateWithoutCreatedByInput = {
   members?: Prisma.ChatRoomMemberCreateNestedManyWithoutRoomInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutChatRoomInput
   messages?: Prisma.ChatMessageCreateNestedManyWithoutRoomInput
+  ActivityLogs?: Prisma.ActivityLogCreateNestedManyWithoutChatRoomInput
 }
 
 export type ChatRoomUncheckedCreateWithoutCreatedByInput = {
@@ -452,6 +476,7 @@ export type ChatRoomUncheckedCreateWithoutCreatedByInput = {
   members?: Prisma.ChatRoomMemberUncheckedCreateNestedManyWithoutRoomInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutChatRoomInput
   messages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutRoomInput
+  ActivityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutChatRoomInput
 }
 
 export type ChatRoomCreateOrConnectWithoutCreatedByInput = {
@@ -499,6 +524,7 @@ export type ChatRoomCreateWithoutNotificationsInput = {
   createdBy?: Prisma.UserCreateNestedOneWithoutCreatedChatRoomsInput
   members?: Prisma.ChatRoomMemberCreateNestedManyWithoutRoomInput
   messages?: Prisma.ChatMessageCreateNestedManyWithoutRoomInput
+  ActivityLogs?: Prisma.ActivityLogCreateNestedManyWithoutChatRoomInput
 }
 
 export type ChatRoomUncheckedCreateWithoutNotificationsInput = {
@@ -509,6 +535,7 @@ export type ChatRoomUncheckedCreateWithoutNotificationsInput = {
   createdById?: string | null
   members?: Prisma.ChatRoomMemberUncheckedCreateNestedManyWithoutRoomInput
   messages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutRoomInput
+  ActivityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutChatRoomInput
 }
 
 export type ChatRoomCreateOrConnectWithoutNotificationsInput = {
@@ -535,6 +562,7 @@ export type ChatRoomUpdateWithoutNotificationsInput = {
   createdBy?: Prisma.UserUpdateOneWithoutCreatedChatRoomsNestedInput
   members?: Prisma.ChatRoomMemberUpdateManyWithoutRoomNestedInput
   messages?: Prisma.ChatMessageUpdateManyWithoutRoomNestedInput
+  ActivityLogs?: Prisma.ActivityLogUpdateManyWithoutChatRoomNestedInput
 }
 
 export type ChatRoomUncheckedUpdateWithoutNotificationsInput = {
@@ -545,6 +573,7 @@ export type ChatRoomUncheckedUpdateWithoutNotificationsInput = {
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   members?: Prisma.ChatRoomMemberUncheckedUpdateManyWithoutRoomNestedInput
   messages?: Prisma.ChatMessageUncheckedUpdateManyWithoutRoomNestedInput
+  ActivityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutChatRoomNestedInput
 }
 
 export type ChatRoomCreateWithoutMembersInput = {
@@ -555,6 +584,7 @@ export type ChatRoomCreateWithoutMembersInput = {
   createdBy?: Prisma.UserCreateNestedOneWithoutCreatedChatRoomsInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutChatRoomInput
   messages?: Prisma.ChatMessageCreateNestedManyWithoutRoomInput
+  ActivityLogs?: Prisma.ActivityLogCreateNestedManyWithoutChatRoomInput
 }
 
 export type ChatRoomUncheckedCreateWithoutMembersInput = {
@@ -565,6 +595,7 @@ export type ChatRoomUncheckedCreateWithoutMembersInput = {
   createdById?: string | null
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutChatRoomInput
   messages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutRoomInput
+  ActivityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutChatRoomInput
 }
 
 export type ChatRoomCreateOrConnectWithoutMembersInput = {
@@ -591,6 +622,7 @@ export type ChatRoomUpdateWithoutMembersInput = {
   createdBy?: Prisma.UserUpdateOneWithoutCreatedChatRoomsNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutChatRoomNestedInput
   messages?: Prisma.ChatMessageUpdateManyWithoutRoomNestedInput
+  ActivityLogs?: Prisma.ActivityLogUpdateManyWithoutChatRoomNestedInput
 }
 
 export type ChatRoomUncheckedUpdateWithoutMembersInput = {
@@ -601,6 +633,7 @@ export type ChatRoomUncheckedUpdateWithoutMembersInput = {
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutChatRoomNestedInput
   messages?: Prisma.ChatMessageUncheckedUpdateManyWithoutRoomNestedInput
+  ActivityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutChatRoomNestedInput
 }
 
 export type ChatRoomCreateWithoutMessagesInput = {
@@ -611,6 +644,7 @@ export type ChatRoomCreateWithoutMessagesInput = {
   createdBy?: Prisma.UserCreateNestedOneWithoutCreatedChatRoomsInput
   members?: Prisma.ChatRoomMemberCreateNestedManyWithoutRoomInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutChatRoomInput
+  ActivityLogs?: Prisma.ActivityLogCreateNestedManyWithoutChatRoomInput
 }
 
 export type ChatRoomUncheckedCreateWithoutMessagesInput = {
@@ -621,6 +655,7 @@ export type ChatRoomUncheckedCreateWithoutMessagesInput = {
   createdById?: string | null
   members?: Prisma.ChatRoomMemberUncheckedCreateNestedManyWithoutRoomInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutChatRoomInput
+  ActivityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutChatRoomInput
 }
 
 export type ChatRoomCreateOrConnectWithoutMessagesInput = {
@@ -647,6 +682,7 @@ export type ChatRoomUpdateWithoutMessagesInput = {
   createdBy?: Prisma.UserUpdateOneWithoutCreatedChatRoomsNestedInput
   members?: Prisma.ChatRoomMemberUpdateManyWithoutRoomNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutChatRoomNestedInput
+  ActivityLogs?: Prisma.ActivityLogUpdateManyWithoutChatRoomNestedInput
 }
 
 export type ChatRoomUncheckedUpdateWithoutMessagesInput = {
@@ -657,6 +693,67 @@ export type ChatRoomUncheckedUpdateWithoutMessagesInput = {
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   members?: Prisma.ChatRoomMemberUncheckedUpdateManyWithoutRoomNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutChatRoomNestedInput
+  ActivityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutChatRoomNestedInput
+}
+
+export type ChatRoomCreateWithoutActivityLogsInput = {
+  id?: string
+  name: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  createdBy?: Prisma.UserCreateNestedOneWithoutCreatedChatRoomsInput
+  members?: Prisma.ChatRoomMemberCreateNestedManyWithoutRoomInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutChatRoomInput
+  messages?: Prisma.ChatMessageCreateNestedManyWithoutRoomInput
+}
+
+export type ChatRoomUncheckedCreateWithoutActivityLogsInput = {
+  id?: string
+  name: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  createdById?: string | null
+  members?: Prisma.ChatRoomMemberUncheckedCreateNestedManyWithoutRoomInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutChatRoomInput
+  messages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutRoomInput
+}
+
+export type ChatRoomCreateOrConnectWithoutActivityLogsInput = {
+  where: Prisma.ChatRoomWhereUniqueInput
+  create: Prisma.XOR<Prisma.ChatRoomCreateWithoutActivityLogsInput, Prisma.ChatRoomUncheckedCreateWithoutActivityLogsInput>
+}
+
+export type ChatRoomUpsertWithoutActivityLogsInput = {
+  update: Prisma.XOR<Prisma.ChatRoomUpdateWithoutActivityLogsInput, Prisma.ChatRoomUncheckedUpdateWithoutActivityLogsInput>
+  create: Prisma.XOR<Prisma.ChatRoomCreateWithoutActivityLogsInput, Prisma.ChatRoomUncheckedCreateWithoutActivityLogsInput>
+  where?: Prisma.ChatRoomWhereInput
+}
+
+export type ChatRoomUpdateToOneWithWhereWithoutActivityLogsInput = {
+  where?: Prisma.ChatRoomWhereInput
+  data: Prisma.XOR<Prisma.ChatRoomUpdateWithoutActivityLogsInput, Prisma.ChatRoomUncheckedUpdateWithoutActivityLogsInput>
+}
+
+export type ChatRoomUpdateWithoutActivityLogsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdBy?: Prisma.UserUpdateOneWithoutCreatedChatRoomsNestedInput
+  members?: Prisma.ChatRoomMemberUpdateManyWithoutRoomNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutChatRoomNestedInput
+  messages?: Prisma.ChatMessageUpdateManyWithoutRoomNestedInput
+}
+
+export type ChatRoomUncheckedUpdateWithoutActivityLogsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  members?: Prisma.ChatRoomMemberUncheckedUpdateManyWithoutRoomNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutChatRoomNestedInput
+  messages?: Prisma.ChatMessageUncheckedUpdateManyWithoutRoomNestedInput
 }
 
 export type ChatRoomCreateManyCreatedByInput = {
@@ -674,6 +771,7 @@ export type ChatRoomUpdateWithoutCreatedByInput = {
   members?: Prisma.ChatRoomMemberUpdateManyWithoutRoomNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutChatRoomNestedInput
   messages?: Prisma.ChatMessageUpdateManyWithoutRoomNestedInput
+  ActivityLogs?: Prisma.ActivityLogUpdateManyWithoutChatRoomNestedInput
 }
 
 export type ChatRoomUncheckedUpdateWithoutCreatedByInput = {
@@ -684,6 +782,7 @@ export type ChatRoomUncheckedUpdateWithoutCreatedByInput = {
   members?: Prisma.ChatRoomMemberUncheckedUpdateManyWithoutRoomNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutChatRoomNestedInput
   messages?: Prisma.ChatMessageUncheckedUpdateManyWithoutRoomNestedInput
+  ActivityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutChatRoomNestedInput
 }
 
 export type ChatRoomUncheckedUpdateManyWithoutCreatedByInput = {
@@ -702,12 +801,14 @@ export type ChatRoomCountOutputType = {
   members: number
   notifications: number
   messages: number
+  ActivityLogs: number
 }
 
 export type ChatRoomCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   members?: boolean | ChatRoomCountOutputTypeCountMembersArgs
   notifications?: boolean | ChatRoomCountOutputTypeCountNotificationsArgs
   messages?: boolean | ChatRoomCountOutputTypeCountMessagesArgs
+  ActivityLogs?: boolean | ChatRoomCountOutputTypeCountActivityLogsArgs
 }
 
 /**
@@ -741,6 +842,13 @@ export type ChatRoomCountOutputTypeCountMessagesArgs<ExtArgs extends runtime.Typ
   where?: Prisma.ChatMessageWhereInput
 }
 
+/**
+ * ChatRoomCountOutputType without action
+ */
+export type ChatRoomCountOutputTypeCountActivityLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ActivityLogWhereInput
+}
+
 
 export type ChatRoomSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -752,6 +860,7 @@ export type ChatRoomSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   members?: boolean | Prisma.ChatRoom$membersArgs<ExtArgs>
   notifications?: boolean | Prisma.ChatRoom$notificationsArgs<ExtArgs>
   messages?: boolean | Prisma.ChatRoom$messagesArgs<ExtArgs>
+  ActivityLogs?: boolean | Prisma.ChatRoom$ActivityLogsArgs<ExtArgs>
   _count?: boolean | Prisma.ChatRoomCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["chatRoom"]>
 
@@ -787,6 +896,7 @@ export type ChatRoomInclude<ExtArgs extends runtime.Types.Extensions.InternalArg
   members?: boolean | Prisma.ChatRoom$membersArgs<ExtArgs>
   notifications?: boolean | Prisma.ChatRoom$notificationsArgs<ExtArgs>
   messages?: boolean | Prisma.ChatRoom$messagesArgs<ExtArgs>
+  ActivityLogs?: boolean | Prisma.ChatRoom$ActivityLogsArgs<ExtArgs>
   _count?: boolean | Prisma.ChatRoomCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ChatRoomIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -803,6 +913,7 @@ export type $ChatRoomPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     members: Prisma.$ChatRoomMemberPayload<ExtArgs>[]
     notifications: Prisma.$NotificationPayload<ExtArgs>[]
     messages: Prisma.$ChatMessagePayload<ExtArgs>[]
+    ActivityLogs: Prisma.$ActivityLogPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1208,6 +1319,7 @@ export interface Prisma__ChatRoomClient<T, Null = never, ExtArgs extends runtime
   members<T extends Prisma.ChatRoom$membersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ChatRoom$membersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatRoomMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notifications<T extends Prisma.ChatRoom$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ChatRoom$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   messages<T extends Prisma.ChatRoom$messagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ChatRoom$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  ActivityLogs<T extends Prisma.ChatRoom$ActivityLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ChatRoom$ActivityLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ActivityLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1731,6 +1843,30 @@ export type ChatRoom$messagesArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   distinct?: Prisma.ChatMessageScalarFieldEnum | Prisma.ChatMessageScalarFieldEnum[]
+}
+
+/**
+ * ChatRoom.ActivityLogs
+ */
+export type ChatRoom$ActivityLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ActivityLog
+   */
+  select?: Prisma.ActivityLogSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ActivityLog
+   */
+  omit?: Prisma.ActivityLogOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ActivityLogInclude<ExtArgs> | null
+  where?: Prisma.ActivityLogWhereInput
+  orderBy?: Prisma.ActivityLogOrderByWithRelationInput | Prisma.ActivityLogOrderByWithRelationInput[]
+  cursor?: Prisma.ActivityLogWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ActivityLogScalarFieldEnum | Prisma.ActivityLogScalarFieldEnum[]
 }
 
 /**

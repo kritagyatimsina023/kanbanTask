@@ -4,12 +4,7 @@
 // import { RealtimeNotificationPayload } from "./realtime.types";
 // import { REALTIME_EVENTS } from "./realtime.events";
 
-import {
-  NotificationType,
-  Role,
-  Status,
-  UserStatus,
-} from "@/generated/prisma/enums";
+import { NotificationType, Role, UserStatus } from "@/generated/prisma/enums";
 import { pusherServer } from "../pusher/pusher.server";
 import { REALTIME_CHANNELS, REALTIME_EVENTS } from "./realtime.events";
 import prisma from "../prisma";
@@ -142,7 +137,6 @@ class RealtimePublisher {
     }
     return false;
   }
-
   async publishNotification(notification: RealTimeNotification) {
     await pusherServer.trigger(
       REALTIME_CHANNELS.user(notification.userId),

@@ -7,17 +7,26 @@ const STORAGE_KEY = "chat-message-sound";
 const ChatMessageSound = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const [soundEnabled, setSoundEnabled] = useState(true);
-
-  useEffect(() => {
-    const savedPreference = localStorage.getItem(STORAGE_KEY);
-
-    if (savedPreference !== null) {
-      setSoundEnabled(savedPreference === "true");
+  const [soundEnabled, setSoundEnabled] = useState(() => {
+    if (typeof window === "undefined") {
+      return true;
     }
 
-    audioRef.current = new Audio("/sounds/message-notification.mp3");
-    audioRef.current.volume = 0.5;
+    const savedPreference = localStorage.getItem(STORAGE_KEY);
+
+    return savedPreference !== null ? savedPreference === "true" : true;
+  });
+
+  useEffect(() => {
+    const audio = new Audio("/sounds/message-notification.mp3");
+
+    audio.volume = 0.5;
+    audioRef.current = audio;
+
+    return () => {
+      audio.pause();
+      audioRef.current = null;
+    };
   }, []);
 
   const toggleSound = () => {

@@ -1,6 +1,6 @@
 "use client";
 
-import { LucideLoader2, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 const randomQuote = [

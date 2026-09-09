@@ -14,7 +14,7 @@ export async function createTaskAction(
   formData: FormData,
 ): Promise<CreateTaskState> {
   try {
-    await requireAdmin();
+    const session = await requireAdmin();
     const deadline = formData.get("deadline");
     const rawData = {
       title: formData.get("title"),
@@ -33,7 +33,7 @@ export async function createTaskAction(
         fieldErrors: messages,
       };
     }
-    await taskService.createTask(result.data);
+    await taskService.createTask(result.data, session.id);
     revalidatePath("/admin/tasks");
     invalidate.admin();
     invalidate.adminUser();
@@ -59,7 +59,7 @@ export async function updateTaskAction(
   formData: FormData,
 ): Promise<CreateTaskState> {
   try {
-    await requireAdmin();
+    const session = await requireAdmin();
     const taskId = formData.get("taskId");
     if (!taskId || typeof taskId !== "string") {
       return {
@@ -86,7 +86,7 @@ export async function updateTaskAction(
         fieldErrors: messages,
       };
     }
-    await taskService.updateTask(taskId, result.data);
+    await taskService.updateTask(taskId, session.id, result.data);
     invalidate.taskUpdated();
     return {
       error: null,
@@ -125,8 +125,12 @@ export async function reassignTaskAction(
   newAssigneeId: string | null,
 ) {
   try {
-    await requireAdmin();
-    const task = await taskService.reassignTask(taskId, newAssigneeId);
+    const session = await requireAdmin();
+    const task = await taskService.reassignTask(
+      taskId,
+      newAssigneeId,
+      session.id,
+    );
     revalidatePath("/");
     invalidate.taskReassigned();
     if (task.status === Status.DONE) {
@@ -145,8 +149,8 @@ export async function reassignTaskAction(
 }
 export async function deleteTaskAction(taskId: string) {
   try {
-    await requireAdmin();
-    const task = await taskService.deleteTask(taskId);
+    const session = await requireAdmin();
+    const task = await taskService.deleteTask(taskId, session.id);
     if (task.status === Status.DONE) {
       invalidate.leaderboard();
       revalidatePath("/admin/leaderboards");

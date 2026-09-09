@@ -1,5 +1,6 @@
+import { activityService } from "@/feature/activitylog/activity.service";
 import { notificationService } from "@/feature/notification/notification.service";
-import { Role, UserStatus } from "@/generated/prisma/enums";
+import { ActivityAction, Role, UserStatus } from "@/generated/prisma/enums";
 import { ErrorResource } from "@/lib/errors/app-error";
 import { Errors } from "@/lib/errors/errors";
 import { normalizeError } from "@/lib/errors/normalizeError";
@@ -60,12 +61,32 @@ export class chatService {
             },
           },
         });
+        await activityService.create(tx, {
+          action: ActivityAction.CHAT_ROOM_CREATED,
+          userId: creatorId,
+          chatRoomId: chatRoom.id,
+          metadata: {
+            name: chatRoom.name,
+          },
+        });
+
+        const addedMembers = chatRoom.members.filter(
+          (member) => member.userId !== creatorId,
+        );
+        await activityService.create(tx, {
+          action: ActivityAction.CHAT_ROOM_MEMBER_ADDED,
+          userId: creatorId,
+          chatRoomId: chatRoom.id,
+          metadata: {
+            memberIds: addedMembers.map((member) => member.userId),
+            memberEmails: addedMembers.map((member) => member.user.email),
+          },
+        });
 
         const creatorUser = await tx.user.findUnique({
           where: {
             id: creatorId,
           },
-
           select: {
             email: true,
           },
@@ -205,28 +226,51 @@ export class chatService {
   }
   async deleteChatRoom(roomId: string, userId: string) {
     try {
-      const chatRoom = await prisma.chatRoom.findUnique({
-        where: {
-          id: roomId,
-        },
-        select: {
-          createdById: true,
-        },
+      const result = await prisma.$transaction(async (tx) => {
+        const chatRoom = await tx.chatRoom.findUnique({
+          where: {
+            id: roomId,
+          },
+          select: {
+            id: true,
+            name: true,
+            createdById: true,
+            members: {
+              select: {
+                userId: true,
+              },
+            },
+          },
+        });
+        if (!chatRoom) {
+          throw Errors.notFound("Chat room not found", ErrorResource.CHATROOM);
+        }
+        if (chatRoom.createdById !== userId) {
+          throw Errors.unauthorized(
+            "Only creator of the chat room can delete it",
+            ErrorResource.USER,
+          );
+        }
+        const memberIds = chatRoom.members.map((member) => member.userId);
+        await activityService.create(tx, {
+          action: ActivityAction.CHAT_ROOM_DELETED,
+          userId,
+          chatRoomId: chatRoom.id,
+          metadata: {
+            name: chatRoom.name,
+            memberIds,
+          },
+        });
+        await tx.chatRoom.delete({
+          where: {
+            id: roomId,
+          },
+        });
+
+        return chatRoom;
       });
-      if (!chatRoom) {
-        throw Errors.notFound("Chat room not found", ErrorResource.CHATROOM);
-      }
-      if (chatRoom?.createdById !== userId) {
-        throw Errors.unauthorized(
-          "Only  creator of the chat room can delete it",
-          ErrorResource.USER,
-        );
-      }
-      return await prisma.chatRoom.delete({
-        where: {
-          id: roomId,
-        },
-      });
+
+      return result;
     } catch (error) {
       throw normalizeError(error, ErrorResource.CHATROOM);
     }

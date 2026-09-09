@@ -7,10 +7,11 @@ import { Errors } from "@/lib/errors/errors";
 import { ErrorResource } from "@/lib/errors/app-error";
 
 import { normalizeError } from "@/lib/errors/normalizeError";
-import { Status } from "@/generated/prisma/enums";
+import { ActivityAction, Status } from "@/generated/prisma/enums";
 import { invalidate } from "@/lib/cache";
 import { Prisma } from "@/generated/prisma/client";
 import { realtimePublisher } from "@/lib/realtime/realtime.publisher";
+import { activityService } from "@/feature/activitylog/activity.service";
 
 // type rewardsType = Readonly<Pick<Reward, "points">>;
 type LeaderboardUser = {
@@ -69,11 +70,6 @@ export class LeaderboardService {
                 },
               },
             },
-            // rewards: {
-            //   select: {
-            //     points: true,
-            //   },
-            // },
           },
         });
 
@@ -177,7 +173,6 @@ export class LeaderboardService {
           ErrorResource.USER,
         );
       }
-
       // const points = 10;
       const result = await prisma.$transaction(async (tx) => {
         const reward = await tx.reward.create({
@@ -189,18 +184,6 @@ export class LeaderboardService {
             // points,
           },
         });
-
-        // await tx.user.update({
-        //   where: {
-        //     id: user.id,
-        //   },
-        //   data: {
-        //     points: {
-        //       increment: points,
-        //     },
-        //   },
-        // });
-
         const notification =
           await notificationService.createRewardedNotificaiton(
             tx,
@@ -210,6 +193,18 @@ export class LeaderboardService {
             reward.createdAt,
           );
 
+        await activityService.create(tx, {
+          action: ActivityAction.REWARD_GRANTED,
+          userId: adminId,
+          rewardId: reward.id,
+          targetUserId: user.id,
+          metadata: {
+            type: "MANUAL",
+            points: reward.points,
+            awardedTo: user.id,
+            title: reward.title,
+          },
+        });
         return {
           reward,
           notification,

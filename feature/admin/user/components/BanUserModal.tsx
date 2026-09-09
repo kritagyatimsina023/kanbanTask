@@ -4,7 +4,6 @@ import { X, Ban } from "lucide-react";
 import { useActionState, useEffect, useState } from "react";
 import { toggleBanUser } from "../user.action";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 
 interface BanUserModalProps {
   user: {

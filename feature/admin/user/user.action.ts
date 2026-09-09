@@ -5,8 +5,7 @@ import { invalidate } from "@/lib/cache";
 import { usersServices } from "./user.service";
 
 import { handleError } from "@/lib/errors/handle-error";
-import { Errors } from "@/lib/errors/errors";
-import { ErrorResource } from "@/lib/errors/app-error";
+
 import { banUserSchema } from "./user.schema";
 
 type BanUserState = {

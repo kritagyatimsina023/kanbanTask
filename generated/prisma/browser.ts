@@ -57,3 +57,8 @@ export type ChatRoomMember = Prisma.ChatRoomMemberModel
  * 
  */
 export type ChatMessage = Prisma.ChatMessageModel
+/**
+ * Model ActivityLog
+ * 
+ */
+export type ActivityLog = Prisma.ActivityLogModel

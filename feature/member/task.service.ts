@@ -1,6 +1,6 @@
 import { ErrorResource } from "./../../lib/errors/app-error";
 import prisma from "@/lib/prisma";
-import { Status, UserStatus } from "@/generated/prisma/enums";
+import { ActivityAction, Status, UserStatus } from "@/generated/prisma/enums";
 import { SessionPayload } from "@/lib/auth";
 import { Errors } from "@/lib/errors/errors";
 import { notificationService } from "../notification/notification.service";
@@ -10,6 +10,7 @@ import { leaderBoardService } from "../admin/leaderboard/leaderboard.service";
 import { invalidate } from "@/lib/cache";
 import { buildTaskWhere } from "@/lib/task/taskQuery";
 import { realtimePublisher } from "@/lib/realtime/realtime.publisher";
+import { activityService } from "../activitylog/activity.service";
 
 const PAGE_SIZE = 5;
 
@@ -69,12 +70,15 @@ export class TaskService {
       filter: params.filter,
     });
   }
-  async createTask(data: {
-    title: string;
-    description: string;
-    assigneeId: string | null;
-    deadline: Date | null;
-  }) {
+  async createTask(
+    data: {
+      title: string;
+      description: string;
+      assigneeId: string | null;
+      deadline: Date | null;
+    },
+    createdBy: string,
+  ) {
     try {
       if (data.assigneeId) {
         const assignee = await prisma.user.findUnique({
@@ -107,6 +111,33 @@ export class TaskService {
             deadline: data.deadline,
           },
         });
+        const activites = [];
+
+        const createdActivity = await activityService.create(tx, {
+          action: ActivityAction.TASK_CREATED,
+          userId: createdBy,
+          taskId: task.id,
+          metadata: {
+            title: task.title,
+            from: createdBy,
+            to: data.assigneeId,
+          },
+        });
+        activites.push(createdActivity);
+        if (task.assigneeId) {
+          const assignedActivity = await activityService.create(tx, {
+            action: ActivityAction.TASK_ASSIGNED,
+            userId: createdBy,
+            targetUserId: task.assigneeId,
+            taskId: task.id,
+            metadata: {
+              title: task.title,
+              from: createdBy,
+              to: data.assigneeId,
+            },
+          });
+          activites.push(assignedActivity);
+        }
         let notification = null;
         if (task.assigneeId) {
           notification =
@@ -120,6 +151,7 @@ export class TaskService {
         }
         return {
           task,
+          activites,
           notification,
         };
       });
@@ -150,14 +182,40 @@ export class TaskService {
       if (task.status === status) {
         return task;
       }
-      const updatedTask = await prisma.task.update({
-        where: {
-          id: taskId,
-        },
-        data: {
-          status,
-        },
+
+      const result = await prisma.$transaction(async (tx) => {
+        const updatedTask = await tx.task.update({
+          where: {
+            id: taskId,
+          },
+          data: {
+            status,
+          },
+        });
+        await activityService.create(tx, {
+          action:
+            status === Status.DONE
+              ? ActivityAction.TASK_COMPLETED
+              : ActivityAction.TASK_STATUS_CHANGED,
+          userId: session.id,
+          targetUserId: task.assigneeId,
+          taskId,
+          metadata: {
+            from: task.status,
+            to: status,
+          },
+        });
+        return updatedTask;
       });
+
+      // const updatedTask = await prisma.task.update({
+      //   where: {
+      //     id: taskId,
+      //   },
+      //   data: {
+      //     status,
+      //   },
+      // });
 
       if (
         task.assigneeId &&
@@ -166,13 +224,14 @@ export class TaskService {
         await leaderBoardService.syncTaskMileStoneRewards(task.assigneeId);
       }
       invalidate.leaderboard();
-      return updatedTask;
+      return result;
     } catch (error) {
       throw normalizeError(error, ErrorResource.TASK);
     }
   }
   async updateTask(
     taskId: string,
+    userId: string,
     data: {
       title: string;
       description: string;
@@ -189,22 +248,36 @@ export class TaskService {
       if (!existingTask) {
         throw Errors.notFound("Task not found", "TASK");
       }
-      return prisma.task.update({
-        where: {
-          id: taskId,
-        },
-        data: {
-          title: data.title,
-          description: data.description,
-          assigneeId: data.assigneeId,
-          deadline: data.deadline,
-        },
+
+      const result = await prisma.$transaction(async (tx) => {
+        const updatedTask = await tx.task.update({
+          where: {
+            id: taskId,
+          },
+          data: {
+            title: data.title,
+            description: data.description,
+            assigneeId: data.assigneeId,
+            deadline: data.deadline,
+          },
+        });
+        await activityService.create(tx, {
+          action: ActivityAction.TASK_UPDATED,
+          userId,
+          taskId: taskId,
+          targetUserId: updatedTask.assigneeId,
+          metadata: {
+            title: updatedTask.title,
+          },
+        });
+        return updatedTask;
       });
+      return result;
     } catch (error) {
       throw normalizeError(error, ErrorResource.TASK);
     }
   }
-  async deleteTask(taskId: string) {
+  async deleteTask(taskId: string, userId: string) {
     try {
       const result = await prisma.$transaction(async (tx) => {
         const task = await tx.task.findUnique({
@@ -213,6 +286,15 @@ export class TaskService {
         if (!task) {
           throw Errors.notFound("Task not found", "TASK");
         }
+        await activityService.create(tx, {
+          action: ActivityAction.TASK_DELETED,
+          userId,
+          targetUserId: task.assigneeId || "",
+          taskId,
+          metadata: {
+            title: task.title,
+          },
+        });
         await tx.task.delete({
           where: { id: taskId },
         });
@@ -235,20 +317,145 @@ export class TaskService {
       throw normalizeError(error, ErrorResource.TASK);
     }
   }
-  async reassignTask(taskId: string, newAssigneeId: string | null) {
+  // async reassignTask(
+  //   taskId: string,
+  //   newAssigneeId: string | null,
+  //   userId: string,
+  // ) {
+  //   try {
+  //     const result = await prisma.$transaction(async (tx) => {
+  //       const task = await tx.task.findUnique({
+  //         where: { id: taskId },
+  //         select: { status: true, assigneeId: true, id: true },
+  //       });
+  //       if (!task) {
+  //         throw Errors.notFound("Task not found", "TASK");
+  //       }
+  //       const updatedTask = await tx.task.update({
+  //         where: { id: taskId },
+  //         data: { assigneeId: newAssigneeId },
+  //       });
+  //       const assignees = await tx.user.findMany({
+  //         where: {
+  //           id: {
+  //             in: [task.assigneeId, newAssigneeId].filter(
+  //               (id): id is string => id !== null,
+  //             ),
+  //           },
+  //         },
+  //         select: {
+  //           id: true,
+  //           email: true,
+  //         },
+  //       });
+  //       const oldAssignee = assignees.find(
+  //         (user) => user.id === task.assigneeId,
+  //       );
+
+  //       const newAssignee = assignees.find((user) => user.id === newAssigneeId);
+
+  //       await activityService.create(tx, {
+  //         action:
+  //           task.assigneeId === null && newAssigneeId !== null
+  //             ? ActivityAction.TASK_ASSIGNED
+  //             : task.assigneeId !== null && newAssigneeId === null
+  //               ? ActivityAction.TASK_UNASSIGNED
+  //               : ActivityAction.TASK_REASSIGNED,
+  //         userId,
+  //         taskId: task.id,
+  //         targetUserId: newAssigneeId || "",
+  //         metadata: {
+  //           fromId: task.assigneeId,
+  //           fromEmail: oldAssignee?.email ?? null,
+  //           toId: newAssigneeId,
+  //           toEmail: newAssignee?.email ?? null,
+  //         },
+  //       });
+  //       return updatedTask;
+  //     });
+  //     return result;
+  //   } catch (error) {
+  //     throw normalizeError(error, ErrorResource.TASK);
+  //   }
+  // }
+  async reassignTask(
+    taskId: string,
+    newAssigneeId: string | null,
+    userId: string,
+  ) {
     try {
-      const task = await prisma.task.findUnique({
-        where: { id: taskId },
-        select: { status: true },
+      const result = await prisma.$transaction(async (tx) => {
+        const task = await tx.task.findUnique({
+          where: { id: taskId },
+          select: {
+            id: true,
+            status: true,
+            assigneeId: true,
+          },
+        });
+
+        if (!task) {
+          throw Errors.notFound("Task not found", "TASK");
+        }
+
+        if (task.assigneeId === newAssigneeId) {
+          return task;
+        }
+
+        const assigneeIds = [task.assigneeId, newAssigneeId].filter(
+          (id): id is string => id !== null,
+        );
+
+        const assignees = await tx.user.findMany({
+          where: {
+            id: {
+              in: assigneeIds,
+            },
+          },
+          select: {
+            id: true,
+            email: true,
+          },
+        });
+
+        const oldAssignee = assignees.find(
+          (user) => user.id === task.assigneeId,
+        );
+
+        const newAssignee = assignees.find((user) => user.id === newAssigneeId);
+
+        const updatedTask = await tx.task.update({
+          where: { id: taskId },
+          data: {
+            assigneeId: newAssigneeId,
+          },
+        });
+
+        let action: ActivityAction;
+        if (task.assigneeId === null && newAssigneeId !== null) {
+          action = ActivityAction.TASK_ASSIGNED;
+        } else if (task.assigneeId !== null && newAssigneeId === null) {
+          action = ActivityAction.TASK_UNASSIGNED;
+        } else {
+          action = ActivityAction.TASK_REASSIGNED;
+        }
+        await activityService.create(tx, {
+          action,
+          userId,
+          taskId: task.id,
+          targetUserId: newAssigneeId || "",
+          metadata: {
+            fromId: task.assigneeId,
+            fromEmail: oldAssignee?.email ?? null,
+            toId: newAssigneeId,
+            toEmail: newAssignee?.email ?? null,
+          },
+        });
+
+        return updatedTask;
       });
-      if (!task) {
-        throw Errors.notFound("Task not found", "TASK");
-      }
-      await prisma.task.update({
-        where: { id: taskId },
-        data: { assigneeId: newAssigneeId },
-      });
-      return task;
+
+      return result;
     } catch (error) {
       throw normalizeError(error, ErrorResource.TASK);
     }

@@ -9,6 +9,7 @@ import {
   Trophy,
   BotMessageSquare,
   MessagesSquare,
+  Activity,
 } from "lucide-react";
 
 import LogoutButton from "./LogoutButton";
@@ -43,6 +44,11 @@ const navItems = [
     label: "Chat Room",
     href: "/member/chat",
     icon: MessagesSquare,
+  },
+  {
+    label: "Activity",
+    href: "/member/activity",
+    icon: Activity,
   },
 ];
 

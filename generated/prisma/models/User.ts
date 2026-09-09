@@ -262,6 +262,8 @@ export type UserWhereInput = {
   taskMessages?: Prisma.TaskMessageListRelationFilter
   chatRoomMemberships?: Prisma.ChatRoomMemberListRelationFilter
   chatMessages?: Prisma.ChatMessageListRelationFilter
+  activitiesAsActor?: Prisma.ActivityLogListRelationFilter
+  activitiesAsTarget?: Prisma.ActivityLogListRelationFilter
   createdChatRooms?: Prisma.ChatRoomListRelationFilter
 }
 
@@ -282,6 +284,8 @@ export type UserOrderByWithRelationInput = {
   taskMessages?: Prisma.TaskMessageOrderByRelationAggregateInput
   chatRoomMemberships?: Prisma.ChatRoomMemberOrderByRelationAggregateInput
   chatMessages?: Prisma.ChatMessageOrderByRelationAggregateInput
+  activitiesAsActor?: Prisma.ActivityLogOrderByRelationAggregateInput
+  activitiesAsTarget?: Prisma.ActivityLogOrderByRelationAggregateInput
   createdChatRooms?: Prisma.ChatRoomOrderByRelationAggregateInput
 }
 
@@ -305,6 +309,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   taskMessages?: Prisma.TaskMessageListRelationFilter
   chatRoomMemberships?: Prisma.ChatRoomMemberListRelationFilter
   chatMessages?: Prisma.ChatMessageListRelationFilter
+  activitiesAsActor?: Prisma.ActivityLogListRelationFilter
+  activitiesAsTarget?: Prisma.ActivityLogListRelationFilter
   createdChatRooms?: Prisma.ChatRoomListRelationFilter
 }, "id" | "email">
 
@@ -359,6 +365,8 @@ export type UserCreateInput = {
   taskMessages?: Prisma.TaskMessageCreateNestedManyWithoutSenderInput
   chatRoomMemberships?: Prisma.ChatRoomMemberCreateNestedManyWithoutUserInput
   chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
+  activitiesAsActor?: Prisma.ActivityLogCreateNestedManyWithoutUserInput
+  activitiesAsTarget?: Prisma.ActivityLogCreateNestedManyWithoutTargetUserInput
   createdChatRooms?: Prisma.ChatRoomCreateNestedManyWithoutCreatedByInput
 }
 
@@ -379,6 +387,8 @@ export type UserUncheckedCreateInput = {
   taskMessages?: Prisma.TaskMessageUncheckedCreateNestedManyWithoutSenderInput
   chatRoomMemberships?: Prisma.ChatRoomMemberUncheckedCreateNestedManyWithoutUserInput
   chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
+  activitiesAsActor?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutUserInput
+  activitiesAsTarget?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutTargetUserInput
   createdChatRooms?: Prisma.ChatRoomUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
@@ -399,6 +409,8 @@ export type UserUpdateInput = {
   taskMessages?: Prisma.TaskMessageUpdateManyWithoutSenderNestedInput
   chatRoomMemberships?: Prisma.ChatRoomMemberUpdateManyWithoutUserNestedInput
   chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
+  activitiesAsActor?: Prisma.ActivityLogUpdateManyWithoutUserNestedInput
+  activitiesAsTarget?: Prisma.ActivityLogUpdateManyWithoutTargetUserNestedInput
   createdChatRooms?: Prisma.ChatRoomUpdateManyWithoutCreatedByNestedInput
 }
 
@@ -419,6 +431,8 @@ export type UserUncheckedUpdateInput = {
   taskMessages?: Prisma.TaskMessageUncheckedUpdateManyWithoutSenderNestedInput
   chatRoomMemberships?: Prisma.ChatRoomMemberUncheckedUpdateManyWithoutUserNestedInput
   chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
+  activitiesAsActor?: Prisma.ActivityLogUncheckedUpdateManyWithoutUserNestedInput
+  activitiesAsTarget?: Prisma.ActivityLogUncheckedUpdateManyWithoutTargetUserNestedInput
   createdChatRooms?: Prisma.ChatRoomUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
@@ -652,6 +666,36 @@ export type UserUpdateOneRequiredWithoutChatMessagesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutChatMessagesInput, Prisma.UserUpdateWithoutChatMessagesInput>, Prisma.UserUncheckedUpdateWithoutChatMessagesInput>
 }
 
+export type UserCreateNestedOneWithoutActivitiesAsActorInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutActivitiesAsActorInput, Prisma.UserUncheckedCreateWithoutActivitiesAsActorInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutActivitiesAsActorInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutActivitiesAsTargetInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutActivitiesAsTargetInput, Prisma.UserUncheckedCreateWithoutActivitiesAsTargetInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutActivitiesAsTargetInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutActivitiesAsActorNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutActivitiesAsActorInput, Prisma.UserUncheckedCreateWithoutActivitiesAsActorInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutActivitiesAsActorInput
+  upsert?: Prisma.UserUpsertWithoutActivitiesAsActorInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutActivitiesAsActorInput, Prisma.UserUpdateWithoutActivitiesAsActorInput>, Prisma.UserUncheckedUpdateWithoutActivitiesAsActorInput>
+}
+
+export type UserUpdateOneWithoutActivitiesAsTargetNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutActivitiesAsTargetInput, Prisma.UserUncheckedCreateWithoutActivitiesAsTargetInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutActivitiesAsTargetInput
+  upsert?: Prisma.UserUpsertWithoutActivitiesAsTargetInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutActivitiesAsTargetInput, Prisma.UserUpdateWithoutActivitiesAsTargetInput>, Prisma.UserUncheckedUpdateWithoutActivitiesAsTargetInput>
+}
+
 export type UserCreateWithoutTasksInput = {
   id?: string
   email: string
@@ -668,6 +712,8 @@ export type UserCreateWithoutTasksInput = {
   taskMessages?: Prisma.TaskMessageCreateNestedManyWithoutSenderInput
   chatRoomMemberships?: Prisma.ChatRoomMemberCreateNestedManyWithoutUserInput
   chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
+  activitiesAsActor?: Prisma.ActivityLogCreateNestedManyWithoutUserInput
+  activitiesAsTarget?: Prisma.ActivityLogCreateNestedManyWithoutTargetUserInput
   createdChatRooms?: Prisma.ChatRoomCreateNestedManyWithoutCreatedByInput
 }
 
@@ -687,6 +733,8 @@ export type UserUncheckedCreateWithoutTasksInput = {
   taskMessages?: Prisma.TaskMessageUncheckedCreateNestedManyWithoutSenderInput
   chatRoomMemberships?: Prisma.ChatRoomMemberUncheckedCreateNestedManyWithoutUserInput
   chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
+  activitiesAsActor?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutUserInput
+  activitiesAsTarget?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutTargetUserInput
   createdChatRooms?: Prisma.ChatRoomUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
@@ -722,6 +770,8 @@ export type UserUpdateWithoutTasksInput = {
   taskMessages?: Prisma.TaskMessageUpdateManyWithoutSenderNestedInput
   chatRoomMemberships?: Prisma.ChatRoomMemberUpdateManyWithoutUserNestedInput
   chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
+  activitiesAsActor?: Prisma.ActivityLogUpdateManyWithoutUserNestedInput
+  activitiesAsTarget?: Prisma.ActivityLogUpdateManyWithoutTargetUserNestedInput
   createdChatRooms?: Prisma.ChatRoomUpdateManyWithoutCreatedByNestedInput
 }
 
@@ -741,6 +791,8 @@ export type UserUncheckedUpdateWithoutTasksInput = {
   taskMessages?: Prisma.TaskMessageUncheckedUpdateManyWithoutSenderNestedInput
   chatRoomMemberships?: Prisma.ChatRoomMemberUncheckedUpdateManyWithoutUserNestedInput
   chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
+  activitiesAsActor?: Prisma.ActivityLogUncheckedUpdateManyWithoutUserNestedInput
+  activitiesAsTarget?: Prisma.ActivityLogUncheckedUpdateManyWithoutTargetUserNestedInput
   createdChatRooms?: Prisma.ChatRoomUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
@@ -760,6 +812,8 @@ export type UserCreateWithoutNotificationsInput = {
   taskMessages?: Prisma.TaskMessageCreateNestedManyWithoutSenderInput
   chatRoomMemberships?: Prisma.ChatRoomMemberCreateNestedManyWithoutUserInput
   chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
+  activitiesAsActor?: Prisma.ActivityLogCreateNestedManyWithoutUserInput
+  activitiesAsTarget?: Prisma.ActivityLogCreateNestedManyWithoutTargetUserInput
   createdChatRooms?: Prisma.ChatRoomCreateNestedManyWithoutCreatedByInput
 }
 
@@ -779,6 +833,8 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   taskMessages?: Prisma.TaskMessageUncheckedCreateNestedManyWithoutSenderInput
   chatRoomMemberships?: Prisma.ChatRoomMemberUncheckedCreateNestedManyWithoutUserInput
   chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
+  activitiesAsActor?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutUserInput
+  activitiesAsTarget?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutTargetUserInput
   createdChatRooms?: Prisma.ChatRoomUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
@@ -814,6 +870,8 @@ export type UserUpdateWithoutNotificationsInput = {
   taskMessages?: Prisma.TaskMessageUpdateManyWithoutSenderNestedInput
   chatRoomMemberships?: Prisma.ChatRoomMemberUpdateManyWithoutUserNestedInput
   chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
+  activitiesAsActor?: Prisma.ActivityLogUpdateManyWithoutUserNestedInput
+  activitiesAsTarget?: Prisma.ActivityLogUpdateManyWithoutTargetUserNestedInput
   createdChatRooms?: Prisma.ChatRoomUpdateManyWithoutCreatedByNestedInput
 }
 
@@ -833,6 +891,8 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   taskMessages?: Prisma.TaskMessageUncheckedUpdateManyWithoutSenderNestedInput
   chatRoomMemberships?: Prisma.ChatRoomMemberUncheckedUpdateManyWithoutUserNestedInput
   chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
+  activitiesAsActor?: Prisma.ActivityLogUncheckedUpdateManyWithoutUserNestedInput
+  activitiesAsTarget?: Prisma.ActivityLogUncheckedUpdateManyWithoutTargetUserNestedInput
   createdChatRooms?: Prisma.ChatRoomUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
@@ -852,6 +912,8 @@ export type UserCreateWithoutRewardsInput = {
   taskMessages?: Prisma.TaskMessageCreateNestedManyWithoutSenderInput
   chatRoomMemberships?: Prisma.ChatRoomMemberCreateNestedManyWithoutUserInput
   chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
+  activitiesAsActor?: Prisma.ActivityLogCreateNestedManyWithoutUserInput
+  activitiesAsTarget?: Prisma.ActivityLogCreateNestedManyWithoutTargetUserInput
   createdChatRooms?: Prisma.ChatRoomCreateNestedManyWithoutCreatedByInput
 }
 
@@ -871,6 +933,8 @@ export type UserUncheckedCreateWithoutRewardsInput = {
   taskMessages?: Prisma.TaskMessageUncheckedCreateNestedManyWithoutSenderInput
   chatRoomMemberships?: Prisma.ChatRoomMemberUncheckedCreateNestedManyWithoutUserInput
   chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
+  activitiesAsActor?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutUserInput
+  activitiesAsTarget?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutTargetUserInput
   createdChatRooms?: Prisma.ChatRoomUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
@@ -906,6 +970,8 @@ export type UserUpdateWithoutRewardsInput = {
   taskMessages?: Prisma.TaskMessageUpdateManyWithoutSenderNestedInput
   chatRoomMemberships?: Prisma.ChatRoomMemberUpdateManyWithoutUserNestedInput
   chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
+  activitiesAsActor?: Prisma.ActivityLogUpdateManyWithoutUserNestedInput
+  activitiesAsTarget?: Prisma.ActivityLogUpdateManyWithoutTargetUserNestedInput
   createdChatRooms?: Prisma.ChatRoomUpdateManyWithoutCreatedByNestedInput
 }
 
@@ -925,6 +991,8 @@ export type UserUncheckedUpdateWithoutRewardsInput = {
   taskMessages?: Prisma.TaskMessageUncheckedUpdateManyWithoutSenderNestedInput
   chatRoomMemberships?: Prisma.ChatRoomMemberUncheckedUpdateManyWithoutUserNestedInput
   chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
+  activitiesAsActor?: Prisma.ActivityLogUncheckedUpdateManyWithoutUserNestedInput
+  activitiesAsTarget?: Prisma.ActivityLogUncheckedUpdateManyWithoutTargetUserNestedInput
   createdChatRooms?: Prisma.ChatRoomUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
@@ -944,6 +1012,8 @@ export type UserCreateWithoutTaskMessagesInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   chatRoomMemberships?: Prisma.ChatRoomMemberCreateNestedManyWithoutUserInput
   chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
+  activitiesAsActor?: Prisma.ActivityLogCreateNestedManyWithoutUserInput
+  activitiesAsTarget?: Prisma.ActivityLogCreateNestedManyWithoutTargetUserInput
   createdChatRooms?: Prisma.ChatRoomCreateNestedManyWithoutCreatedByInput
 }
 
@@ -963,6 +1033,8 @@ export type UserUncheckedCreateWithoutTaskMessagesInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   chatRoomMemberships?: Prisma.ChatRoomMemberUncheckedCreateNestedManyWithoutUserInput
   chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
+  activitiesAsActor?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutUserInput
+  activitiesAsTarget?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutTargetUserInput
   createdChatRooms?: Prisma.ChatRoomUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
@@ -998,6 +1070,8 @@ export type UserUpdateWithoutTaskMessagesInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   chatRoomMemberships?: Prisma.ChatRoomMemberUpdateManyWithoutUserNestedInput
   chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
+  activitiesAsActor?: Prisma.ActivityLogUpdateManyWithoutUserNestedInput
+  activitiesAsTarget?: Prisma.ActivityLogUpdateManyWithoutTargetUserNestedInput
   createdChatRooms?: Prisma.ChatRoomUpdateManyWithoutCreatedByNestedInput
 }
 
@@ -1017,6 +1091,8 @@ export type UserUncheckedUpdateWithoutTaskMessagesInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   chatRoomMemberships?: Prisma.ChatRoomMemberUncheckedUpdateManyWithoutUserNestedInput
   chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
+  activitiesAsActor?: Prisma.ActivityLogUncheckedUpdateManyWithoutUserNestedInput
+  activitiesAsTarget?: Prisma.ActivityLogUncheckedUpdateManyWithoutTargetUserNestedInput
   createdChatRooms?: Prisma.ChatRoomUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
@@ -1037,6 +1113,8 @@ export type UserCreateWithoutCreatedChatRoomsInput = {
   taskMessages?: Prisma.TaskMessageCreateNestedManyWithoutSenderInput
   chatRoomMemberships?: Prisma.ChatRoomMemberCreateNestedManyWithoutUserInput
   chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
+  activitiesAsActor?: Prisma.ActivityLogCreateNestedManyWithoutUserInput
+  activitiesAsTarget?: Prisma.ActivityLogCreateNestedManyWithoutTargetUserInput
 }
 
 export type UserUncheckedCreateWithoutCreatedChatRoomsInput = {
@@ -1056,6 +1134,8 @@ export type UserUncheckedCreateWithoutCreatedChatRoomsInput = {
   taskMessages?: Prisma.TaskMessageUncheckedCreateNestedManyWithoutSenderInput
   chatRoomMemberships?: Prisma.ChatRoomMemberUncheckedCreateNestedManyWithoutUserInput
   chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
+  activitiesAsActor?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutUserInput
+  activitiesAsTarget?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutTargetUserInput
 }
 
 export type UserCreateOrConnectWithoutCreatedChatRoomsInput = {
@@ -1091,6 +1171,8 @@ export type UserUpdateWithoutCreatedChatRoomsInput = {
   taskMessages?: Prisma.TaskMessageUpdateManyWithoutSenderNestedInput
   chatRoomMemberships?: Prisma.ChatRoomMemberUpdateManyWithoutUserNestedInput
   chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
+  activitiesAsActor?: Prisma.ActivityLogUpdateManyWithoutUserNestedInput
+  activitiesAsTarget?: Prisma.ActivityLogUpdateManyWithoutTargetUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCreatedChatRoomsInput = {
@@ -1110,6 +1192,8 @@ export type UserUncheckedUpdateWithoutCreatedChatRoomsInput = {
   taskMessages?: Prisma.TaskMessageUncheckedUpdateManyWithoutSenderNestedInput
   chatRoomMemberships?: Prisma.ChatRoomMemberUncheckedUpdateManyWithoutUserNestedInput
   chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
+  activitiesAsActor?: Prisma.ActivityLogUncheckedUpdateManyWithoutUserNestedInput
+  activitiesAsTarget?: Prisma.ActivityLogUncheckedUpdateManyWithoutTargetUserNestedInput
 }
 
 export type UserCreateWithoutChatRoomMembershipsInput = {
@@ -1128,6 +1212,8 @@ export type UserCreateWithoutChatRoomMembershipsInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   taskMessages?: Prisma.TaskMessageCreateNestedManyWithoutSenderInput
   chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
+  activitiesAsActor?: Prisma.ActivityLogCreateNestedManyWithoutUserInput
+  activitiesAsTarget?: Prisma.ActivityLogCreateNestedManyWithoutTargetUserInput
   createdChatRooms?: Prisma.ChatRoomCreateNestedManyWithoutCreatedByInput
 }
 
@@ -1147,6 +1233,8 @@ export type UserUncheckedCreateWithoutChatRoomMembershipsInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   taskMessages?: Prisma.TaskMessageUncheckedCreateNestedManyWithoutSenderInput
   chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
+  activitiesAsActor?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutUserInput
+  activitiesAsTarget?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutTargetUserInput
   createdChatRooms?: Prisma.ChatRoomUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
@@ -1182,6 +1270,8 @@ export type UserUpdateWithoutChatRoomMembershipsInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   taskMessages?: Prisma.TaskMessageUpdateManyWithoutSenderNestedInput
   chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
+  activitiesAsActor?: Prisma.ActivityLogUpdateManyWithoutUserNestedInput
+  activitiesAsTarget?: Prisma.ActivityLogUpdateManyWithoutTargetUserNestedInput
   createdChatRooms?: Prisma.ChatRoomUpdateManyWithoutCreatedByNestedInput
 }
 
@@ -1201,6 +1291,8 @@ export type UserUncheckedUpdateWithoutChatRoomMembershipsInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   taskMessages?: Prisma.TaskMessageUncheckedUpdateManyWithoutSenderNestedInput
   chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
+  activitiesAsActor?: Prisma.ActivityLogUncheckedUpdateManyWithoutUserNestedInput
+  activitiesAsTarget?: Prisma.ActivityLogUncheckedUpdateManyWithoutTargetUserNestedInput
   createdChatRooms?: Prisma.ChatRoomUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
@@ -1220,6 +1312,8 @@ export type UserCreateWithoutChatMessagesInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   taskMessages?: Prisma.TaskMessageCreateNestedManyWithoutSenderInput
   chatRoomMemberships?: Prisma.ChatRoomMemberCreateNestedManyWithoutUserInput
+  activitiesAsActor?: Prisma.ActivityLogCreateNestedManyWithoutUserInput
+  activitiesAsTarget?: Prisma.ActivityLogCreateNestedManyWithoutTargetUserInput
   createdChatRooms?: Prisma.ChatRoomCreateNestedManyWithoutCreatedByInput
 }
 
@@ -1239,6 +1333,8 @@ export type UserUncheckedCreateWithoutChatMessagesInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   taskMessages?: Prisma.TaskMessageUncheckedCreateNestedManyWithoutSenderInput
   chatRoomMemberships?: Prisma.ChatRoomMemberUncheckedCreateNestedManyWithoutUserInput
+  activitiesAsActor?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutUserInput
+  activitiesAsTarget?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutTargetUserInput
   createdChatRooms?: Prisma.ChatRoomUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
@@ -1274,6 +1370,8 @@ export type UserUpdateWithoutChatMessagesInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   taskMessages?: Prisma.TaskMessageUpdateManyWithoutSenderNestedInput
   chatRoomMemberships?: Prisma.ChatRoomMemberUpdateManyWithoutUserNestedInput
+  activitiesAsActor?: Prisma.ActivityLogUpdateManyWithoutUserNestedInput
+  activitiesAsTarget?: Prisma.ActivityLogUpdateManyWithoutTargetUserNestedInput
   createdChatRooms?: Prisma.ChatRoomUpdateManyWithoutCreatedByNestedInput
 }
 
@@ -1293,6 +1391,208 @@ export type UserUncheckedUpdateWithoutChatMessagesInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   taskMessages?: Prisma.TaskMessageUncheckedUpdateManyWithoutSenderNestedInput
   chatRoomMemberships?: Prisma.ChatRoomMemberUncheckedUpdateManyWithoutUserNestedInput
+  activitiesAsActor?: Prisma.ActivityLogUncheckedUpdateManyWithoutUserNestedInput
+  activitiesAsTarget?: Prisma.ActivityLogUncheckedUpdateManyWithoutTargetUserNestedInput
+  createdChatRooms?: Prisma.ChatRoomUncheckedUpdateManyWithoutCreatedByNestedInput
+}
+
+export type UserCreateWithoutActivitiesAsActorInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  role?: $Enums.Role
+  status?: $Enums.UserStatus
+  points?: number
+  banReason?: string | null
+  bannedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tasks?: Prisma.TaskCreateNestedManyWithoutAssigneeInput
+  rewards?: Prisma.RewardCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  taskMessages?: Prisma.TaskMessageCreateNestedManyWithoutSenderInput
+  chatRoomMemberships?: Prisma.ChatRoomMemberCreateNestedManyWithoutUserInput
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
+  activitiesAsTarget?: Prisma.ActivityLogCreateNestedManyWithoutTargetUserInput
+  createdChatRooms?: Prisma.ChatRoomCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserUncheckedCreateWithoutActivitiesAsActorInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  role?: $Enums.Role
+  status?: $Enums.UserStatus
+  points?: number
+  banReason?: string | null
+  bannedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutAssigneeInput
+  rewards?: Prisma.RewardUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  taskMessages?: Prisma.TaskMessageUncheckedCreateNestedManyWithoutSenderInput
+  chatRoomMemberships?: Prisma.ChatRoomMemberUncheckedCreateNestedManyWithoutUserInput
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
+  activitiesAsTarget?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutTargetUserInput
+  createdChatRooms?: Prisma.ChatRoomUncheckedCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserCreateOrConnectWithoutActivitiesAsActorInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutActivitiesAsActorInput, Prisma.UserUncheckedCreateWithoutActivitiesAsActorInput>
+}
+
+export type UserCreateWithoutActivitiesAsTargetInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  role?: $Enums.Role
+  status?: $Enums.UserStatus
+  points?: number
+  banReason?: string | null
+  bannedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tasks?: Prisma.TaskCreateNestedManyWithoutAssigneeInput
+  rewards?: Prisma.RewardCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  taskMessages?: Prisma.TaskMessageCreateNestedManyWithoutSenderInput
+  chatRoomMemberships?: Prisma.ChatRoomMemberCreateNestedManyWithoutUserInput
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
+  activitiesAsActor?: Prisma.ActivityLogCreateNestedManyWithoutUserInput
+  createdChatRooms?: Prisma.ChatRoomCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserUncheckedCreateWithoutActivitiesAsTargetInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  role?: $Enums.Role
+  status?: $Enums.UserStatus
+  points?: number
+  banReason?: string | null
+  bannedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutAssigneeInput
+  rewards?: Prisma.RewardUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  taskMessages?: Prisma.TaskMessageUncheckedCreateNestedManyWithoutSenderInput
+  chatRoomMemberships?: Prisma.ChatRoomMemberUncheckedCreateNestedManyWithoutUserInput
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
+  activitiesAsActor?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutUserInput
+  createdChatRooms?: Prisma.ChatRoomUncheckedCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserCreateOrConnectWithoutActivitiesAsTargetInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutActivitiesAsTargetInput, Prisma.UserUncheckedCreateWithoutActivitiesAsTargetInput>
+}
+
+export type UserUpsertWithoutActivitiesAsActorInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutActivitiesAsActorInput, Prisma.UserUncheckedUpdateWithoutActivitiesAsActorInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutActivitiesAsActorInput, Prisma.UserUncheckedCreateWithoutActivitiesAsActorInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutActivitiesAsActorInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutActivitiesAsActorInput, Prisma.UserUncheckedUpdateWithoutActivitiesAsActorInput>
+}
+
+export type UserUpdateWithoutActivitiesAsActorInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  points?: Prisma.IntFieldUpdateOperationsInput | number
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tasks?: Prisma.TaskUpdateManyWithoutAssigneeNestedInput
+  rewards?: Prisma.RewardUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  taskMessages?: Prisma.TaskMessageUpdateManyWithoutSenderNestedInput
+  chatRoomMemberships?: Prisma.ChatRoomMemberUpdateManyWithoutUserNestedInput
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
+  activitiesAsTarget?: Prisma.ActivityLogUpdateManyWithoutTargetUserNestedInput
+  createdChatRooms?: Prisma.ChatRoomUpdateManyWithoutCreatedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutActivitiesAsActorInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  points?: Prisma.IntFieldUpdateOperationsInput | number
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tasks?: Prisma.TaskUncheckedUpdateManyWithoutAssigneeNestedInput
+  rewards?: Prisma.RewardUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  taskMessages?: Prisma.TaskMessageUncheckedUpdateManyWithoutSenderNestedInput
+  chatRoomMemberships?: Prisma.ChatRoomMemberUncheckedUpdateManyWithoutUserNestedInput
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
+  activitiesAsTarget?: Prisma.ActivityLogUncheckedUpdateManyWithoutTargetUserNestedInput
+  createdChatRooms?: Prisma.ChatRoomUncheckedUpdateManyWithoutCreatedByNestedInput
+}
+
+export type UserUpsertWithoutActivitiesAsTargetInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutActivitiesAsTargetInput, Prisma.UserUncheckedUpdateWithoutActivitiesAsTargetInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutActivitiesAsTargetInput, Prisma.UserUncheckedCreateWithoutActivitiesAsTargetInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutActivitiesAsTargetInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutActivitiesAsTargetInput, Prisma.UserUncheckedUpdateWithoutActivitiesAsTargetInput>
+}
+
+export type UserUpdateWithoutActivitiesAsTargetInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  points?: Prisma.IntFieldUpdateOperationsInput | number
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tasks?: Prisma.TaskUpdateManyWithoutAssigneeNestedInput
+  rewards?: Prisma.RewardUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  taskMessages?: Prisma.TaskMessageUpdateManyWithoutSenderNestedInput
+  chatRoomMemberships?: Prisma.ChatRoomMemberUpdateManyWithoutUserNestedInput
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
+  activitiesAsActor?: Prisma.ActivityLogUpdateManyWithoutUserNestedInput
+  createdChatRooms?: Prisma.ChatRoomUpdateManyWithoutCreatedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutActivitiesAsTargetInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  points?: Prisma.IntFieldUpdateOperationsInput | number
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tasks?: Prisma.TaskUncheckedUpdateManyWithoutAssigneeNestedInput
+  rewards?: Prisma.RewardUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  taskMessages?: Prisma.TaskMessageUncheckedUpdateManyWithoutSenderNestedInput
+  chatRoomMemberships?: Prisma.ChatRoomMemberUncheckedUpdateManyWithoutUserNestedInput
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
+  activitiesAsActor?: Prisma.ActivityLogUncheckedUpdateManyWithoutUserNestedInput
   createdChatRooms?: Prisma.ChatRoomUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
@@ -1308,6 +1608,8 @@ export type UserCountOutputType = {
   taskMessages: number
   chatRoomMemberships: number
   chatMessages: number
+  activitiesAsActor: number
+  activitiesAsTarget: number
   createdChatRooms: number
 }
 
@@ -1318,6 +1620,8 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   taskMessages?: boolean | UserCountOutputTypeCountTaskMessagesArgs
   chatRoomMemberships?: boolean | UserCountOutputTypeCountChatRoomMembershipsArgs
   chatMessages?: boolean | UserCountOutputTypeCountChatMessagesArgs
+  activitiesAsActor?: boolean | UserCountOutputTypeCountActivitiesAsActorArgs
+  activitiesAsTarget?: boolean | UserCountOutputTypeCountActivitiesAsTargetArgs
   createdChatRooms?: boolean | UserCountOutputTypeCountCreatedChatRoomsArgs
 }
 
@@ -1376,6 +1680,20 @@ export type UserCountOutputTypeCountChatMessagesArgs<ExtArgs extends runtime.Typ
 /**
  * UserCountOutputType without action
  */
+export type UserCountOutputTypeCountActivitiesAsActorArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ActivityLogWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountActivitiesAsTargetArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ActivityLogWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
 export type UserCountOutputTypeCountCreatedChatRoomsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.ChatRoomWhereInput
 }
@@ -1398,6 +1716,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   taskMessages?: boolean | Prisma.User$taskMessagesArgs<ExtArgs>
   chatRoomMemberships?: boolean | Prisma.User$chatRoomMembershipsArgs<ExtArgs>
   chatMessages?: boolean | Prisma.User$chatMessagesArgs<ExtArgs>
+  activitiesAsActor?: boolean | Prisma.User$activitiesAsActorArgs<ExtArgs>
+  activitiesAsTarget?: boolean | Prisma.User$activitiesAsTargetArgs<ExtArgs>
   createdChatRooms?: boolean | Prisma.User$createdChatRoomsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
@@ -1449,6 +1769,8 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   taskMessages?: boolean | Prisma.User$taskMessagesArgs<ExtArgs>
   chatRoomMemberships?: boolean | Prisma.User$chatRoomMembershipsArgs<ExtArgs>
   chatMessages?: boolean | Prisma.User$chatMessagesArgs<ExtArgs>
+  activitiesAsActor?: boolean | Prisma.User$activitiesAsActorArgs<ExtArgs>
+  activitiesAsTarget?: boolean | Prisma.User$activitiesAsTargetArgs<ExtArgs>
   createdChatRooms?: boolean | Prisma.User$createdChatRoomsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -1464,6 +1786,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     taskMessages: Prisma.$TaskMessagePayload<ExtArgs>[]
     chatRoomMemberships: Prisma.$ChatRoomMemberPayload<ExtArgs>[]
     chatMessages: Prisma.$ChatMessagePayload<ExtArgs>[]
+    activitiesAsActor: Prisma.$ActivityLogPayload<ExtArgs>[]
+    activitiesAsTarget: Prisma.$ActivityLogPayload<ExtArgs>[]
     createdChatRooms: Prisma.$ChatRoomPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1877,6 +2201,8 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   taskMessages<T extends Prisma.User$taskMessagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$taskMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TaskMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   chatRoomMemberships<T extends Prisma.User$chatRoomMembershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$chatRoomMembershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatRoomMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   chatMessages<T extends Prisma.User$chatMessagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$chatMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  activitiesAsActor<T extends Prisma.User$activitiesAsActorArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$activitiesAsActorArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ActivityLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  activitiesAsTarget<T extends Prisma.User$activitiesAsTargetArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$activitiesAsTargetArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ActivityLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   createdChatRooms<T extends Prisma.User$createdChatRoomsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$createdChatRoomsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatRoomPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -2451,6 +2777,54 @@ export type User$chatMessagesArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   distinct?: Prisma.ChatMessageScalarFieldEnum | Prisma.ChatMessageScalarFieldEnum[]
+}
+
+/**
+ * User.activitiesAsActor
+ */
+export type User$activitiesAsActorArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ActivityLog
+   */
+  select?: Prisma.ActivityLogSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ActivityLog
+   */
+  omit?: Prisma.ActivityLogOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ActivityLogInclude<ExtArgs> | null
+  where?: Prisma.ActivityLogWhereInput
+  orderBy?: Prisma.ActivityLogOrderByWithRelationInput | Prisma.ActivityLogOrderByWithRelationInput[]
+  cursor?: Prisma.ActivityLogWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ActivityLogScalarFieldEnum | Prisma.ActivityLogScalarFieldEnum[]
+}
+
+/**
+ * User.activitiesAsTarget
+ */
+export type User$activitiesAsTargetArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ActivityLog
+   */
+  select?: Prisma.ActivityLogSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ActivityLog
+   */
+  omit?: Prisma.ActivityLogOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ActivityLogInclude<ExtArgs> | null
+  where?: Prisma.ActivityLogWhereInput
+  orderBy?: Prisma.ActivityLogOrderByWithRelationInput | Prisma.ActivityLogOrderByWithRelationInput[]
+  cursor?: Prisma.ActivityLogWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ActivityLogScalarFieldEnum | Prisma.ActivityLogScalarFieldEnum[]
 }
 
 /**

@@ -2,9 +2,7 @@
 
 import { Search, UserRound, X, UserMinus } from "lucide-react";
 import { Room } from "@/app/types/chatMessage.types";
-import { removeMemberFromRoomAction } from "../chatMessage.action";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+
 import useDeleteModalStore from "@/store/useDeleteModal";
 
 type Props = {
@@ -15,23 +13,23 @@ type Props = {
 
 const ChatMembers = ({ room, open, onClose }: Props) => {
   const openDeleteModal = useDeleteModalStore((state) => state.openDeleteModal);
-  const router = useRouter();
+  // const router = useRouter();
   if (!open) return null;
 
-  const handleRemoveMember = async (targetUserId: string) => {
-    try {
-      const result = await removeMemberFromRoomAction(room.id, targetUserId);
-      if (!result.success) {
-        toast.error(result.message);
-        return;
-      }
-      toast.success(result.message);
-      router.refresh();
-    } catch (error) {
-      console.error("Failed to remove member:", error);
-      toast.error("Failed to remove member");
-    }
-  };
+  // const handleRemoveMember = async (targetUserId: string) => {
+  //   try {
+  //     const result = await removeMemberFromRoomAction(room.id, targetUserId);
+  //     if (!result.success) {
+  //       toast.error(result.message);
+  //       return;
+  //     }
+  //     toast.success(result.message);
+  //     router.refresh();
+  //   } catch (error) {
+  //     console.error("Failed to remove member:", error);
+  //     toast.error("Failed to remove member");
+  //   }
+  // };
 
   const handleDeleteMember = (targetUserId: string, memberEmail: string) => {
     openDeleteModal({

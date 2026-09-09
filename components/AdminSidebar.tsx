@@ -8,6 +8,7 @@ import {
   KanbanSquare,
   Crown,
   ListTodoIcon,
+  Activity,
 } from "lucide-react";
 
 import LogoutButton from "./LogoutButton";
@@ -37,6 +38,11 @@ const navItems = [
     label: "Tasks Board",
     href: "/admin/taskBoard",
     icon: ListTodoIcon,
+  },
+  {
+    label: "Activity",
+    href: "/admin/activity",
+    icon: Activity,
   },
 ];
 

@@ -18,6 +18,7 @@ export const ErrorResource = {
   MESSAGE: "MESSAGE",
   CHATROOM: "CHATROOM",
   REALTIME: "REALTIME",
+  ACTIVITY_LOG: "ACTIVITY_LOG",
 } as const;
 
 export type ErrorResource = (typeof ErrorResource)[keyof typeof ErrorResource];

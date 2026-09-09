@@ -13,9 +13,9 @@ import { TaskWithAssignee } from "@/app/types/task.types";
 import { Member } from "@/app/types/member.types";
 import { Column } from "@/app/types/column.types";
 import { useOpenModel } from "@/store/useOpenModel";
-import DeleteTask from "./DeleteTask";
+
 import { memo } from "react";
-import { useRouter } from "next/navigation";
+
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import useDeleteModalStore from "@/store/useDeleteModal";
@@ -38,16 +38,10 @@ const TaskCard = memo(function TaskCard({
   isPending,
 }: TaskCardProps) {
   const { handleStatusChange, handleReassign } = useTaskActions();
-  const router = useRouter();
+
   const openDeleteModal = useDeleteModalStore((state) => state.openDeleteModal);
 
-  const { setDeleteOpen, setTask, isDeleteOpen, openEditModal } =
-    useOpenModel();
-  const handleTaskDelete = (task: TaskWithAssignee) => {
-    setDeleteOpen();
-    setTask(task);
-    router.refresh();
-  };
+  const { openEditModal } = useOpenModel();
 
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
@@ -91,8 +85,8 @@ const TaskCard = memo(function TaskCard({
             <button
               type="button"
               className="cursor-grab text-slate-400 hover:text-slate-600 disabled:cursor-default disabled:opacity-50"
-              // {...attributes}
-              // {...listeners}
+              {...attributes}
+              {...listeners}
               disabled={!canEdit || isPending}
             >
               <GripVertical size={16} />

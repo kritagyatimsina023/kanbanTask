@@ -1,8 +1,8 @@
 "use client";
 
 import { Ban, CheckCircle2, Shield, UserRound } from "lucide-react";
-import { useActionState, useEffect, useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useActionState, useEffect, useState } from "react";
+
 import BanUserModal from "./BanUserModal";
 import { toggleBanUser } from "../user.action";
 import { Role } from "@/generated/prisma/enums";

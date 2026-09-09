@@ -11,11 +11,9 @@ import {
 } from "lucide-react";
 
 import { memo } from "react";
-import { taskService } from "../../task.service";
+
 import { useTaskFilters } from "@/hooks/useTaskFilters";
-type TaskTableProps = {
-  data: Awaited<ReturnType<typeof taskService.getAllTasks>>;
-};
+
 type props = {
   // displayedTasks: MyTask[];
   onSelectedTask: (task: MyTask) => void;
